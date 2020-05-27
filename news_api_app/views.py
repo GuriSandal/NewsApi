@@ -4,7 +4,10 @@ from rest_framework.parsers import JSONParser
 from news_api_app.models import State, Company
 from news_api_app.serializers import StateSerializer, CompanySerializer
 from rest_framework import generics, permissions
-
+from rest_framework.views import APIView
+from rest_framework.reverse import reverse
+from rest_framework.response import Response
+from rest_framework import viewsets
 
 # @csrf_exempt
 # def state_list(request):
@@ -51,24 +54,27 @@ from rest_framework import generics, permissions
 #         return HttpResponse(status=204)
 
 
-class StateList(generics.ListCreateAPIView):
+class StateViewSet(viewsets.ModelViewSet):
     queryset = State.objects.all()
     serializer_class = StateSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
 
-class StateDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = State.objects.all()
-    serializer_class = StateSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
+# class StateDetail(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = State.objects.all()
+#     serializer_class = StateSerializer
 
 
-class CompanyList(generics.ListCreateAPIView):
+class CompanyViewSet(viewsets.ModelViewSet):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
-class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Company.objects.all()
-    serializer_class = CompanySerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
+# class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Company.objects.all()
+#     serializer_class = CompanySerializer
+
+# class ApiRoot(APIView):
+#     def get(self, request, format=None):
+#         return Response({
+#         'states': reverse('all_states', request=request, format=format),
+#         'companies': reverse('all_companies', request=request, format=format)
+#     })
