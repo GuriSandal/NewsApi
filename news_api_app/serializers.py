@@ -1,19 +1,15 @@
 from rest_framework import serializers
-from .models import State,Company
+from .models import State,Headline
 
-
-class CompanySerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='company-detail',read_only=True)
+class HeadlineSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Company
-        fields = ['id','url', 'company_name', 'added_on']
+        model = Headline
+        fields = ['headlineText']
+
 
 class StateSerializer(serializers.ModelSerializer):
-    company = CompanySerializer(many=True, read_only=True, source='company_set')
-    url = serializers.HyperlinkedIdentityField(view_name='state-detail',read_only=True)
     class Meta:
         model = State
-        fields = ['id', 'url','state_name','company', 'added_on']
-
+        fields = ['stateId','stateName', 'imageUlr']
 
 

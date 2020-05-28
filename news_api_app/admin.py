@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import State, Company
-# Register your models here.
+from .models import State, Headline
+# Register your models here
+
 admin.site.register(State)
-admin.site.register(Company)
+admin.site.register(Headline)
