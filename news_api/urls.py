@@ -19,7 +19,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('api/', include('rest_framework.urls')),
     path('api/customer/', include('news_api_app.urls')),
     path('admin/', admin.site.urls),
 ]
