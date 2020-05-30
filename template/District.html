@@ -2,188 +2,191 @@
 {%load static%}
 
 {% block admin_base %}
-<div class="col-md-10 mx-auto mt-5 shadow shadow-lg py-3">
-    <span> <a href="" class="text-dark">Home/</a> </span><span><a class="text-dark" href="">District/</a></span><span> <a class="text-dark" href="">list</a></span>
+<div class="container-fluid">
+    <div class="col-md-10 mx-auto mt-5 shadow shadow-lg py-3">
+        <span> <a href="" class="text-dark">Home/</a> </span><span><a class="text-dark" href="">District/</a></span><span> <a class="text-dark" href="">list</a></span>
+    
+    </div>
+    <div class="col-md-10  mx-auto mt-5 shadow shadow-lg">
+        <div class="row">
+            <div class="col-md-12">
+                <h6><a href="" class="btn btn-primary mt-3" data-toggle="modal" data-target="#exampleModal">Add new</a></h6>
+            </div>
+        </div>
+        
+            <!-- modal for add new -->
+            <div class="col-md-12 mt-5">
+                <div class="modal fade" id="exampleModal"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog " role="document">
+                        <div class="modal-content  p-0 m-0" >
+                            <div class="row" style=" background-color: transparent !important;border: none;">
+                                <div class="col-md-1 mx-auto">
+                                    <button  data-dismiss="modal"  class="close" type="button"  >
+                                        <span aria-hidden="true" style="color: red; font-size:62px;">x</span>
+                                        
+                                    </button>
+        
+                                </div>
+        
+                            </div>
+                           
+                            <div class="modal-body p-0 m-0">
+                                <div class="row">
+                                    <div class="col-md-10 p-3 mx-auto">
+                                        <form action="">
+                                            <label for="">Name</label>
+                                            <input type="text" class="form-control" placeholder=" Enter Name here " >
+                                            <label for="" class="mt-3">State</label>
+                                            <select name="" id="" class="form-control">
+                                                <option value="">Kanada</option>
+                                                <option value="">English</option>
+                                            </select>
+                                            <input type="checkbox" id="vehicle1" class="form-conrol mt-4" name="vehicle1" value="Bike">
+                                            <label for="vehicle1"> Active</label><br>
+                                            <input type="submit" value="Add" class="form-control btn btn-success mb-5 mt-3">
+                                            
+                                        </form>
+        
+                                    </div>
+        
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                  </div>
+        
+            </div>
+            <!-- modal end  -->
+        
+        
+        <!-- table  satart    -->
+        <div class="row">
+            <div class="col-md-12 p-0">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="container">
+                            <table class="table table-fluid display nowrap" style="width:100%" id="myTable">
+                            <thead>
+                            <tr><th>Sr.num</th>
+                                <th>District</th>
+                                <th>Status</th>
+                                <th>Date/Time</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr><td>1</td>
+                                <td>Kanada <br>
+                                    <small class="text-danger">State:</small><small>beguluru</small>
+                                </td>
+                                <td><span class="bg-success text-white px-3 rounded py-1">Active</span></td>
+                                <td>18 Jan,2020 02:55 AM</td>
+                                <td><span> <h4><a href="" data-toggle="modal" data-target="#exampleModal1"><i class="far fa-edit"></i></a></span>
+                                    <span> <a href=""data-toggle="modal" data-target="#exampleModald"><i class="fa fa-trash"></i></a></h4></span></h4></td>
+        
+                            </tr>
+                           
+                            
+                            </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>        
+    
+            </div>
+        
+        </div> 
+        <!-- table end  -->
+            <!-- modal for edit new -->
+            <div class="col-md-12 mt-5">
+                <div class="modal fade" id="exampleModal1"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog " role="document">
+                        <div class="modal-content  p-0 m-0" >
+                            <div class="row" style=" background-color: transparent !important;border: none;">
+                                <div class="col-md-1 mx-auto">
+                                    <button  data-dismiss="modal"  class="close" type="button"  >
+                                        <span aria-hidden="true" style="color: red; font-size:62px;">x</span>
+                                        
+                                    </button>
+        
+                                </div>
+        
+                            </div>
+                           
+                            <div class="modal-body p-0 m-0">
+                                <div class="row">
+                                    <div class="col-md-10 p-3 mx-auto">
+                                        <form action="">
+                                            <label for="">Name</label>
+                                            <input type="text" class="form-control" placeholder=" Enter Name here " >
+                                            <label for="" class="mt-3">State</label>
+                                            <select name="" id="" class="form-control">
+                                                <option value="">Kanada</option>
+                                                <option value="">English</option>
+                                            </select>
+                                            <input type="checkbox" id="vehicle1" class="form-conrol mt-4" name="vehicle1" value="Bike">
+                                            <label for="vehicle1"> Active</label><br>
+                                            <input type="submit" value="Add" class="form-control btn btn-success mb-5 mt-3">
+                                            
+                                        </form>
+        
+                                    </div>
+        
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                  </div>
+        
+            </div>
+            <!-- modal end  -->
+        
+            <!-- modal for delete -->
+            <div class="col-md-12 mt-5">
+                <div class="modal fade" id="exampleModald"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog " role="document">
+                        <div class="modal-content  p-0 m-0" >
+        
+                           
+                            <div class="modal-body p-0 m-0">
+                                <div class="row">
+                                    <div class="col-md-10 p-3 mx-auto">
+                                        <form action="">
+                                            <h1>Do you really want to delete this ?</h1>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <input type="submit" value="Delete" class=" btn btn-success mb-5 px-5 mt-3">
+                                                   </div> 
+                                                   <div class="col-md-6">
+                                                    <a href="" class="btn btn-danger  mb-5 mt-3 px-5 " > Cancel </a>
+                
+                                                   </div>
+                                                    
+        
+                                            </div>
+                                        </form>
+        
+        
+                                    </div>
+        
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                  </div>
+        
+            </div>
+            <!-- modal end  -->
+        
+        </div>
 
 </div>
-<div class="col-md-10 card mx-auto mt-5 shadow shadow-lg">
-    <div class="row">
-        <div class="col-md-12">
-            <h6><a href="" class="btn btn-primary mt-3" data-toggle="modal" data-target="#exampleModal">Add new</a></h6>
-        </div>
-    </div>
-    <div >
-        <!-- modal for add new -->
-        <div class="col-md-12 mt-5">
-            <div class="modal fade" id="exampleModal"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog " role="document">
-                    <div class="modal-content  p-0 m-0" >
-                        <div class="row" style=" background-color: transparent !important;border: none;">
-                            <div class="col-md-1 mx-auto">
-                                <button  data-dismiss="modal"  class="close" type="button"  >
-                                    <span aria-hidden="true" style="color: red; font-size:62px;">x</span>
-                                    
-                                </button>
-    
-                            </div>
-    
-                        </div>
-                       
-                        <div class="modal-body p-0 m-0">
-                            <div class="row">
-                                <div class="col-md-10 p-3 mx-auto">
-                                    <form action="">
-                                        <label for="">Name</label>
-                                        <input type="text" class="form-control" placeholder=" Enter Name here " >
-                                        <label for="" class="mt-3">State</label>
-                                        <select name="" id="" class="form-control">
-                                            <option value="">Kanada</option>
-                                            <option value="">English</option>
-                                        </select>
-                                        <input type="checkbox" id="vehicle1" class="form-conrol mt-4" name="vehicle1" value="Bike">
-                                        <label for="vehicle1"> Active</label><br>
-                                        <input type="submit" value="Add" class="form-control btn btn-success mb-5 mt-3">
-                                        
-                                    </form>
-    
-                                </div>
-    
-                            </div>
-                            
-                        </div>
-                        
-                    </div>
-                </div>
-              </div>
-    
-        </div>
-        <!-- modal end  -->
-    
-    </div>
-    <!-- table  satart    -->
-    <div class="row">
-        <div class="col-md-12 p-0">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="container">
-                        <table class="table table-fluid" id="myTable">
-                        <thead>
-                        <tr><th>Sr.num</th>
-                            <th>District</th>
-                            <th>Status</th>
-                            <th>Date/Time</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr><td>1</td>
-                            <td>Kanada <br>
-                                <small class="text-danger">State:</small><small>beguluru</small>
-                            </td>
-                            <td><span class="bg-success text-white px-3 rounded py-1">Active</span></td>
-                            <td>18 Jan,2020 02:55 AM</td>
-                            <td><span> <h4><a href="" data-toggle="modal" data-target="#exampleModal1"><i class="far fa-edit"></i></a></span>
-                                <span> <a href=""data-toggle="modal" data-target="#exampleModald"><i class="fa fa-trash"></i></a></h4></span></h4></td>
-    
-                        </tr>
-                       
-                        
-                        </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>        
-
-        </div>
-    
-    </div> 
-    <!-- table end  -->
-        <!-- modal for edit new -->
-        <div class="col-md-12 mt-5">
-            <div class="modal fade" id="exampleModal1"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog " role="document">
-                    <div class="modal-content  p-0 m-0" >
-                        <div class="row" style=" background-color: transparent !important;border: none;">
-                            <div class="col-md-1 mx-auto">
-                                <button  data-dismiss="modal"  class="close" type="button"  >
-                                    <span aria-hidden="true" style="color: red; font-size:62px;">x</span>
-                                    
-                                </button>
-    
-                            </div>
-    
-                        </div>
-                       
-                        <div class="modal-body p-0 m-0">
-                            <div class="row">
-                                <div class="col-md-10 p-3 mx-auto">
-                                    <form action="">
-                                        <label for="">Name</label>
-                                        <input type="text" class="form-control" placeholder=" Enter Name here " >
-                                        <label for="" class="mt-3">State</label>
-                                        <select name="" id="" class="form-control">
-                                            <option value="">Kanada</option>
-                                            <option value="">English</option>
-                                        </select>
-                                        <input type="checkbox" id="vehicle1" class="form-conrol mt-4" name="vehicle1" value="Bike">
-                                        <label for="vehicle1"> Active</label><br>
-                                        <input type="submit" value="Add" class="form-control btn btn-success mb-5 mt-3">
-                                        
-                                    </form>
-    
-                                </div>
-    
-                            </div>
-                            
-                        </div>
-                        
-                    </div>
-                </div>
-              </div>
-    
-        </div>
-        <!-- modal end  -->
-    
-        <!-- modal for delete -->
-        <div class="col-md-12 mt-5">
-            <div class="modal fade" id="exampleModald"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog " role="document">
-                    <div class="modal-content  p-0 m-0" >
-    
-                       
-                        <div class="modal-body p-0 m-0">
-                            <div class="row">
-                                <div class="col-md-10 p-3 mx-auto">
-                                    <form action="">
-                                        <h1>Do you really want to delete this ?</h1>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <input type="submit" value="Delete" class=" btn btn-success mb-5 px-5 mt-3">
-                                               </div> 
-                                               <div class="col-md-6">
-                                                <a href="" class="btn btn-danger  mb-5 mt-3 px-5 " > Cancel </a>
-            
-                                               </div>
-                                                
-    
-                                        </div>
-                                    </form>
-    
-    
-                                </div>
-    
-                            </div>
-                            
-                        </div>
-                        
-                    </div>
-                </div>
-              </div>
-    
-        </div>
-        <!-- modal end  -->
-    
-    </div>
     <script>
  $(document).ready(function() {
             $('#myTable').DataTable( {
