@@ -2,6 +2,7 @@ from django.urls import path
 from news_api_app import views
 
 urlpatterns = [
+    # API Paths #
     path('state/get-all-states', views.StateList.as_view(), name='get-all-states'),
     path('company/get-all-companies-from-state', views.CompaninesList.as_view(), name='companies-under-state'),
     path('city/get-city-from-company', views.CitiesList.as_view(), name='cities-under-company'),

@@ -17,10 +17,23 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+import news_api_app.urls
+from news_api_app import views
 
 urlpatterns = [
-    path('api/customer/', include('news_api_app.urls')),
+    path('api/customer/', include(news_api_app.urls)),
     path('admin/', admin.site.urls),
+    # Frontend Paths #
+    path('', views.login_user,name="login_user"),
+    path('forgot_password/', views.forgot_password,name="forgot_password"),
+    path('state/', views.state,name="state"),
+    path('district/', views.district,name="district"),
+    path('company/', views.company,name="company"),
+    path('headline/', views.headline,name="headline"),
+    path('magzine_catagory/', views.magzine_catagory,name="magzine_catagory"),
+    path('magzine/', views.magzine,name="magzine"),
+    path('sunday_magzine/', views.sunday_magzine,name="sunday_magzine"),
+    path('city/', views.publish_newspaper,name="publish_newspaper"),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

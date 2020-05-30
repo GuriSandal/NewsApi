@@ -1,11 +1,11 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from news_api_app.models import State, Headline, Companines,Cities, MagazineCategory, Magazine, SundayMagazine
 from news_api_app.serializers import StateSerializer, HeadlineSerializer, CompaninesSerializer, CitiesSerializer, CompanyInfoSerializer, SearchCompanyInfoSerializer, MagazineCategorySerializer, MagazineSerializer, SundayMagazineSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 
-
+# API END #
 class StateList(APIView):
     """
     List all snippets, or create a new snippet.
@@ -78,3 +78,33 @@ class SundayMagazineList(APIView):
         data["status"] = True
         data['sundayMagazineList'] = SundayMagazineSerializer(SundayMagazine.objects.order_by("magazineName"),context={"request": request}, many=True).data
         return Response(data=data, status=status.HTTP_200_OK)
+
+
+
+# Front End #
+
+def login_user(request):
+    return render(request,'login_user.html')
+
+def forgot_password(request):
+    return render(request,'forgot_password.html')
+
+def state(request):
+    return render(request,'state.html')
+def district(request):
+    return render(request,'District.html')
+
+def company(request):
+    return render(request,'Publication_house.html')
+
+def headline(request):
+    return render(request,'headline.html')
+def magzine(request):
+    return render(request,'magzine.html')
+def magzine_catagory(request):
+    return render(request,"magzine_catagory.html")
+def sunday_magzine(request):
+    return render(request,"sunday_magzine.html")
+
+def publish_newspaper(request):
+    return render(request,"publish_newspaper.html")
