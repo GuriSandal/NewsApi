@@ -18,7 +18,7 @@
             <div class="row">
                 <div class="col-md-12 py-3">
                     <div class="container">
-                        <table class="table table-fluid  id="myTable">
+                        <table class="table table-fluid"  id="myTable" >
                         <thead>
                         <tr><th>Sr.num</th>
                             <th>Headline</th>
@@ -94,5 +94,15 @@
         
     
     </div>
+    <script>
+         $(document).ready(function() {
+            $('#myTable').DataTable( {
+                
+                responsive: true
+            } );
+        
+            // new $.fn.dataTable.FixedHeader( table );
+        } );
+    </script>
 
 {%endblock%}

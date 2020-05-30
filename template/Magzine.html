@@ -1,12 +1,15 @@
 {% extends 'admin_base.html' %}
 {%load static%}
+{%block head%}
 
+<!-- <script src="https://cdn.datatables.net/fixedheader/3.1.7/js/dataTables.fixedHeader.min.js"></script> -->
+{%endblock%}
 {% block admin_base %}
-<div class="col-md-10 mx-auto mt-5 shadow shadow-lg py-3">
+<div class="col-md-10 mx-auto mt-5 shadow shadow-sm  py-3">
     <span> <a href="" class="text-dark">Home/</a> </span><span><a class="text-dark" href="">Magazine/</a></span><span> <a class="text-dark" href="">List</a></span>
 
 </div>
-<div class="col-md-10 card mx-auto mt-5 shadow shadow-lg">
+<div class="col-md-10 card mx-auto mt-5 shadow shadow-sm">
     <div class="row">
         <div class="col-md-12">
             <h6><a href="" class="btn btn-primary mt-3" data-toggle="modal" data-target="#exampleModal">Add new</a></h6>
@@ -72,11 +75,11 @@
             <div class="container">
                 <div class=" row mb-5">
                     <div class="col-md-5">
-                        <input type="date" class="form-control">
+                        <input type="date" id="filter" class="form-control">
     
                     </div>
                     <div class="col-md-1">
-                        <i class="fa fa-search btn card form-control"></i>
+                        <i id="fi" class="fa fa-search btn card form-control"></i>
 
                     </div>
                     <div class="col-md-2 ml-auto">
@@ -91,7 +94,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="container">
-                        <table class="table table-fluid" id="myTable">
+                        <table class="table table-fluid display nowrap" style="width:100%" id="myTable">
                         <thead>
                         <tr><th>Sr.num</th>
                             <th>Name</th>
@@ -102,12 +105,12 @@
                             <th>Actions</th>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="searchable">
                         <tr><td>1</td>
                             <td>Kanada</td>
                             <td><img height="50" width="50" src="https://images.unsplash.com/photo-1588774069410-84ae30757c8e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=375&q=80" alt=""></td>
                             <td> Professional image</td>
-                            <td>12may2020</td>
+                            <td>2020-05-12</td>
                             <td><span class="bg-success text-white px-3 rounded py-1">Active</span></td>
                             <td><span> <h4><a href="" data-toggle="modal" data-target="#exampleModal1"><i class="far fa-edit"></i></a></span>
                                 <span> <a href=""data-toggle="modal" data-target="#exampleModald"><i class="fa fa-trash"></i></a></h4></span></h4></td>
@@ -116,6 +119,16 @@
                         
                         
                         </tbody>
+                        <tfoot>
+                            <tr><th>Sr.num</th>
+                                <th>Name</th>
+                                <th>Download</th>
+                                <th>Magzine_Catagory</th>
+                                <th>News Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </tfoot>
                         </table>
                     </div>
                 </div>
@@ -221,8 +234,32 @@
     
     </div>
     <script>
-        $(document).ready( function () {
-        $('#myTable').DataTable();
-    } );
+            $(document).ready(function() {
+            $('#myTable').DataTable( {
+                
+                responsive: true
+            } );
+        
+            // new $.fn.dataTable.FixedHeader( table );
+        } );
         </script>
+
+<!-- for search by date  -->
+
+<script>
+$(document).ready(function () {
+(function ($) {
+$('#fi').click(function a() {
+var a = $('#filter').val();
+var rex = new RegExp(String(a))
+
+$('.searchable tr').hide();
+$('.searchable tr').filter(function () {
+    return rex.test($(this).text());
+}).show();
+})
+}(jQuery));
+a();
+});
+</script>
 {%endblock%}
