@@ -27,12 +27,12 @@ urlpatterns = [
     path('', views.login_user,name="login_user"),
     path('forgot_password/', views.forgot_password,name="forgot_password"),
     path('state/', views.state,name="state"),
-    path('district/', views.district,name="district"),
+    path('area/', views.district,name="district"),
     path('company/', views.company,name="company"),
     path('headline/', views.headline,name="headline"),
-    path('magzine_catagory/', views.magzine_catagory,name="magzine_catagory"),
-    path('magzine/', views.magzine,name="magzine"),
-    path('sunday_magzine/', views.sunday_magzine,name="sunday_magzine"),
+    path('magazine/', views.magzine_catagory,name="magzine_catagory"),
+    path('news/', views.magzine,name="magzine"),
+    path('sunday-magazine/', views.sunday_magzine,name="sunday_magzine"),
     path('city/', views.publish_newspaper,name="publish_newspaper"),
 ]
 if settings.DEBUG:
