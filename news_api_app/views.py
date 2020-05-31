@@ -1,9 +1,11 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, HttpResponseRedirect
 from news_api_app.models import State, Headline, Companines,Cities, MagazineCategory, Magazine, SundayMagazine
 from news_api_app.serializers import StateSerializer, HeadlineSerializer, CompaninesSerializer, CitiesSerializer, CompanyInfoSerializer, SearchCompanyInfoSerializer, MagazineCategorySerializer, MagazineSerializer, SundayMagazineSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
+
+from django.contrib.auth import login, logout, authenticate
 
 # API END #
 class StateList(APIView):
@@ -84,6 +86,16 @@ class SundayMagazineList(APIView):
 # Front End #
 
 def login_user(request):
+    context = {}
+    if request.method == "POST":
+        uname = request.POST["username"]
+        pas = request.POST["password"]
+        user = authenticate(username=uname, password=pas)
+        if user:
+            login(request,user)
+            return HttpResponseRedirect("/state/")
+        else:
+           return render(request, 'login_user.html', {"status":"Invalid Username or Password !"} ) 
     return render(request,'login_user.html')
 
 def forgot_password(request):
@@ -108,3 +120,7 @@ def sunday_magzine(request):
 
 def publish_newspaper(request):
     return render(request,"publish_newspaper.html")
+
+def user_logout(request):
+    logout(request)
+    return HttpResponseRedirect("/")

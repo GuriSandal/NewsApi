@@ -34,6 +34,7 @@ urlpatterns = [
     path('news/', views.magzine,name="magzine"),
     path('sunday-magazine/', views.sunday_magzine,name="sunday_magzine"),
     path('city/', views.publish_newspaper,name="publish_newspaper"),
+    path('user-logout/',views.user_logout, name="user_logout"),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
