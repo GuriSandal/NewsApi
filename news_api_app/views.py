@@ -108,7 +108,7 @@ def state(request):
     states = State.objects.order_by("stateName")
     context['states'] = states
     if request.method == "POST":
-        if request.POST["add"]:
+        if 'add' in request.POST:
             stateName = request.POST['stateName']
             try:
                 isActive = request.POST['isActive']

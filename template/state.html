@@ -1,6 +1,12 @@
 {% extends 'admin_base.html' %}
 {%load static%}
+
 {% block title %}NEWS - State{% endblock %}
+
+{% block head %}
+    
+{% endblock %}
+
 {% block admin_base %}
 <div class="col-md-10 mx-auto mt-5 shadow shadow py-3">
     <span><i class="fa fa-home"></i> <a href="{% url 'state' %}" class="text-dark">Home /</a> </span><span><a class="text-dark" href="{% url 'state' %}">State /</a></span><span class="text-muted"> List</span>
@@ -40,10 +46,15 @@
                                     <div class="form-group">
                                         <label for="">Image</label>
                                         <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="inputGroupFile01"
-                                              aria-describedby="inputGroupFileAddon01">
-                                            <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-                                          </div>
+                                            <input type="file" class="custom-file-input" id="customFile" name="stateImage">
+                                            <label class="custom-file-label" for="customFile">Choose file</label>
+                                        </div>
+                                        <script>
+                                            $(".custom-file-input").on("change", function() {
+                                              var fileName = $(this).val().split("\\").pop();
+                                              $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+                                            });
+                                        </script>
                                     </div>
                                     <div class="form-group">
                                         <div class="form-check">
@@ -95,7 +106,11 @@
                         <tr>
                             <td class="align-middle">{{forloop.counter}}</td>
                             <td class="align-middle">{{state.stateName}}</td>
+                            {% if state.imageUlr %}
                             <td class="align-middle"><img src="/media/{{state.imageUlr}}" alt="" height="100" width="100"></td>
+                            {% else %}
+                            <td class="align-middle"><img src="" alt="" height="100" width="100"></td>
+                            {% endif %}
                             <td class="align-middle">
                                 {% if state.isActive %}
                                     <span class="bg-success text-white px-3 rounded py-1">ACTIVE</span>
