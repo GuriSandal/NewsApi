@@ -1,6 +1,8 @@
 {% extends 'admin_base.html' %}
 {%load static%}
+{%block head%}
 
+{%endblock%}
 {% block admin_base %}
 <div class="col-md-10 mx-auto mt-5 shadow shadow-lg py-3">
     <span> <a href="" class="text-dark">Home/</a> </span><span><a class="text-dark" href="">Sunday magazine /</a></span><span> <a class="text-dark" href="">List</a></span>
@@ -137,4 +139,5 @@
             // new $.fn.dataTable.FixedHeader( table );
         } );
     </script>
+    
 {%endblock%}
