@@ -120,10 +120,16 @@ def state(request):
                 if isActive == '1':
                     state = State(stateName=stateName, isActive=True, imageUlr=stateImage)
                     state.save()
+                else:
+                    state = State(stateName=stateName, imageUlr=stateImage)
+                    state.save()
 
             else:
                 if isActive == '1':
                     state = State(stateName=stateName, isActive=True)
+                    state.save()
+                else:
+                    state = State(stateName=stateName)
                     state.save()
                 
             context["added"] = "New State Added!"
