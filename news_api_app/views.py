@@ -86,7 +86,6 @@ class SundayMagazineList(APIView):
 # Front End #
 
 def login_user(request):
-    context = {}
     if request.method == "POST":
         uname = request.POST["username"]
         pas = request.POST["password"]
@@ -124,3 +123,4 @@ def publish_newspaper(request):
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect("/")
+    
