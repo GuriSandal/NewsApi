@@ -1,16 +1,20 @@
 {% extends 'admin_base.html' %}
 {%load static%}
-
+{% block title %}NEWS - State{% endblock %}
 {% block admin_base %}
-<div class="col-md-10 mx-auto mt-5 shadow shadow-lg py-3">
-    <span> <a href="" class="text-dark">Home/</a> </span><span><a class="text-dark" href="">State/</a></span><span> <a class="text-dark" href="">list</a></span>
-
+<div class="col-md-10 mx-auto mt-5 shadow shadow py-3">
+    <span><i class="fa fa-home"></i> <a href="{% url 'state' %}" class="text-dark">Home /</a> </span><span><a class="text-dark" href="{% url 'state' %}">State /</a></span><span class="text-muted"> List</span>
 </div>
 
-<div class="col-md-10 card mx-auto mt-5 shadow shadow-lg">
+
+<div class="col-md-10 card mx-auto mt-5 shadow shadow">
+
 <div class="row">
+    {% if added %}
+        <div class="alert alert-success text-center">{{added}}</div>
+    {% endif %}
     <div class="col-md-12">
-        <h6><a href="" class="btn btn-primary mt-3" data-toggle="modal" data-target="#exampleModal">Add new</a></h6>
+        <h6><a href="" class="btn btn-primary mt-3" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus"></i>  Add new</a></h6>
     </div>
 </div>
 <div >
@@ -19,28 +23,39 @@
         <div class="modal fade" id="exampleModal"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog " role="document">
                 <div class="modal-content  p-0 m-0" >
-                    <div class="row" style=" background-color: transparent !important;border: none;">
-                        <div class="col-md-1 mx-auto">
-                            <button  data-dismiss="modal"  class="close" type="button"  >
-                                <span aria-hidden="true" style="color: red; font-size:62px;">x</span>
-                                
-                            </button>
-
-                        </div>
-
+                    <div class="modal-header">
+                        State
+                        <button  data-dismiss="modal"  class="close" type="button"  >
+                            <span aria-hidden="true" >&times;</span>
+                        </button>
                     </div>
-                   
                     <div class="modal-body p-0 m-0">
                         <div class="row">
                             <div class="col-md-10 p-3 mx-auto">
-                                <form action="">
-                                    <label for="">Name</label>
-                                    <input type="text" class="form-control" placeholder=" Enter Name here " >
-                                    <label for="" class="mt-3">Image</label>
-                                    <input type="file" class="form-control" placeholder="Add file">
-                                    <input type="checkbox" id="vehicle1" class="form-conrol mt-4" name="vehicle1" value="Bike">
-                                    <label for="vehicle1"> Active</label><br>
-                                    <input type="submit" value="Add" class="form-control btn btn-success mb-5 mt-3">
+                                <form action="" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label for="">Name</label>
+                                        <input type="text" class="form-control" name="stateName" placeholder="Enter State Name here" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="">Image</label>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" name="stateImage" id="customFile" >
+                                            <label class="custom-file-label" for="customFile">Choose file</label>
+                                          </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="1" name="isActive" id="defaultCheck1">
+                                            <label class="form-check-label" for="defaultCheck1">
+                                              Active
+                                            </label>
+                                          </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="submit" value="Add" class="form-control btn btn-success">
+                                    </div>
                                     
                                 </form>
 
@@ -61,14 +76,12 @@
 <!-- table  satart    -->
 <div class="row">
     <div class="col-md-12">
-        
-        
         <div class="row">
             <div class="col-md-12">
                 <div class="container">
                     <table class="table table-fluid display nowrap" style="width:100%" id="myTable">
                     <thead>
-                    <tr><th>Sr.num</th>
+                    <tr><th>#</th>
                         <th>State</th>
                         <th>Image</th>
                         <th>Status</th>
@@ -77,18 +90,25 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr><td>1</td>
-                        <td>Kanada</td>
-                        <td><img height="50" width="50" src="https://images.unsplash.com/photo-1588774069410-84ae30757c8e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=375&q=80" alt=""></td>
-                        <td><span class="bg-success text-white px-3 rounded py-1">Active</span></td>
-                        <td>18 Jan,2020 02:42 AM</td>
-                        <td><span> <h4><a href="" data-toggle="modal" data-target="#exampleModal1"><i class="fa fa-edit" ></i></a></span>
-                            <span> <a href=""data-toggle="modal" data-target="#exampleModald"><i class="fa fa-trash"></i></a></h4></span></h4></td>
-
-                    </tr>
-                    <tr><td>Samuel</td><td>samuel@gmail.com</td><td>Samuel</td><td>samuel@gmail.com</td><td>Pass1234</td><td>samuel@gmail.com</td></tr>
-                    <tr><td>Jack</td><td>jack@gmail.com</td><td>Pass1234</td><td>Samuel</td><td>samuel@gmail.com</td><td>samuel@gmail.com</td></tr>
-                    
+                    {% for state in states %}
+                        <tr>
+                            <td class="align-middle">{{forloop.counter}}</td>
+                            <td class="align-middle">{{state.stateName}}</td>
+                            <td class="align-middle"><img src="/media/{{state.imageUlr}}" alt="" height="100" width="100"></td>
+                            <td class="align-middle">
+                                {% if state.isActive %}
+                                    <span class="bg-success text-white px-3 rounded py-1">ACTIVE</span>
+                                {% else %}
+                                    <span class="bg-secondary text-white px-3 rounded py-1">IN ACTIVE</span>
+                                {% endif %}
+                            </td>
+                            <td class="align-middle">
+                                <span>{{state.addedOn}}</span>
+                            </td>
+                            <td class="align-middle"><span> <h4><a href="" data-toggle="modal" data-target="#exampleModal1"><i class="fa fa-edit" ></i></a></span>
+                                <span> <a href=""data-toggle="modal" data-target="#exampleModald"><i class="fa fa-trash"></i></a></h4></span></h4></td>
+                        </tr>
+                    {% endfor %}
                     </tbody>
                     </table>
                 </div>
@@ -105,9 +125,9 @@
             <div class="modal-dialog " role="document">
                 <div class="modal-content  p-0 m-0" >
                     <div class="row" style=" background-color: transparent !important;border: none;">
-                        <div class="col-md-1 mx-auto">
+                        <div class="col-md-1 ml-auto">
                             <button  data-dismiss="modal"  class="close" type="button"  >
-                                <span aria-hidden="true" style="color: red; font-size:62px;">x</span>
+                                <span aria-hidden="true" style="color: red; font-size:62px;">&times;</span>
                                 
                             </button>
 
@@ -119,6 +139,7 @@
                         <div class="row">
                             <div class="col-md-10 p-3 mx-auto">
                                 <form action="">
+                                   
                                     <label for="">Name</label>
                                     <input type="text" class="form-control" placeholder=" Enter Name here " >
                                     <label for="" class="mt-3">Image</label>
@@ -185,8 +206,8 @@
 <script>
  $(document).ready(function() {
             $('#myTable').DataTable( {
-                
-                responsive: true
+                responsive: true,
+                asStripeClasses: []
             } );
         
             // new $.fn.dataTable.FixedHeader( table );

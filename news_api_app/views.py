@@ -6,6 +6,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 
 from django.contrib.auth import login, logout, authenticate
+import os
+from django.conf import settings
 
 # API END #
 class StateList(APIView):
@@ -101,7 +103,37 @@ def forgot_password(request):
     return render(request,'forgot_password.html')
 
 def state(request):
-    return render(request,'state.html')
+    context = {}
+    isActive = ''
+    states = State.objects.order_by("stateName")
+    context['states'] = states
+    if request.method == "POST":
+        stateName = request.POST['stateName']
+        try:
+            isActive = request.POST['isActive']
+        except:
+            pass
+
+        if "stateImage" in request.FILES:
+            stateImage = request.FILES["stateImage"]
+            if isActive == '1':
+                state = State(stateName=stateName, isActive=True, imageUlr=stateImage)
+                state.save()
+            else:
+                state = State(stateName=stateName, isActive=False, imageUlr=stateImage)
+                state.save()
+
+        else:
+            if isActive == '1':
+                state = State(stateName=stateName, isActive=True)
+                state.save()
+            else:
+                state = State(stateName=stateName, isActive=False)
+                state.save()
+        context["added"] = "New State Added!"
+        
+    return render(request,'state.html', context)
+
 def district(request):
     return render(request,'District.html')
 

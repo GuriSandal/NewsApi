@@ -14,7 +14,7 @@ class State(models.Model):
     stateName = models.CharField(max_length=50)
     imageUlr = models.ImageField(upload_to = "StatesImages/%Y/%m/%d", null=True, blank=True)
     isActive = models.BooleanField(null=True,blank=True,default=False)
-    addedOn = models.DateTimeField(auto_now=True)
+    addedOn = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.stateName
     class Meta:
@@ -24,7 +24,7 @@ class Headline(models.Model):
     headlineId = models.AutoField(primary_key=True, editable=False)
     headlineText = models.CharField(max_length=50)
     isActive = models.BooleanField(default=False)
-    addedOn = models.DateTimeField(auto_now=True)
+    addedOn = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.headlineText
     class Meta:
@@ -39,7 +39,7 @@ class Companines(models.Model):
     imageUlr = models.ImageField(upload_to = "CompaniesImages/%Y/%m/%d", null=True, blank=True)
     newsDate = models.CharField(max_length=20,validators =[date_validate],null=True)
     isActive = models.BooleanField(default=False)
-    addedOn = models.DateTimeField(auto_now=True)
+    addedOn = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.companyName
     class Meta:
@@ -53,7 +53,7 @@ class Cities(models.Model):
     newsDate = models.CharField(max_length=20,validators =[date_validate],null=True)
     companyName = models.ForeignKey(Companines, on_delete=models.CASCADE, null=True)
     isActive = models.BooleanField(default=False)
-    addedOn = models.DateTimeField(auto_now=True)
+    addedOn = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.cityName
     class Meta:
@@ -64,7 +64,7 @@ class MagazineCategory(models.Model):
     categoryName = models.CharField(max_length=50)
     imageUlr = models.ImageField(upload_to = "MagazineCategoryImages/%Y/%m/%d", null=True, blank=True)
     isActive = models.BooleanField(default=False)
-    addedOn = models.DateTimeField(auto_now=True)
+    addedOn = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.categoryName
     class Meta:
@@ -78,7 +78,7 @@ class Magazine(models.Model):
     categoryName = models.ForeignKey(MagazineCategory, on_delete=models.CASCADE)
     newsDate = models.CharField(max_length=20,validators =[date_validate])
     isActive = models.BooleanField(default=False)
-    addedOn = models.DateTimeField(auto_now=True)
+    addedOn = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.magazineName
     class Meta:
@@ -91,7 +91,7 @@ class SundayMagazine(models.Model):
     imageUrl = models.ImageField(upload_to = "SundayMagazineImages/%Y/%m/%d", null=True, blank=True)
     newsDate = models.CharField(max_length=20,validators =[date_validate])
     isActive = models.BooleanField(default=False)
-    addedOn = models.DateTimeField(auto_now=True)
+    addedOn = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.magazineName
     class Meta:
