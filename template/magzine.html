@@ -40,11 +40,17 @@
                                         <input type="text" class="form-control" placeholder=" Enter Name here " >
                                         <label for="">Notification Text</label>
                                         <input type="text" class="form-control" placeholder=" Notification text " >
-                                        <label for="">Magzine_Catagory</label>
-                                        <select name="" id="" class="form-control"> 
+                                        <label for="" class="mt-3">Magzine_Catagory</label>
+                                        <select class="ui js-example-templating " style="width: 100%;">
                                             <option value="">Education</option>
-                                            <option value="">Current Affair</option>
-                                        </select>
+                                            <option value="AL">Alabama</option>
+                                            <option value="AK">Alaska</option>
+                                            <option value="AZ">Arizona</option>
+                                            <option value="AR">Arkansas</option>
+                                            <option value="CA">California</option>
+                                            <option value="CO">Colorado</option>
+                                           
+                                          </select>
                                         <label for="" class="mt-3">Image</label>
                                         <input type="file" class="form-control" placeholder="Add file">
                                         <label for="">News Date</label>
@@ -96,7 +102,7 @@
                     <div class="container">
                         <table class="table table-fluid display nowrap" style="width:100%" id="myTable">
                         <thead>
-                        <tr><th>Sr.num</th>
+                        <tr><th>#</th>
                             <th>Name</th>
                             <th>Download</th>
                             <th>Magzine_Catagory</th>
@@ -120,7 +126,7 @@
                         
                         </tbody>
                         <tfoot>
-                            <tr><th>Sr.num</th>
+                            <tr><th>#</th>
                                 <th>Name</th>
                                 <th>Download</th>
                                 <th>Magzine_Catagory</th>
@@ -165,11 +171,17 @@
                                         <label for="">Name</label>
                                         <input type="text" class="form-control" placeholder=" Enter Name here " >
                                         
-                                        <label for="">Magzine_Catagory</label>
-                                        <select name="" id="" class="form-control"> 
+                                        <label for="" class="mt-3">Magzine_Catagory</label>
+                                        <select class="ui js-example-templating " style="width: 100%;">
                                             <option value="">Education</option>
-                                            <option value="">Current Affair</option>
-                                        </select>
+                                            <option value="AL">Alabama</option>
+                                            <option value="AK">Alaska</option>
+                                            <option value="AZ">Arizona</option>
+                                            <option value="AR">Arkansas</option>
+                                            <option value="CA">California</option>
+                                            <option value="CO">Colorado</option>
+                                           
+                                          </select>
                                         <label for="" class="mt-3">Image</label>
                                         <input type="file" class="form-control" placeholder="Add file">
                                         <label for="">News Date</label>
@@ -262,4 +274,27 @@ $('.searchable tr').filter(function () {
 a();
 });
 </script>
+            <!-- for select search  -->
+            <script>
+                function formatState (state) {
+                    if (!state.id) {
+                        return state.text;
+                    }
+    
+                    var baseUrl = "/user/pages/images/flags";
+                    var $state = $(
+                        '<span><img class="img-flag" /> <span></span></span>'
+                    );
+    
+                    // Use .text() instead of HTML string concatenation to avoid script injection issues
+                    $state.find("span").text(state.text);
+                    // $state.find("img").attr("src", baseUrl + "/" + state.element.value.toLowerCase() + ".png");
+    
+                    return $state;
+                    };
+    
+                    $(".js-example-templating").select2({
+                    templateSelection: formatState
+                    });
+            </script>
 {%endblock%}

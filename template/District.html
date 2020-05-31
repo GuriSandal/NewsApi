@@ -37,10 +37,16 @@
                                             <label for="">Name</label>
                                             <input type="text" class="form-control" placeholder=" Enter Name here " >
                                             <label for="" class="mt-3">State</label>
-                                            <select name="" id="" class="form-control">
-                                                <option value="">Kanada</option>
-                                                <option value="">English</option>
-                                            </select>
+                                            <select class="ui js-example-templating " style="width: 100%;">
+                                                <option value="">State</option>
+                                                <option value="AL">Alabama</option>
+                                                <option value="AK">Alaska</option>
+                                                <option value="AZ">Arizona</option>
+                                                <option value="AR">Arkansas</option>
+                                                <option value="CA">California</option>
+                                                <option value="CO">Colorado</option>
+                                               
+                                              </select>
                                             <input type="checkbox" id="vehicle1" class="form-conrol mt-4" name="vehicle1" value="Bike">
                                             <label for="vehicle1"> Active</label><br>
                                             <input type="submit" value="Add" class="form-control btn btn-success mb-5 mt-3">
@@ -69,7 +75,7 @@
                         <div class="container">
                             <table class="table table-fluid display nowrap" style="width:100%" id="myTable">
                             <thead>
-                            <tr><th>Sr.num</th>
+                            <tr><th>#</th>
                                 <th>District</th>
                                 <th>Status</th>
                                 <th>Date/Time</th>
@@ -122,10 +128,16 @@
                                             <label for="">Name</label>
                                             <input type="text" class="form-control" placeholder=" Enter Name here " >
                                             <label for="" class="mt-3">State</label>
-                                            <select name="" id="" class="form-control">
-                                                <option value="">Kanada</option>
-                                                <option value="">English</option>
-                                            </select>
+                                            <select class="ui js-example-templating " style="width: 100%;">
+                                                <option value="">State</option>
+                                                <option value="AL">Alabama</option>
+                                                <option value="AK">Alaska</option>
+                                                <option value="AZ">Arizona</option>
+                                                <option value="AR">Arkansas</option>
+                                                <option value="CA">California</option>
+                                                <option value="CO">Colorado</option>
+                                               
+                                              </select>
                                             <input type="checkbox" id="vehicle1" class="form-conrol mt-4" name="vehicle1" value="Bike">
                                             <label for="vehicle1"> Active</label><br>
                                             <input type="submit" value="Add" class="form-control btn btn-success mb-5 mt-3">
@@ -197,4 +209,27 @@
             // new $.fn.dataTable.FixedHeader( table );
         } );
         </script>
+                    <!-- for select search  -->
+                    <script>
+                        function formatState (state) {
+                            if (!state.id) {
+                                return state.text;
+                            }
+            
+                            var baseUrl = "/user/pages/images/flags";
+                            var $state = $(
+                                '<span><img class="img-flag" /> <span></span></span>'
+                            );
+            
+                            // Use .text() instead of HTML string concatenation to avoid script injection issues
+                            $state.find("span").text(state.text);
+                            // $state.find("img").attr("src", baseUrl + "/" + state.element.value.toLowerCase() + ".png");
+            
+                            return $state;
+                            };
+            
+                            $(".js-example-templating").select2({
+                            templateSelection: formatState
+                            });
+                    </script>
 {%endblock%}
