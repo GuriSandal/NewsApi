@@ -54,27 +54,30 @@
             <div class="modal fade" id="exampleModal1"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog " role="document">
                     <div class="modal-content  p-0 m-0" >
-                        <div class="row" style=" background-color: transparent !important;border: none;">
-                            <div class="col-md-1 mx-auto">
-                                <button  data-dismiss="modal"  class="close" type="button"  >
-                                    <span aria-hidden="true" style="color: red; font-size:62px;">x</span>
-                                    
-                                </button>
-    
-                            </div>
-    
+                        <div class="modal-header">
+                            Heading
+                            <button  data-dismiss="modal"  class="close" type="button"  >
+                                <span aria-hidden="true" >&times;</span>
+                            </button>
                         </div>
                        
                         <div class="modal-body p-0 m-0">
                             <div class="row">
                                 <div class="col-md-10 p-3 mx-auto">
                                     <form action="">
-                                        <label for="">Headline</label>
-                                        <input type="text" class="form-control" placeholder=" Enter headline here " >
+                                        <div class="form-group">
+                                            <label for="">Headline</label>
+                                            <input type="text" class="form-control" placeholder=" Enter headline here " >
+
+                                        </div>
                                         
-                                        <input type="checkbox" id="vehicle1" class="form-conrol mt-4" name="vehicle1" value="Bike">
-                                        <label for="vehicle1"> Active</label><br>
-                                        <input type="submit" value="Add" class="form-control btn btn-success mb-5 mt-3">
+                                        <div class="form-group">
+                                            <input type="checkbox" id="vehicle1" class="form-conrol mt-4" name="vehicle1" value="Bike">
+                                            <label for="vehicle1"> Active</label>
+
+                                        </div>
+
+                                        <input type="submit" value="Add" class="form-control btn btn-success mb-5 ">
                                         
                                     </form>
     
