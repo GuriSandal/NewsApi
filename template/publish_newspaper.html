@@ -45,7 +45,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="">State</label>
-                                            <select name="" id="" class="ui js-example-templating form-control " style="width: 100%;">
+                                            <select name="" id="" class="ui js-example-templating  form-control " style="width: 100%;">
                                                 <option value="">Kanada</option>
                                                 <option value="">English</option>
                                             </select>
@@ -206,7 +206,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="">Publication House</label>
-                                            <select name="" id=""  class="ui js-example-templating form-control " style="width: 100%;">
+                                            <select name="" id=""  class="ui js-example-templating form-control  " style="width: 100%;">
                                                 <option value="">Kanada</option>
                                                 <option value="">English</option>
                                             </select>
@@ -291,7 +291,9 @@ $('.searchable tr').filter(function () {
         };
 
         $(".js-example-templating").select2({
-        templateSelection: formatState
+        templateSelection: formatState,
+        theme: "bootstrap4",
+        
         });
 </script>
         
