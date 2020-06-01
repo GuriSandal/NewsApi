@@ -11,7 +11,10 @@
     <div class="col-md-10 mx-auto mt-5 shadow-sm border rounded-lg py-2">
         <span><i class="fa fa-home"></i> <a href="{% url 'state' %}" class="text-dark">Home</a> / </span><span><a class="text-dark" href="{% url 'district' %}">Dstrict</a></span> / <span class="text-muted">List</span>    
     </div>
-    <div class="col-md-10 card mx-auto mt-5 shadow ">
+    <div class="col-md-10  mx-auto mt-5 rounded-lg border shadow-sm">
+        {% if status %}
+            <div class="alert alert-success text-center mt-3">{{status}}</div>
+        {% endif %}
         <div class="row">
             <div class="col-md-12">
                 <h6><a href="" class="btn btn-primary mt-3" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus"></i> Add new</a></h6>
@@ -41,7 +44,7 @@
                                             </div>
                                            <div class="form-group">
                                             <label for="" >State</label>
-                                            <select class="ui js-example-templating" style="width: 100%;" required name="stateId">
+                                            <select class="ui js-example-templating" style="width: 100%;" name="stateId">
                                                 <option value="">--Select State--</option>
                                                 {% for state in states %}
                                                     <option value="{{state.stateId}}">{{state.stateName}}</option>
@@ -51,11 +54,11 @@
 
                                            </div>
                                             <div class=" form-group">
-                                                <input type="checkbox" id="vehicle1" class="form-conrol " name="vehicle1" value="Bike">
-                                                <label for="vehicle1"> Active</label>
+                                                <input type="checkbox" id="addActive" class="form-conrol" name="addActive" >
+                                                <label for="addActive"> Active</label>
                                             </div>
                                            
-                                            <input type="submit" value="Add" class="form-control btn btn-success mb-5 ">
+                                            <input type="submit" value="Add" name="add" class="form-control btn btn-success mb-5 ">
                                             
                                         </form>
         
@@ -106,8 +109,8 @@
                                     <td class="align-middle">
                                         <span>{{district.addedOn}}</span>
                                     </td>
-                                    <td class="align-middle"><span> <h4><a href="" data-toggle="modal" data-target="#exampleModal1"><i class="fa fa-edit" ></i></a></span>
-                                        <span> <a href=""data-toggle="modal" data-target="#exampleModald"><i class="fa fa-trash"></i></a></h4></span></h4>
+                                    <td class="align-middle"><span> <h4><a href="" data-toggle="modal" data-target="#update{{district.districtId}}"><i class="fa fa-edit" ></i></a></span>
+                                        <span> <a href=""data-toggle="modal" data-target="#delete{{district.districtId}}"><i class="fa fa-trash"></i></a></h4></span></h4>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -124,12 +127,13 @@
         </div> 
         <!-- table end  -->
             <!-- modal for edit new -->
+            {% for district in districts %}
             <div class="col-md-12 mt-5">
-                <div class="modal fade" id="exampleModal1"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal fade" id="update{{district.districtId}}"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog " role="document">
                         <div class="modal-content  p-0 m-0" >
                             <div class="modal-header">
-                                District
+                                {{district.districtName}}
                                 <button  data-dismiss="modal"  class="close" type="button"  >
                                     <span aria-hidden="true" >&times;</span>
                                 </button>
@@ -138,31 +142,37 @@
                             <div class="modal-body p-0 m-0">
                                 <div class="row">
                                     <div class="col-md-10 p-3 mx-auto">
-                                        <form action="">
+                                        <form action="" method="POST">
+                                            {% csrf_token %}
+                                            <input type="text" hidden value="{{district.districtId}}" name="districtId">
                                             <div class="form-group">
                                                 <label for="">Name</label>
-                                                <input type="text" class="form-control" placeholder=" Enter Name here " >
+                                                <input type="text" class="form-control" value="{{district.districtName}}" required name="districtName">
                                             </div>
                                            <div class="form-group">
                                             <label for="" >State</label>
-                                            <select class="ui js-example-templating " style="width: 100%;">
-                                                <option value="">State</option>
-                                                <option value="AL">Alabama</option>
-                                                <option value="AK">Alaska</option>
-                                                <option value="AZ">Arizona</option>
-                                                <option value="AR">Arkansas</option>
-                                                <option value="CA">California</option>
-                                                <option value="CO">Colorado</option>
+                                            <select class="ui js-example-templating " style="width: 100%;" name="stateId">
+                                                <option value="{{district.stateName.stateId}}">{{district.stateName.stateName}}</option>
+                                                {% for state in states %}
+                                                    {% if state.stateId == district.stateName.stateId %}
+                                                    {% else %}
+                                                        <option value="{{state.stateId}}">{{state.stateName}}</option>
+                                                    {% endif %}
+                                                {% endfor %}
                                                
                                               </select>
 
                                            </div>
                                             <div class=" form-group">
-                                                <input type="checkbox" id="vehicle1" class="form-conrol " name="vehicle1" value="Bike">
-                                                <label for="vehicle1"> Active</label>
+                                                {% if district.isActive %}
+                                                    <input type="checkbox" id="updateActive" class="form-conrol " name="updateActive" checked>
+                                                {% else %}
+                                                    <input type="checkbox" id="updateActive" class="form-conrol " name="updateActive">
+                                                {% endif %}
+                                                <label for="updateActive"> Active</label>
                                             </div>
                                            
-                                            <input type="submit" value="Add" class="form-control btn btn-success mb-5 ">
+                                            <input type="submit" value="Update" name="update" class="form-control btn btn-success mb-5 ">
                                             
                                         </form>
         
@@ -177,11 +187,13 @@
                   </div>
         
             </div>
+            {% endfor %}
             <!-- modal end  -->
         
             <!-- modal for delete -->
+            {% for district in districts %}
             <div class="col-md-12 mt-5">
-                <div class="modal fade" id="exampleModald"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal fade" id="delete{{district.districtId}}"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog " role="document">
                         <div class="modal-content  p-0 m-0" >
         
@@ -189,20 +201,21 @@
                             <div class="modal-body p-0 m-0">
                                 <div class="row">
                                     <div class="col-md-10 p-3 mx-auto">
-                                        <form action="">
-                                            <h1>Do you really want to delete this ?</h1>
+                                        <h4>Do you really want to delete <strong>{{district.districtName}}</strong>?<h4>
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <input type="submit" value="Delete" class=" btn btn-success mb-5 px-5 mt-3">
+                                                <form action="" method="POST">
+                                                    {% csrf_token %}
+                                                    <input type="text" value="{{district.districtId}}" hidden name="districtId">
+                                                    <input type="submit" value="Delete" name="delete" class=" btn btn-danger px-5 mt-3">
+                                                </form>
                                                    </div> 
                                                    <div class="col-md-6">
-                                                    <a href="" class="btn btn-danger  mb-5 mt-3 px-5 " > Cancel </a>
-                
+                                                    <a  data-dismiss="modal" class="btn btn-info px-5 mt-3 text-white">Cancel</a>        
                                                    </div>
                                                     
         
                                             </div>
-                                        </form>
         
         
                                     </div>
@@ -216,6 +229,7 @@
                   </div>
         
             </div>
+            {% endfor %}
             <!-- modal end  -->
         
         </div>

@@ -186,6 +186,51 @@ def district(request):
 
     states = State.objects.filter(isActive=True).order_by("stateName")
     context['states'] = states
+
+    if request.method == "POST":
+        if "add" in request.POST:
+            districtName = request.POST["districtName"]
+            stateId = request.POST["stateId"]
+            
+            state = get_object_or_404(State, stateId=stateId)
+
+            if "addActive" in request.POST:
+                district = District(districtName=districtName, stateName=state, isActive=True)
+                district.save()
+            else:
+                district = District(districtName=districtName, stateName=state)
+                district.save()
+
+            context["status"] = "{} Added Successfully!".format(districtName)
+
+        if "update" in request.POST:
+            districtName = request.POST["districtName"]
+            districtId = request.POST["districtId"]
+            stateId = request.POST["stateId"]
+
+            state = get_object_or_404(State, stateId=stateId)
+            
+            district = get_object_or_404(District, districtId=districtId)
+
+            if "updateActive" in request.POST:
+                district.districtName = districtName
+                district.stateName = state
+                district.isActive = True
+                district.save()
+            else:
+                district.districtName = districtName
+                district.stateName = state
+                district.isActive = False
+                district.save()
+
+            context["status"] = "{} update Successfully!".format(district.districtName)
+
+        if "delete" in request.POST:
+            districtId = request.POST["districtId"]
+            district = get_object_or_404(District, districtId=districtId)
+            district.delete()
+            context["status"] = "{} Deleted Sucessfully!".format(district.districtName)
+
     return render(request,'District.html',context)
 
 def company(request):
