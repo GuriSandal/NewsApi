@@ -20,6 +20,17 @@ class State(models.Model):
     class Meta:
         verbose_name_plural = "States"
 
+class District(models.Model):
+    districtId = models.AutoField(primary_key=True, editable=False)
+    stateName = models.ForeignKey(State, on_delete=models.CASCADE,blank=True, null=True)
+    districtName = models.CharField(max_length=50)
+    isActive = models.BooleanField(null=True,blank=True,default=False)
+    addedOn = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.districtName
+    class Meta:
+        verbose_name_plural = "Districts"
+
 class Headline(models.Model):
     headlineId = models.AutoField(primary_key=True, editable=False)
     headlineText = models.CharField(max_length=50)
@@ -33,11 +44,12 @@ class Headline(models.Model):
 class Companines(models.Model):
     companyId = models.AutoField(primary_key=True, editable=False)
     stateId = models.ForeignKey(State, on_delete=models.CASCADE)
+    districtNames = models.ManyToManyField(District) 
     companyName = models.CharField(max_length=50)
     companyUrl = models.CharField(max_length=250,null=True,blank=True)
-    pdfUlr = models.FileField(upload_to='CompanyPDFs/%Y/%m/%d',null=True)
+    pdfUlr = models.FileField(upload_to='CompanyPDFs/%Y/%m/%d',null=True,blank=True)
     imageUlr = models.ImageField(upload_to = "CompaniesImages/%Y/%m/%d", null=True, blank=True)
-    newsDate = models.CharField(max_length=20,validators =[date_validate],null=True)
+    newsDate = models.CharField(max_length=20,validators =[date_validate],null=True, blank=True)
     isActive = models.BooleanField(default=False)
     addedOn = models.DateTimeField(auto_now_add=True)
     def __str__(self):
@@ -98,16 +110,7 @@ class SundayMagazine(models.Model):
         verbose_name_plural = 'SundayMagazines'
 
 
-class District(models.Model):
-    districtId = models.AutoField(primary_key=True, editable=False)
-    stateName = models.ForeignKey(State, on_delete=models.CASCADE,blank=True, null=True)
-    districtName = models.CharField(max_length=50)
-    isActive = models.BooleanField(null=True,blank=True,default=False)
-    addedOn = models.DateTimeField(auto_now_add=True)
-    def __str__(self):
-        return self.districtName
-    class Meta:
-        verbose_name_plural = "Districts"
+
 
 
 

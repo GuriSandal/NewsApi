@@ -45,7 +45,6 @@
                                            <div class="form-group">
                                             <label for="" >State</label>
                                             <select class="ui js-example-templating" style="width: 100%;" name="stateId">
-                                                <option value="">--Select State--</option>
                                                 {% for state in states %}
                                                     <option value="{{state.stateId}}">{{state.stateName}}</option>
                                                 {% endfor %}
@@ -152,7 +151,7 @@
                                            <div class="form-group">
                                             <label for="" >State</label>
                                             <select class="ui js-example-templating " style="width: 100%;" name="stateId">
-                                                <option value="{{district.stateName.stateId}}">{{district.stateName.stateName}}</option>
+                                                <option value="{{district.stateName.stateId}}" selected>{{district.stateName.stateName}}</option>
                                                 {% for state in states %}
                                                     {% if state.stateId == district.stateName.stateId %}
                                                     {% else %}

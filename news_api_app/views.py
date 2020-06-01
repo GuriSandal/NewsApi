@@ -99,8 +99,10 @@ def login_user(request):
            return render(request, 'login_user.html', {"status":"Invalid Username or Password !"} ) 
     return render(request,'login_user.html')
 
+
 def forgot_password(request):
     return render(request,'forgot_password.html')
+
 
 def state(request):
     context = {}
@@ -178,6 +180,7 @@ def state(request):
         
     return render(request,'state.html', context)
 
+
 def district(request):
     context = {}
     
@@ -193,7 +196,7 @@ def district(request):
             stateId = request.POST["stateId"]
             
             state = get_object_or_404(State, stateId=stateId)
-
+            
             if "addActive" in request.POST:
                 district = District(districtName=districtName, stateName=state, isActive=True)
                 district.save()
@@ -233,8 +236,145 @@ def district(request):
 
     return render(request,'District.html',context)
 
+
 def company(request):
-    return render(request,'Publication_house.html')
+    context = {}
+
+    companies = Companines.objects.order_by("companyName")
+    context["companies"] = companies
+
+    districts = District.objects.filter(isActive=True).order_by("districtName")
+    context["districts"] = districts
+
+    states = State.objects.filter(isActive=True).order_by("stateName")
+    context['states'] = states
+
+    if request.method == "POST":
+        if "add" in request.POST:
+            companyName = request.POST["companyName"]
+            companyUrl = request.POST["companyUrl"]
+            districtIds_list = request.POST.getlist('districtIds')
+            stateId = request.POST["stateId"]
+            
+            state = get_object_or_404(State, stateId=stateId)    
+
+            district_list = [get_object_or_404(District, districtId=i) for i in districtIds_list]
+
+            if "addActive" in request.POST:
+                if "imageUrl" in request.FILES:
+                    imageUrl = request.FILES["imageUrl"]
+                    company = Companines(companyName=companyName)
+                    company.companyUrl = companyUrl
+                    company.stateId = state
+                    print(imageUrl)
+                    company.imageUlr = imageUrl
+                    company.isActive = True
+                    company.save()
+                    for i in district_list:
+                        company.districtNames.add(i)
+                else:
+                    company = Companines(companyName=companyName)
+                    company.companyUrl = companyUrl
+                    company.stateId = state
+                    company.isActive = True
+                    company.save()
+                    for i in district_list:
+                        company.districtNames.add(i)
+            else:
+                if "imageUrl" in request.FILES:
+                    imageUrl = request.FILES["imageUrl"]
+                    company = Companines(companyName=companyName)
+                    company.companyUrl = companyUrl
+                    company.stateId = state
+                    company.imageUlr = imageUrl
+                    company.isActive = False
+                    company.save()
+                    for i in district_list:
+                        company.districtNames.add(i)
+                else:
+                    company = Companines(companyName=companyName)
+                    company.companyUrl = companyUrl
+                    company.stateId = state
+                    company.isActive = False
+                    company.save()
+                    for i in district_list:
+                        company.districtNames.add(i)
+                        
+            context["status"] = "{} Added Successfully!".format(companyName)
+
+        if "update" in request.POST:
+            companyId = request.POST["companyId"]
+            companyName = request.POST["companyName"]
+            companyUrl = request.POST["companyUrl"]
+            districtIds_list = request.POST.getlist('districtIds')
+            stateId = request.POST["stateId"]
+
+            company = get_object_or_404(Companines, companyId=companyId)
+
+            state = get_object_or_404(State, stateId=stateId)    
+
+            district_list = [get_object_or_404(District, districtId=i) for i in districtIds_list]
+
+            if "updateActive" in request.POST:
+                if "imageUrl" in request.FILES:
+                    try:
+                        os.remove(settings.MEDIA_ROOT+"/"+str(company.imageUlr))
+                    except:
+                        pass
+                    imageUrl = request.FILES["imageUrl"]
+                    company.companyName=companyName
+                    company.companyUrl = companyUrl
+                    company.stateId = state
+                    company.imageUlr = imageUrl
+                    company.isActive = True
+                    company.save()
+                    for i in district_list:
+                        company.districtNames.add(i)
+                else:
+                    company.companyName=companyName
+                    company.companyUrl = companyUrl
+                    company.stateId = state
+                    company.isActive = True
+                    company.save()
+                    for i in district_list:
+                        company.districtNames.add(i)
+            else:
+                if "imageUrl" in request.FILES:
+                    try:
+                        os.remove(settings.MEDIA_ROOT+"/"+str(company.imageUlr))
+                    except:
+                        pass
+                    imageUrl = request.FILES["imageUrl"]
+                    company.companyName=companyName
+                    company.companyUrl = companyUrl
+                    company.stateId = state
+                    company.imageUlr = imageUrl
+                    company.isActive = False
+                    company.save()
+                    for i in district_list:
+                        company.districtNames.add(i)
+                else:
+                    company.companyName=companyName
+                    company.companyUrl = companyUrl
+                    company.stateId = state
+                    company.isActive = False
+                    company.save()
+                    for i in district_list:
+                        company.districtNames.add(i)
+                        
+            context["status"] = "{} Update Successfully!".format(company.companyName)
+
+        if "delete" in request.POST:
+            companyId = request.POST["companyId"]
+            company = get_object_or_404(Companines, companyId=companyId)
+            try:
+                os.remove(settings.MEDIA_ROOT+"/"+str(company.imageUlr))
+            except:
+                pass
+            company.delete()
+            context["status"] = "{} Deleted Sucessfully!".format(company.companyName)
+
+    return render(request,'Publication_house.html',context)
 
 def headline(request):
     return render(request,'headline.html')
