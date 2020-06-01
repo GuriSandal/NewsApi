@@ -98,30 +98,18 @@ class SundayMagazine(models.Model):
         verbose_name_plural = 'SundayMagazines'
 
 
-# class District(models.Model):
-#     state_id = models.ForeignKey(State, on_delete=models.CASCADE,blank=True, null=True)
-#     name = models.CharField(max_length=50)
-#     status = models.BooleanField(null=True,blank=True,default=False)
-#     added_on = models.DateTimeField(auto_now=True)
-#     def __str__(self):
-#         return self.name
-#     class Meta:
-#         verbose_name_plural = "Districts"
+class District(models.Model):
+    districtId = models.AutoField(primary_key=True, editable=False)
+    stateName = models.ForeignKey(State, on_delete=models.CASCADE,blank=True, null=True)
+    districtName = models.CharField(max_length=50)
+    isActive = models.BooleanField(null=True,blank=True,default=False)
+    addedOn = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.districtName
+    class Meta:
+        verbose_name_plural = "Districts"
 
 
-
-# class PublishNewspaper(models.Model):
-#     state_id = models.ForeignKey(State, on_delete=models.CASCADE, blank=True, null=True)
-#     company_id = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
-#     name = models.CharField(max_length=50)
-#     file_url = models.FileField(upload_to='CompanyPDFs/%Y/%m/%d')
-#     news_date = models.DateField()
-#     status = models.BooleanField(default=False)
-#     added_on = models.DateTimeField(auto_now=True)
-#     def __str__(self):
-#         return self.name
-#     class Meta:
-#         verbose_name_plural = 'PublishNewspapers'
 
 
 

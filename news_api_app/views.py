@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render, HttpResponseRedirect
-from news_api_app.models import State, Headline, Companines,Cities, MagazineCategory, Magazine, SundayMagazine
+from news_api_app.models import State, Headline, Companines,Cities, MagazineCategory, Magazine, SundayMagazine, District
 from news_api_app.serializers import StateSerializer, HeadlineSerializer, CompaninesSerializer, CitiesSerializer, CompanyInfoSerializer, SearchCompanyInfoSerializer, MagazineCategorySerializer, MagazineSerializer, SundayMagazineSerializer
 from rest_framework.response import Response
 from rest_framework import status
@@ -169,13 +169,24 @@ def state(request):
         if "delete" in request.POST:
             stateId = request.POST["stateId"]
             state = get_object_or_404(State, stateId=stateId)
+            try:
+                os.remove(settings.MEDIA_ROOT+"/"+str(state.imageUlr))
+            except:
+                pass
             state.delete()
             context["status"] = "{} Deleted Sucessfully!".format(state.stateName)
         
     return render(request,'state.html', context)
 
 def district(request):
-    return render(request,'District.html')
+    context = {}
+    
+    districts = District.objects.order_by("districtName")
+    context["districts"] = districts
+
+    states = State.objects.filter(isActive=True).order_by("stateName")
+    context['states'] = states
+    return render(request,'District.html',context)
 
 def company(request):
     return render(request,'Publication_house.html')

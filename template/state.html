@@ -8,12 +8,12 @@
 {% endblock %}
 
 {% block admin_base %}
-<div class="col-md-10 mx-auto mt-5 shadow shadow py-3">
-    <span><i class="fa fa-home"></i> <a href="{% url 'state' %}" class="text-dark">Home /</a> </span><span><a class="text-dark" href="{% url 'state' %}">State /</a></span><span class="text-muted"> List</span>
+<div class="col-md-10 mx-auto mt-5 shadow-sm border rounded-lg py-2">
+    <span><i class="fa fa-home"></i> <a href="{% url 'state' %}" class="text-dark">Home</a> / </span><span><a class="text-dark" href="{% url 'state' %}">State</a></span> / <span class="text-muted">List</span>
 </div>
 
 
-<div class="col-md-10 card mx-auto mt-5 shadow shadow">
+<div class="col-md-10 card mx-auto mt-5 shadow ">
     {% if status %}
     <div class="alert alert-success text-center">{{status}}</div>
 {% endif %}
