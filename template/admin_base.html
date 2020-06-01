@@ -15,6 +15,8 @@
 
     <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="/static/select2-bootstrap4-theme-master/dist/select2-bootstrap4.css">
+    <link rel="stylesheet" href="/static/select2-bootstrap4-theme-master/dist/select2-bootstrap4.min.css">
 <!-- for search option  -->
 <link href="/static/jqueryTable/select2.min.css" rel="stylesheet" />
 <script src="/static/jqueryTable/select2.min.js"></script>
@@ -127,5 +129,14 @@
     $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
   });
 </script>
+<script>
+   $(".js-example-templating").select2({
+        templateSelection: formatState,
+        theme: "bootstrap4",
+        
+        });
+
+</script>
+
 </body>
 </html>

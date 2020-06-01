@@ -45,7 +45,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="">State</label>
-                                            <select name="" id="" class="form-control">
+                                            <select name="" id="" class="ui js-example-templating  form-control " style="width: 100%;">
                                                 <option value="">Kanada</option>
                                                 <option value="">English</option>
                                             </select>
@@ -53,7 +53,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="">Publication House</label>
-                                            <select name="" id="" class="form-control">
+                                            <select name="" id="" class="ui js-example-templating form-control " style="width: 100%;">
                                                 <option value="">Kanada</option>
                                                 <option value="">English</option>
                                             </select>
@@ -91,7 +91,7 @@
    <div class="row mb-5">
        <div class="col-md-3">
            <label for="">State</label>
-           <select name="" id="" class="form-control">
+           <select name="" id=""  class="ui js-example-templating form-control " style="width: 100%;">
                <option value="">Kanada</option>
                <option value="">English</option>
            </select>
@@ -99,7 +99,7 @@
        </div>
        <div class="col-md-3">
         <label for="">District</label>
-        <select name="" id="" class="form-control">
+        <select name="" id=""  class="ui js-example-templating form-control " style="width: 100%;">
             <option value="">Kanada</option>
             <option value="">English</option>
         </select>
@@ -198,7 +198,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="">State</label>
-                                            <select name="" id="" class="form-control">
+                                            <select name="" id="" class="ui js-example-templating form-control " style="width: 100%;">
                                                 <option value="">Kanada</option>
                                                 <option value="">English</option>
                                             </select>
@@ -206,7 +206,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="">Publication House</label>
-                                            <select name="" id="" class="form-control">
+                                            <select name="" id=""  class="ui js-example-templating form-control  " style="width: 100%;">
                                                 <option value="">Kanada</option>
                                                 <option value="">English</option>
                                             </select>
@@ -242,6 +242,7 @@
         
     
     </div>
+    <!-- for data table  -->
     <script>
          $(document).ready(function() {
             $('#myTable').DataTable( {
@@ -269,6 +270,31 @@ $('.searchable tr').filter(function () {
 }(jQuery));
 // a();
 });
+</script>
+<!-- for select search  -->
+<script>
+    function formatState (state) {
+        if (!state.id) {
+            return state.text;
+        }
+
+        var baseUrl = "/user/pages/images/flags";
+        var $state = $(
+            '<span><img class="img-flag" /> <span></span></span>'
+        );
+
+        // Use .text() instead of HTML string concatenation to avoid script injection issues
+        $state.find("span").text(state.text);
+        // $state.find("img").attr("src", baseUrl + "/" + state.element.value.toLowerCase() + ".png");
+
+        return $state;
+        };
+
+        $(".js-example-templating").select2({
+        templateSelection: formatState,
+        theme: "bootstrap4",
+        
+        });
 </script>
         
 {%endblock%}
