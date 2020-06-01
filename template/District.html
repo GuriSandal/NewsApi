@@ -1,16 +1,20 @@
 {% extends 'admin_base.html' %}
 {%load static%}
 
+{% block title %}NEWS - District{% endblock %}
+
+{% block head %}
+{% endblock %}
+
 {% block admin_base %}
-<div class="container-fluid">
-    <div class="col-md-10 mx-auto mt-5 shadow shadow-lg py-3">
-        <span> <a href="" class="text-dark">Home/</a> </span><span><a class="text-dark" href="">District/</a></span><span> <a class="text-dark" href="">list</a></span>
-    
+<div class="container-fluid ">
+    <div class="col-md-10 mx-auto mt-5 shadow-sm border rounded-lg py-2">
+        <span><i class="fa fa-home"></i> <a href="{% url 'state' %}" class="text-dark">Home</a> / </span><span><a class="text-dark" href="{% url 'district' %}">Dstrict</a></span> / <span class="text-muted">List</span>    
     </div>
-    <div class="col-md-10  mx-auto mt-5 shadow shadow-lg">
+    <div class="col-md-10 card mx-auto mt-5 shadow ">
         <div class="row">
             <div class="col-md-12">
-                <h6><a href="" class="btn btn-primary mt-3" data-toggle="modal" data-target="#exampleModal">Add new</a></h6>
+                <h6><a href="" class="btn btn-primary mt-3" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus"></i> Add new</a></h6>
             </div>
         </div>
         
@@ -29,21 +33,19 @@
                             <div class="modal-body p-0 m-0">
                                 <div class="row">
                                     <div class="col-md-10 p-3 mx-auto">
-                                        <form action="">
+                                        <form action="" method="POST">
+                                            {% csrf_token %}
                                             <div class="form-group">
                                                 <label for="">Name</label>
-                                                <input type="text" class="form-control" placeholder=" Enter Name here " >
+                                                <input type="text" class="form-control" placeholder="Enter City Name here... " required name="districtName">
                                             </div>
                                            <div class="form-group">
                                             <label for="" >State</label>
-                                            <select class="ui js-example-templating " style="width: 100%;">
-                                                <option value="">State</option>
-                                                <option value="AL">Alabama</option>
-                                                <option value="AK">Alaska</option>
-                                                <option value="AZ">Arizona</option>
-                                                <option value="AR">Arkansas</option>
-                                                <option value="CA">California</option>
-                                                <option value="CO">Colorado</option>
+                                            <select class="ui js-example-templating" style="width: 100%;" required name="stateId">
+                                                <option value="">--Select State--</option>
+                                                {% for state in states %}
+                                                    <option value="{{state.stateId}}">{{state.stateName}}</option>
+                                                {% endfor %}
                                                
                                               </select>
 
@@ -87,16 +89,28 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr><td>1</td>
-                                <td>Kanada <br>
-                                    <small class="text-danger">State:</small><small>beguluru</small>
-                                </td>
-                                <td><span class="bg-success text-white px-3 rounded py-1">Active</span></td>
-                                <td>18 Jan,2020 02:55 AM</td>
-                                <td><span> <h4><a href="" data-toggle="modal" data-target="#exampleModal1"><i class="far fa-edit"></i></a></span>
-                                    <span> <a href=""data-toggle="modal" data-target="#exampleModald"><i class="fa fa-trash"></i></a></h4></span></h4></td>
-        
-                            </tr>
+                            {% for district in districts %}
+                                <tr>
+                                    <td class="align-middle">{{forloop.counter}}</td>
+                                    <td class="align-middle"> 
+                                        {{district.districtName}} <br>
+                                        <small class="text-danger">State:</small> <small>{{district.stateName.stateName}}</small>
+                                    </td>
+                                    <td class="align-middle">
+                                        {% if district.isActive %}
+                                            <span class="bg-success text-white px-3 rounded py-1">ACTIVE</span>
+                                        {% else %}
+                                            <span class="bg-secondary text-white px-3 rounded py-1">IN ACTIVE</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="align-middle">
+                                        <span>{{district.addedOn}}</span>
+                                    </td>
+                                    <td class="align-middle"><span> <h4><a href="" data-toggle="modal" data-target="#exampleModal1"><i class="fa fa-edit" ></i></a></span>
+                                        <span> <a href=""data-toggle="modal" data-target="#exampleModald"><i class="fa fa-trash"></i></a></h4></span></h4>
+                                    </td>
+                                </tr>
+                            {% endfor %}
                            
                             
                             </tbody>
