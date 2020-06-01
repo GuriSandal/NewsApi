@@ -132,7 +132,45 @@ def state(request):
                     state = State(stateName=stateName)
                     state.save()
                 
-            context["added"] = "New State Added!"
+            context["status"] = "New State Added!"
+        
+        if "update" in request.POST:
+            stateId = request.POST["stateId"]
+            stateName = request.POST['stateName']
+            
+            state = State.objects.get(stateId=stateId)
+            
+            if "isActive" in request.POST:
+                state.stateName = stateName
+                state.isActive = True
+                state.save()
+                if "stateImage" in request.FILES:
+                    try:
+                        os.remove(settings.MEDIA_ROOT+"/"+str(state.imageUlr))
+                    except:
+                        pass
+                    stateImage = request.FILES["stateImage"]
+                    state.imageUlr = stateImage
+                    state.save()
+            else:
+                state.stateName = stateName
+                state.isActive = False
+                state.save()
+                if "stateImage" in request.FILES:
+                    try:
+                        os.remove(settings.MEDIA_ROOT+"/"+str(state.imageUlr))
+                    except:
+                        pass
+                    stateImage = request.FILES["stateImage"]
+                    state.imageUlr = stateImage
+                    state.save()
+            context["status"] = "Update {} Sucessfully!".format(state.stateName)
+        
+        if "delete" in request.POST:
+            stateId = request.POST["stateId"]
+            state = get_object_or_404(State, stateId=stateId)
+            state.delete()
+            context["status"] = "{} Deleted Sucessfully!".format(state.stateName)
         
     return render(request,'state.html', context)
 
