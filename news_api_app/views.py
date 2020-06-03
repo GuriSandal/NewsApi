@@ -392,3 +392,5 @@ def user_logout(request):
     logout(request)
     return HttpResponseRedirect("/")
     
+def Add_pubshnews(request):
+    return render(request,"Add_Publishnewspaper.html")

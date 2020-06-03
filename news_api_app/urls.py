@@ -12,4 +12,5 @@ urlpatterns = [
     path('search/magazine-news', views.SearchMagazineList.as_view(), name='search-magazine-news'),
     path('get-all-sunday-magazines', views.SundayMagazineList.as_view(), name='all-sunday-magazines'),
 
+
 ]

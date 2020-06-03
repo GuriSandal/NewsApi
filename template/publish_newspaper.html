@@ -9,83 +9,11 @@
 <div class="col-md-10 card mx-auto mt-5 shadow shadow-lg">
     <div class="row">
         <div class="col-md-12">
-            <h6><a href="" class="btn btn-primary mt-3" data-toggle="modal" data-target="#exampleModal">Add new</a></h6>
+            <h6><a href="{%url 'city/add' %}" class="btn btn-primary mt-3" >Add new</a></h6>
         </div>
     </div>
     <div >
-        <!-- modal for add new -->
-        <div class="col-md-12 mt-5">
-            <div class="modal fade" id="exampleModal"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog " role="document">
-                    <div class="modal-content  p-0 m-0" >
-                        <div class="modal-header">
-                            Publish Newsapaper
-                            <button  data-dismiss="modal"  class="close" type="button"  >
-                                <span aria-hidden="true" >&times;</span>
-                            </button>
-                        </div>
-                       
-                        <div class="modal-body p-0 m-0">
-                            <div class="row">
-                                <div class="col-md-10 p-3 mx-auto">
-                                    <form action="">
-                                        <div class="form-group">
-                                            <label for="">Name</label>
-                                            <input type="text" class="form-control " placeholder=" Enter Name here " >
 
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="" >Image</label>
-                                            <div class="custom-file">
-                                                <input type="file" class="custom-file-input">
-                                                <label class="custom-file-label" for="customFile">Choose file</label>
-                                            </div>
-
-
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="">State</label>
-                                            <select name="" id="" class="ui js-example-templating  form-control " style="width: 100%;">
-                                                <option value="">Kanada</option>
-                                                <option value="">English</option>
-                                            </select>
-
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="">Publication House</label>
-                                            <select name="" id="" class="ui js-example-templating form-control " style="width: 100%;">
-                                                <option value="">Kanada</option>
-                                                <option value="">English</option>
-                                            </select>
-
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="">Date/Time</label>
-                                            <input type="date" class="form-control">
-
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="checkbox" id="vehicle1" class="form-conrol " name="vehicle1" value="Bike">
-                                            <label for="vehicle1"> Active</label>
-
-                                        </div>
-                            
-                                        <input type="submit" value="Add" class="form-control btn btn-success mb-5 mt-3">
-                                        
-                                    </form>
-    
-                                </div>
-    
-                            </div>
-                            
-                        </div>
-                        
-                    </div>
-                </div>
-              </div>
-    
-        </div>
-        <!-- modal end  -->
     
     </div>
    <div class="row mb-5">

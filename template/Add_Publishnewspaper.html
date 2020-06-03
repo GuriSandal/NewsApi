@@ -1,0 +1,152 @@
+{% extends 'admin_base.html' %}
+{%load static%}
+
+{% block admin_base %}
+<div class="container-fluid">
+    <div class="col-md-10 mx-auto card mt-3 p-5 shadow shadow-sm">
+        <h3>Publish newspaper</h3>
+        <br>
+        <form action="">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="">Date/Time</label>
+                        <input type="date" class="form-control">
+        
+                    </div>
+    
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="">State</label>
+                        <select name="" id="" class="ui js-example-templating  form-control " style="width: 100%;">
+                            <option value="">Kanada</option>
+                            <option value="">English</option>
+                        </select>
+        
+                    </div>
+    
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="">Publication House</label>
+                        <select name="" id="" class="ui js-example-templating form-control " style="width: 100%;">
+                            <option value="">Kanada</option>
+                            <option value="">English</option>
+                        </select>
+        
+                    </div>
+    
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="">Sort</label>
+                        <select name="" id="" class="ui  form-control " style="width: 100%;">
+                            <option value="">Acending</option>
+                            <option value="">Decending</option>
+                        </select>
+        
+                    </div>
+    
+                </div>
+
+            </div>
+            <h5 class="mt-3">MAIN UPLOAD</h5>
+                <br>
+            <div class="row">
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="" >Image</label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input">
+                            <label class="custom-file-label" for="customFile">Choose file</label>
+                        </div>
+        
+        
+                    </div>
+    
+    
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="" >Multiple Image</label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" multiple data-show-upload="true" data-show-caption="true">
+                            <label class="custom-file-label" for="customFile" >Choose file</label>
+                        </div>
+        
+        
+                    </div>
+    
+    
+                </div>
+
+            </div>
+            <h5 class="mt-3">UPLOAD FOR CITY</h5>
+                <br>
+            <div class="row">
+                <div class="col-md-3 card p-3 mx-auto">
+                    <h5 style="color: rgb(121, 41, 158);" class="text-center">Bengluru</h5>
+                    <div class="form-group">
+                        <input type="file" id="myfile" name="myfile" class="form-control mt-3"><br>
+                    </div>
+
+                </div>
+                <div class="col-md-3  card p-3 mx-auto">
+                    <h5 style="color: rgb(121, 41, 158);" class="text-center">Bengluru</h5>
+                    <div class="form-group">
+                        <input type="file" id="myfile" name="myfile" class="form-control mt-3"><br>
+        
+        
+                    </div>
+
+                </div>
+                <div class="col-md-3  card p-3 mx-auto">
+                    <h5 style="color: rgb(121, 41, 158);" class="text-center">Bengluru</h5>
+                    <div class="form-group">
+                        <input type="file" id="myfile" name="myfile" class="form-control mt-3"><br>
+       
+                    </div>
+                    <h6 class="text-success"><i class="fas fa-check"></i> UPLOADED - 03 Jun 2020</h6>
+
+                </div>
+                
+
+            </div>
+
+            <!-- <input type="submit" value="Add" class="form-control btn btn-success mb-5 mt-3"> -->
+            
+        </form>
+
+        
+
+    </div>
+
+</div>
+<!-- for select search  -->
+<script>
+    function formatState (state) {
+        if (!state.id) {
+            return state.text;
+        }
+
+        var baseUrl = "/user/pages/images/flags";
+        var $state = $(
+            '<span><img class="img-flag" /> <span></span></span>'
+        );
+
+        // Use .text() instead of HTML string concatenation to avoid script injection issues
+        $state.find("span").text(state.text);
+        // $state.find("img").attr("src", baseUrl + "/" + state.element.value.toLowerCase() + ".png");
+
+        return $state;
+        };
+
+        $(".js-example-templating").select2({
+        templateSelection: formatState,
+        theme: "bootstrap4",
+        
+        });
+</script>
+{%endblock%}
