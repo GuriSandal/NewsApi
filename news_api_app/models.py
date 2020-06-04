@@ -35,7 +35,7 @@ class Headline(models.Model):
     headlineId = models.AutoField(primary_key=True, editable=False)
     headlineText = models.CharField(max_length=50)
     isActive = models.BooleanField(default=False)
-    addedOn = models.DateTimeField(auto_now_add=True)
+    addedOn = models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.headlineText
     class Meta:
@@ -87,7 +87,7 @@ class Magazine(models.Model):
     magazineName = models.CharField(max_length=50)
     fileName = models.FileField(upload_to='MagazinePDFs/%Y/%m/%d')
     imageUrl = models.ImageField(upload_to = "MagazineImages/%Y/%m/%d", null=True, blank=True)
-    categoryName = models.ForeignKey(MagazineCategory, on_delete=models.CASCADE)
+    categoryName = models.ManyToManyField(MagazineCategory)
     newsDate = models.CharField(max_length=20,validators =[date_validate])
     isActive = models.BooleanField(default=False)
     addedOn = models.DateTimeField(auto_now_add=True)
@@ -103,7 +103,7 @@ class SundayMagazine(models.Model):
     imageUrl = models.ImageField(upload_to = "SundayMagazineImages/%Y/%m/%d", null=True, blank=True)
     newsDate = models.CharField(max_length=20,validators =[date_validate])
     isActive = models.BooleanField(default=False)
-    addedOn = models.DateTimeField(auto_now_add=True)
+    addedOn = models.DateTimeField(auto_now_add=True, null=True)
     def __str__(self):
         return self.magazineName
     class Meta:

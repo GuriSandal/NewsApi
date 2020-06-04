@@ -1,15 +1,20 @@
 {% extends 'admin_base.html' %}
 {%load static%}
 
+{% block title %}NEWS - Magazine{% endblock %}
+
+
 {% block admin_base %}
-<div class="col-md-10 mx-auto mt-5 shadow shadow-sm  py-3">
-    <span> <a href="" class="text-dark">Home/</a> </span><span><a class="text-dark" href="">Magazine/</a></span><span> <a class="text-dark" href="">List</a></span>
+<div class="col-md-10 mx-auto mt-5 shadow-sm border rounded-lg py-2">
+    <span><i class="fa fa-home"></i> <a href="{% url 'state' %}" class="text-dark">Home</a> / </span><span><a class="text-dark" href="{% url 'magzine' %}">Magazine</a></span> / <span class="text-muted">List</span>    
 
 </div>
-<div class="col-md-10 card mx-auto mt-5 shadow shadow-sm">
-    <div class="row">
+<div class="col-md-10 mx-auto mt-5 rounded-lg border shadow-sm">
+    {% if status %}
+        <div class="alert alert-success text-center mt-3">{{status}}</div>
+    {% endif %}    <div class="row">
         <div class="col-md-12">
-            <h6><a href="" class="btn btn-primary mt-3" data-toggle="modal" data-target="#exampleModal">Add new</a></h6>
+            <h6><a href="" class="btn btn-primary mt-3" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus"></i> Add new</a></h6>
         </div>
     </div>
     <div >
@@ -28,47 +33,50 @@
                         <div class="modal-body p-0 m-0">
                             <div class="row">
                                 <div class="col-md-10 p-3 mx-auto">
-                                    <form action="">
+                                    <form action="" method="POST" enctype="multipart/form-data">
+                                        {% csrf_token %}
                                         <div class="form-group">
                                             <label for="">Name</label>
-                                            <input type="text" class="form-control" placeholder=" Enter Name here " >
+                                            <input type="text" class="form-control" placeholder="Enter Name here " name="magazineName" required>
 
                                         </div>
+                               
                                         <div class="form-group">
-                                            <label for="">Notification Text</label>
-                                            <input type="text" class="form-control" placeholder=" Notification text " >
-
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="" >Magzine_Catagory</label>
-                                            <select class="ui js-example-templating " style="width: 100%;">
-                                                <option value="">Education</option>
-                                                <option value="AL">Alabama</option>
-                                                <option value="AK">Alaska</option>
-                                                <option value="AZ">Arizona</option>
-                                                <option value="AR">Arkansas</option>
-                                                <option value="CA">California</option>
-                                                <option value="CO">Colorado</option>
-                                               
+                                            <label for="" >Magzine Catagory</label>
+                                            <select class="js-example-basic-multiple " style="width: 100%;" name="categoryIds" multiple="multiple" required>
+                                                {% for category in categories %}
+                                                    <option value="{{category.categoryId}}">{{category.categoryName}}</option>
+                                                {% endfor %}
                                               </select>
 
                                         </div>
+
                                         <div class="form-group">
-                                            <label for="" class="mt-3">Image</label>
+                                            <label for="">File</label>
                                             <div class="custom-file">
-                                                <input type="file" class="custom-file-input">
+                                                <input type="file" class="custom-file-input" name="fileName" required>
+                                                <label class="custom-file-label" for="customFile">Choose file</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="">Image</label>
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" name="imageUrl" required>
                                                 <label class="custom-file-label" for="customFile">Choose file</label>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="">News Date</label>
-                                            <input type="date" class="form-control">
+                                            <input type="text" pattern="\d{1,2}-\d{1,2}-\d{4}" placeholder="dd-mm-yyyy" class="datepicker form-control" name="date" required />
                                         </div>
                                         <div class="form-group">
-                                            <input type="checkbox" id="vehicle1" class="form-conrol mt-4" name="vehicle1" value="Bike">
-                                            <label for="vehicle1"> Active</label><br>
+                                            <input type="checkbox" id="addActive" class="form-conrol mt-4" name="addActive" >
+                                            <label for="addActive"> Active</label><br>
                                         </div>
-                                        <input type="submit" value="Add" class="form-control btn btn-success mb-5 mt-3">
+                                        <div class="form-group">
+                                            <input type="submit" value="Add" name="add" class="form-control btn btn-success">
+                                        </div>
                                     </form>
     
                                 </div>
@@ -91,11 +99,10 @@
             <div class="container">
                 <div class=" row mb-5">
                     <div class="col-md-5">
-                        <input type="date" id="filter" class="form-control">
-    
+                        <input type="text" id="filter" pattern="\d{1,2}-\d{1,2}-\d{4}" placeholder="dd-mm-yyyy" class="datepicker form-control"/>
                     </div>
                     <div class="col-md-1">
-                        <i id="fi" class="fa fa-search btn card form-control"></i>
+                        <i id="fi" class="fa fa-search btn btn-outline-dark p-2"></i>
 
                     </div>
                     <div class="col-md-2 ml-auto">
@@ -115,31 +122,41 @@
                         <tr><th>#</th>
                             <th>Name</th>
                             <th>Download</th>
-                            <th>Magzine_Catagory</th>
                             <th>News Date</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
                         <tbody class="searchable">
-                        <tr><td>1</td>
-                            <td>Kanada</td>
-                            <td><img height="50" width="50" src="https://images.unsplash.com/photo-1588774069410-84ae30757c8e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=375&q=80" alt=""></td>
-                            <td> Professional image</td>
-                            <td>2020-05-12</td>
-                            <td><span class="bg-success text-white px-3 rounded py-1">Active</span></td>
-                            <td><span> <h4><a href="" data-toggle="modal" data-target="#exampleModal1"><i class="far fa-edit"></i></a></span>
-                                <span> <a href=""data-toggle="modal" data-target="#exampleModald"><i class="fa fa-trash"></i></a></h4></span></h4></td>
-    
+                        {% for magazine in magazines %}
+                        <tr>
+                            <td class="align-middle">{{forloop.counter}}</td>
+                                <td class="align-middle">{{magazine.magazineName}}</td>
+                                <td class="align-middle">
+                                    <a href="/media/{{magazine.fileName}}" download>
+                                        <img src="/media/{{magazine.imageUrl}}" height="70" width="60" alt="">
+                                    </a>
+                                </td>
+                                <td class="align-middle">{{magazine.newsDate}}</td>
+                                <td class="align-middle">
+                                    {% if magazine.isActive %}
+                                        <span class="bg-success text-white px-3 rounded py-1">ACTIVE</span>
+                                    {% else %}
+                                        <span class="bg-secondary text-white px-3 rounded py-1">IN ACTIVE</span>
+                                    {% endif %}
+                                </td>
+                                <td class="align-middle">
+                                    <span> <h4><a href="" data-toggle="modal" data-target="#update{{magazine.magazineId}}"><i class="far fa-edit"></i></a></span>
+                                    <span> <a href=""data-toggle="modal" data-target="#delete{{magazine.magazineId}}"><i class="fa fa-trash"></i></a></h4></span></h4>
+                                </td>
                         </tr>
-                        
+                        {% endfor %}
                         
                         </tbody>
                         <tfoot>
                             <tr><th>#</th>
                                 <th>Name</th>
                                 <th>Download</th>
-                                <th>Magzine_Catagory</th>
                                 <th>News Date</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -155,12 +172,13 @@
     </div> 
     <!-- table end  -->
         <!-- modal for edit new -->
+        {% for magazine in magazines %}
         <div class="col-md-12 mt-5">
-            <div class="modal fade" id="exampleModal1"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="update{{magazine.magazineId}}"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog " role="document">
                     <div class="modal-content  p-0 m-0" >
                         <div class="modal-header">
-                            Magazine 
+                            {{magazine.magazineName}} 
                             <button  data-dismiss="modal"  class="close" type="button"  >
                                 <span aria-hidden="true" >&times;</span>
                             </button>
@@ -170,43 +188,72 @@
                             <div class="row ">
                                
                                 <div class="col-md-10 p-3 mx-auto">
-                                    <form action="">
+                                    <form action="" method="POST" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <input type="text" hidden value="{{magazine.magazineId}}" name="id">
                                         <div class="form-group">
+
                                             <label for="">Name</label>
-                                            <input type="text" class="form-control" placeholder=" Enter Name here " >
+                                            <input type="text" class="form-control" placeholder="" name="magazineName" value="{{magazine.magazineName}}">
 
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="" >Magzine_Catagory</label>
-                                            <select class="ui js-example-templating " style="width: 100%;">
-                                                <option value="">Education</option>
-                                                <option value="AL">Alabama</option>
-                                                <option value="AK">Alaska</option>
-                                                <option value="AZ">Arizona</option>
-                                                <option value="AR">Arkansas</option>
-                                                <option value="CA">California</option>
-                                                <option value="CO">Colorado</option>
-                                               
+                                            <label for="" >Magzine Catagory</label>
+                                            <select class="js-example-basic-multiple " style="width: 100%;" name="magazineIds" multiple="multiple">
+                                                {% for data in magazine.categoryNames.all %}
+                                                    <option value="{{data.categoryId}}" selected>{{data.categoryName}}</option>
+                                                {% endfor %}
+                                                {% for category in categories %}
+                                                    {% if category in magazines.categorytNames.all %}
+                                                    {% else %}
+                                                        <option value="{{category.categoryId}}" >{{category.categoryName}}</option>
+                                                    {% endif %}
+                                                {% endfor %}
                                               </select>
 
                                         </div>
                                         <div class="form-group">
-                                            <label for="" class="mt-3">Image</label>
+                                            <div class="text-center">
+                                                {% if magazine.fileName %}
+                                                    <a href="/media/{{magazine.fileName}}" download>
+                                                        <img src="/media/{{magazine.imageUrl}}" height="70" width="60" alt="">
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                            <label for="" >File</label>
                                             <div class="custom-file">
-                                                <input type="file" class="custom-file-input">
+                                                <input type="file" class="custom-file-input" name="fileName" value="">
+                                                <label class="custom-file-label" for="customFile">Choose file</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="text-center">
+                                                {% if magazine.imageUrl %}
+                                                    <img src="/media/{{magazine.imageUrl}}" alt="" height="100" width="100">
+                                                {% endif %}
+                                            </div>
+                                            <label for="" >Image</label>
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" name="imageUrl" value="">
                                                 <label class="custom-file-label" for="customFile">Choose file</label>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="">News Date</label>
-                                            <input type="date" class="form-control">
+                                            <input type="text" pattern="\d{1,2}-\d{1,2}-\d{4}" placeholder="dd-mm-yyyy" class="datepicker form-control" name="date" value="{{magazine.newsDate}}" />
                                         </div>
                                         <div class="form-group">
-                                            <input type="checkbox" id="vehicle1" class="form-conrol mt-4" name="vehicle1" value="Bike">
-                                            <label for="vehicle1"> Active</label><br>
+                                            {% if magazine.isActive %}
+                                                <input type="checkbox" id="updateActive" class="form-conrol " name="updateActive" checked>
+                                            {% else %}
+                                                <input type="checkbox" id="updateActive" class="form-conrol " name="updateActive">
+                                            {% endif %}                                
+                                            <label for="updateActive"> Active</label><br>
                                         </div>
-                                        <input type="submit" value="Add" class="form-control btn btn-success mb-5 mt-3">
+                                        <div class="form-group">
+                                            <input type="submit" value="Update" name="update" class="form-control btn btn-success mb-5 mt-3">
+                                        </div>
                                         
                                     </form>
     
@@ -221,11 +268,13 @@
               </div>
     
         </div>
+        {% endfor %}
         <!-- modal end  -->
     
+        {% for magazine in magazines %}
         <!-- modal for delete -->
         <div class="col-md-12 mt-5">
-            <div class="modal fade" id="exampleModald"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="delete{{magazine.magazineId}}"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog " role="document">
                     <div class="modal-content  p-0 m-0" >
     
@@ -233,20 +282,21 @@
                         <div class="modal-body p-0 m-0">
                             <div class="row">
                                 <div class="col-md-10 p-3 mx-auto">
-                                    <form action="">
-                                        <h1>Do you really want to delete this ?</h1>
+                                    <h4>Do you really want to delete <strong>{{magazine.magazineName}}</strong>?<h4>
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <input type="submit" value="Delete" class=" btn btn-success mb-5 px-5 mt-3">
+                                            <form action="" method="POST">
+                                                {% csrf_token %}
+                                                <input type="text" value="{{magazine.magazineId}}" hidden name="magazineId">
+                                                <input type="submit" value="Delete" name="delete" class=" btn btn-danger px-5 mt-3">
+                                            </form>
                                                </div> 
                                                <div class="col-md-6">
-                                                <a href="" class="btn btn-danger  mb-5 mt-3 px-5 " > Cancel </a>
-            
+                                                <a  data-dismiss="modal" class="btn btn-info px-5 mt-3 text-white">Cancel</a>        
                                                </div>
                                                 
     
                                         </div>
-                                    </form>
     
     
                                 </div>
@@ -260,6 +310,7 @@
               </div>
     
         </div>
+        {% endfor %}
         <!-- modal end  -->
     
     </div>
@@ -315,4 +366,25 @@ $('.searchable tr').filter(function () {
                     templateSelection: formatState
                     });
             </script>
+
+<script>
+    $(document).ready(function() {
+        $('.js-example-basic-multiple').select2();
+    });
+</script>
+<!-- for multi select for add new  -->
+ <script>
+    $(document).ready(function() {
+        $('.js-example-basic-multiple2').select2();
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+    $('.datepicker').datepicker({
+      uiLibrary: 'bootstrap4',
+      format: 'dd-mm-yyyy'
+    });
+});
+</script>
 {%endblock%}

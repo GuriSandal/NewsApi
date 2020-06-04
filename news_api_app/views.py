@@ -377,13 +377,264 @@ def company(request):
     return render(request,'Publication_house.html',context)
 
 def headline(request):
-    return render(request,'headline.html')
+    context = {}
+    headline = Headline.objects.get(headlineId=2)
+    context["headline"] = headline
+
+    if request.method == "POST":
+        headlineText = request.POST["headlineText"]
+
+        if "updateActive" in request.POST:
+            headline.headlineText = headlineText
+            headline.isActive = True
+            headline.save()
+        else:
+            headline.headlineText = headlineText
+            headline.isActive = False
+            headline.save()
+        context["status"] = "Headline Update Successfully!"
+
+    return render(request,'headline.html', context)
+
 def magzine(request):
-    return render(request,'magzine.html')
+    context = {}
+    magazines = Magazine.objects.order_by("magazineName")
+    context["magazines"] = magazines
+
+    categories = MagazineCategory.objects.filter(isActive=True).order_by("categoryName")
+    context["categories"] = categories
+
+
+    if request.method == "POST":
+        if "add" in request.POST:
+            name = request.POST["magazineName"]
+            date = request.POST["date"]
+            categorieIds_list = request.POST.getlist('categorieIds')
+            
+            categorie_list = [get_object_or_404(MagazineCategory, categorieId=i) for i in categorieIds_list]
+            
+            if "addActive" in request.POST:
+                if "fileName" in request.FILES and "imageUrl" in request.FILES:
+                    fileName = request.FILES["fileName"]
+                    imageUrl = request.FILES["imageUrl"]
+                    magazine = Magazine(magazineName=name,fileName=fileName,imageUrl=imageUrl,newsDate=date,isActive=True)
+                    magazine.save()
+                    for i in categorie_list:
+                        magazine.categoryName.add(i)
+            else:
+                if "fileName" in request.FILES and "imageUrl" in request.FILES:
+                    fileName = request.FILES["fileName"]
+                    imageUrl = request.FILES["imageUrl"]
+                    magazine = Magazine(magazineName=name,fileName=fileName,imageUrl=imageUrl,newsDate=date,isActive=False)
+                    magazine.save()
+                    for i in categorie_list:
+                        magazine.categoryName.add(i)
+
+            context["status"] = "{} added successfully!".format(name)
+
+        if "update" in request.POST:
+            name = request.POST["magazineName"]
+            date = request.POST["date"]
+          
+            Id = request.POST['id']
+
+            categorieIds_list = request.POST.getlist('categorieIds')
+            
+            categorie_list = [get_object_or_404(MagazineCategory, categorieId=i) for i in categorieIds_list]
+
+            magazine = Magazine.objects.get(magazineId=Id)
+            if "updateActive" in request.POST:    
+                if "fileName" in request.FILES and "imageUrl" in request.FILES:
+                    fileName = request.FILES["fileName"]
+                    imageUrl = request.FILES["imageUrl"]
+                    magazine.magazineName=name
+                    magazine.fileName=fileName
+                    magazine.imageUrl=imageUrl
+                    magazine.newsDate=date
+                    magazine.isActive=True
+                    magazine.save()
+                    for i in categorie_list:
+                        magazine.categoryName.add(i)
+                else:
+                    magazine.magazineName=name
+                    magazine.newsDate=date
+                    magazine.isActive=True
+                    magazine.save()
+                    for i in categorie_list:
+                        magazine.categoryName.add(i)
+
+            else:
+                if "fileName" in request.FILES and "imageUrl" in request.FILES:
+                    fileName = request.FILES["fileName"]
+                    imageUrl = request.FILES["imageUrl"]
+                    magazine.magazineName=name
+                    magazine.fileName=fileName
+                    magazine.imageUrl=imageUrl
+                    magazine.newsDate=date
+                    magazine.isActive=False
+                    magazine.save()
+                    for i in categorie_list:
+                        magazine.categoryName.add(i)
+                else:
+                    magazine.magazineName=name
+                    magazine.newsDate=date
+                    magazine.isActive=False
+                    magazine.save()
+                    for i in categorie_list:
+                        magazine.categoryName.add(i)
+
+            context["status"] = "{} Update successfully!".format(name)
+
+        if "delete" in request.POST:
+            magazineId = request.POST["magazineId"]
+            magazine = get_object_or_404(Magazine, magazineId=magazineId)
+            magazine.delete()
+            context["status"] = "{} Deleted Sucessfully!".format(magazine.magazineName)
+    return render(request,'magzine.html', context)
+
 def magzine_catagory(request):
-    return render(request,"magzine_catagory.html")
+    context = {}
+    categories = MagazineCategory.objects.order_by("categoryName")
+    context["categories"] = categories
+
+    if request.method == "POST":
+        if 'add' in request.POST:
+            categoryName = request.POST['categoryName']
+            if "isActive" in request.POST:
+                if "categoryImage" in request.FILES:
+                    categoryImage = request.FILES["categoryImage"]
+                    category = MagazineCategory(categoryName=categoryName, isActive=True, imageUlr=categoryImage)
+                    category.save()
+                else:
+                    category = MagazineCategory(categoryName=categoryName, isActive=True)
+                    category.save()
+            else:
+                if "categoryImage" in request.FILES:
+                    categoryImage = request.FILES["categoryImage"]
+                    category = MagazineCategory(categoryName=categoryName, isActive=False, imageUlr=categoryImage)
+                    category.save()
+                else:
+                    category = MagazineCategory(categoryName=categoryName, isActive=False)
+                    category.save()
+
+            context["status"] = "New Category Added!"
+        
+        if "update" in request.POST:
+            categoryId = request.POST["categoryId"]
+            categoryName = request.POST['categoryName']
+            
+            category = MagazineCategory.objects.get(categoryId=categoryId)
+            
+            if "isActive" in request.POST:
+                category.categoryName = categoryName
+                category.isActive = True
+                category.save()
+                if "categoryImage" in request.FILES:
+                    try:
+                        os.remove(settings.MEDIA_ROOT+"/"+str(category.imageUlr))
+                    except:
+                        pass
+                    categoryImage = request.FILES["categoryImage"]
+                    category.imageUlr = categoryImage
+                    category.save()
+            else:
+                category.categoryName = categoryName
+                category.isActive = False
+                category.save()
+                if "categoryImage" in request.FILES:
+                    try:
+                        os.remove(settings.MEDIA_ROOT+"/"+str(category.imageUlr))
+                    except:
+                        pass
+                    categoryImage = request.FILES["categoryImage"]
+                    category.imageUlr = categoryImage
+                    category.save()
+            context["status"] = "Update {} Sucessfully!".format(category.categoryName)
+        
+        if "delete" in request.POST:
+            categoryId = request.POST["categoryId"]
+            category = get_object_or_404(MagazineCategory, categoryId=categoryId)
+            try:
+                os.remove(settings.MEDIA_ROOT+"/"+str(category.imageUlr))
+            except:
+                pass
+            category.delete()
+            context["status"] = "{} Deleted Sucessfully!".format(category.categoryName)
+
+    return render(request,"magzine_catagory.html", context)
+
 def sunday_magzine(request):
-    return render(request,"sunday_magzine.html")
+    context = {}
+    magazines = SundayMagazine.objects.order_by("magazineName")
+    context["magazines"] = magazines
+
+    if request.method == "POST":
+        if "add" in request.POST:
+            name = request.POST["magazineName"]
+            date = request.POST["date"]
+            # date = date.split("-")
+            # date = date[2]+"-"+date[1]+"-"+date[0]
+            if "addActive" in request.POST:    
+                if "fileName" in request.FILES and "imageUrl" in request.FILES:
+                    fileName = request.FILES["fileName"]
+                    imageUrl = request.FILES["imageUrl"]
+                    magazine = SundayMagazine(magazineName=name,fileName=fileName,imageUrl=imageUrl,newsDate=date,isActive=True)
+                    magazine.save()
+            else:
+                if "fileName" in request.FILES and "imageUrl" in request.FILES:
+                    fileName = request.FILES["fileName"]
+                    imageUrl = request.FILES["imageUrl"]
+                    magazine = SundayMagazine(magazineName=name,fileName=fileName,imageUrl=imageUrl,newsDate=date,isActive=False)
+                    magazine.save()
+            context["status"] = "{} added successfully!".format(name)
+        
+        if "update" in request.POST:
+            name = request.POST["magazineName"]
+            date = request.POST["date"]
+            # date = date.split("-")
+            # date = date[2]+"-"+date[1]+"-"+date[0]
+            Id = request.POST['id']
+            magazine = SundayMagazine.objects.get(magazineId=Id)
+            if "updateActive" in request.POST:    
+                if "fileName" in request.FILES and "imageUrl" in request.FILES:
+                    fileName = request.FILES["fileName"]
+                    imageUrl = request.FILES["imageUrl"]
+                    magazine.magazineName=name
+                    magazine.fileName=fileName
+                    magazine.imageUrl=imageUrl
+                    magazine.newsDate=date
+                    magazine.isActive=True
+                    magazine.save()
+                else:
+                    magazine.magazineName=name
+                    magazine.newsDate=date
+                    magazine.isActive=True
+                    magazine.save()
+
+            else:
+                if "fileName" in request.FILES and "imageUrl" in request.FILES:
+                    fileName = request.FILES["fileName"]
+                    imageUrl = request.FILES["imageUrl"]
+                    magazine.magazineName=name
+                    magazine.fileName=fileName
+                    magazine.imageUrl=imageUrl
+                    magazine.newsDate=date
+                    magazine.isActive=False
+                    magazine.save()
+                else:
+                    magazine.magazineName=name
+                    magazine.newsDate=date
+                    magazine.isActive=False
+                    magazine.save()
+
+            context["status"] = "{} Update successfully!".format(name)
+
+        if "delete" in request.POST:
+            magazineId = request.POST["magazineId"]
+            magazine = get_object_or_404(SundayMagazine, magazineId=magazineId)
+            magazine.delete()
+            context["status"] = "{} Deleted Sucessfully!".format(magazine.magazineName)
+    return render(request,"sunday_magzine.html", context)
 
 def publish_newspaper(request):
     return render(request,"publish_newspaper.html")

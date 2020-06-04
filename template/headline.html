@@ -1,24 +1,29 @@
 {% extends 'admin_base.html' %}
 {%load static%}
 
+{% block title %}NEWS - Headline{% endblock %}
+
+
 {% block admin_base %}
-<div class="col-md-10 mx-auto mt-5 shadow shadow-lg py-3">
-    <span> <a href="" class="text-dark">Home/</a> </span><span><a class="text-dark" href="">Headline/</a></span><span> <a class="text-dark" href="">List</a></span>
+<div class="col-md-10 mx-auto mt-5 shadow-sm border rounded-lg py-2">
+    <span><i class="fa fa-home"></i> <a href="{% url 'state' %}" class="text-dark">Home</a> / </span><span><a class="text-dark" href="{% url 'headline' %}">Headline</a></span> / <span class="text-muted">List</span>    
 
 </div>
-<div class="col-md-10 card mx-auto mt-5 shadow shadow-lg">
-   
+<div class="col-md-10 mx-auto mt-5">
+    {% if status %}
+    <div class="alert alert-success text-center mt-3">{{status}}</div>
+{% endif %}
     
     
     <!-- table  satart    -->
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12 px-0">
             
             
             <div class="row">
-                <div class="col-md-12 py-3">
+                <div class="col-md-12 px-0">
                     <div class="container">
-                        <table class="table table-fluid display nowrap" style="width:100%"  id="myTable" >
+                        <table class="table table-fluid display rounded-lg border shadow-sm nowrap" style="width:100%"  id="myTable" >
                         <thead>
                         <tr><th>#</th>
                             <th>Headline</th>
@@ -29,12 +34,23 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr><td>1</td>
-                            <td>Kanada</td>
-                            <td><img height="50" width="50" src="https://images.unsplash.com/photo-1588774069410-84ae30757c8e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=375&q=80" alt=""></td>
-                            <td><span class="bg-success text-white px-3 rounded py-1">Active</span></td>
-                            <td><h4><a href="" data-toggle="modal" data-target="#exampleModal1"><i class="fa fa-edit" ></i></a></h4></td>
-                            
+                        <tr>
+                            <td class="align-middle">1</td>
+                            <td class="align-middle"> 
+                                {{headline.headlineText}}
+                            </td>
+                            <td class="align-middle">
+                                {% if headline.isActive %}
+                                    <span class="bg-success text-white px-3 rounded py-1">ACTIVE</span>
+                                {% else %}
+                                    <span class="bg-secondary text-white px-3 rounded py-1">IN ACTIVE</span>
+                                {% endif %}
+                            </td>
+                            <td class="align-middle">
+                                <span>{{headline.addedOn}}</span>
+                            </td>
+                            <td class="align-middle"><span> <h4><a href="" data-toggle="modal" data-target="#upadte{{headline.headlineId}}"><i class="fa fa-edit" ></i></a></span>
+                            </td>
     
                         </tr>
                         
@@ -51,11 +67,11 @@
     <!-- table end  -->
         <!-- modal for edit  -->
         <div class="col-md-12 mt-5">
-            <div class="modal fade" id="exampleModal1"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="upadte{{headline.headlineId}}"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog " role="document">
                     <div class="modal-content  p-0 m-0" >
                         <div class="modal-header">
-                            Heading
+                            Update Headline
                             <button  data-dismiss="modal"  class="close" type="button"  >
                                 <span aria-hidden="true" >&times;</span>
                             </button>
@@ -64,20 +80,25 @@
                         <div class="modal-body p-0 m-0">
                             <div class="row">
                                 <div class="col-md-10 p-3 mx-auto">
-                                    <form action="">
+                                    <form action="" method="POST">
+                                        {% csrf_token %}
                                         <div class="form-group">
                                             <label for="">Headline</label>
-                                            <input type="text" class="form-control" placeholder=" Enter headline here " >
+                                            <input type="text" class="form-control" placeholder="" value="{{headline.headlineText}}" name="headlineText">
 
                                         </div>
                                         
                                         <div class="form-group">
-                                            <input type="checkbox" id="vehicle1" class="form-conrol mt-4" name="vehicle1" value="Bike">
-                                            <label for="vehicle1"> Active</label>
+                                            {% if headline.isActive %}
+                                                <input type="checkbox" id="updateActive" class="form-conrol " name="updateActive" checked>
+                                            {% else %}
+                                                <input type="checkbox" id="updateActive" class="form-conrol " name="updateActive">
+                                            {% endif %}                                         
+                                           <label for="vehicle1"> Active</label>
 
                                         </div>
 
-                                        <input type="submit" value="Add" class="form-control btn btn-success mb-5 ">
+                                        <input type="submit" value="Update" name="update" class="form-control btn btn-success mb-5 ">
                                         
                                     </form>
     
@@ -100,7 +121,7 @@
     <script>
          $(document).ready(function() {
             $('#myTable').DataTable( {
-                
+                search = false,
                 responsive: true
             } );
         
