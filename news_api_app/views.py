@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render, HttpResponseRedirect
-from news_api_app.models import State, Headline, Companines,Cities, MagazineCategory, Magazine, SundayMagazine, District
+from news_api_app.models import State, Headline, Companines,Cities, MagazineCategory, Magazine, SundayMagazine, District, CompaninesPdf
 from news_api_app.serializers import StateSerializer, HeadlineSerializer, CompaninesSerializer, CitiesSerializer, CompanyInfoSerializer, SearchCompanyInfoSerializer, MagazineCategorySerializer, MagazineSerializer, SundayMagazineSerializer
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from django.contrib.auth import login, logout, authenticate
 import os
 from django.conf import settings
+from django.http import JsonResponse
 
 # API END #
 class StateList(APIView):
@@ -35,7 +36,7 @@ class CitiesList(APIView):
         company_id = request.GET['company_id']
         company = get_object_or_404(Companines,companyId=company_id)
         data["status"] = True
-        data['companyInfo'] = CompanyInfoSerializer(Companines.objects.filter(companyId=company_id), context={"request": request}, many=True).data
+        data['companyInfo'] = CompanyInfoSerializer(CompaninesPdf.objects.filter(companyId=company), context={"request": request}, many=True).data
         data['cityList'] = CitiesSerializer(Cities.objects.filter(companyName=company).order_by("cityName"), context={"request": request}, many=True).data
         return Response(data=data, status=status.HTTP_200_OK)
 
@@ -47,7 +48,7 @@ class SearchCityNews(APIView):
         search_date = request.GET['search_date']
         company = get_object_or_404(Companines,companyId=company_id)
         data["status"] = True
-        data['companyInfo'] = SearchCompanyInfoSerializer(Companines.objects.filter(companyId=company_id,newsDate=search_date), context={"request": request}, many=True).data
+        data['companyInfo'] = SearchCompanyInfoSerializer(CompaninesPdf.objects.filter(companyId=company,newsDate=search_date), context={"request": request}, many=True).data
         data['cityList'] = CitiesSerializer(Cities.objects.filter(companyName=company,newsDate=search_date).order_by("cityName"), context={"request": request}, many=True).data
         return Response(data=data, status=status.HTTP_200_OK)
 
@@ -266,7 +267,6 @@ def company(request):
                     company = Companines(companyName=companyName)
                     company.companyUrl = companyUrl
                     company.stateId = state
-                    print(imageUrl)
                     company.imageUlr = imageUrl
                     company.isActive = True
                     company.save()
@@ -612,7 +612,7 @@ def sunday_magzine(request):
             if "addActive" in request.POST:    
                 if "fileName" in request.FILES:
                     fileName = request.FILES["fileName"]
-                    imageUrl = "MagazineImages/"+str(fileName).split(".")[0]+".png"
+                    imageUrl = "SundayMagazineImages/"+str(fileName).split(".")[0]+".png"
                     magazine = SundayMagazine(magazineName=name,fileName=fileName,imageUrl=imageUrl,newsDate=date,isActive=True)
                     magazine.save()
                     pdffile = settings.MEDIA_ROOT+"/"+str(magazine.fileName)
@@ -621,11 +621,11 @@ def sunday_magzine(request):
                     pix = page.getPixmap()
                     output = str(fileName).split(".")
                     output = output[0]+".png"
-                    pix.writePNG(settings.MEDIA_ROOT+"/MagazineImages/"+output)
+                    pix.writePNG(settings.MEDIA_ROOT+"/SundayMagazineImages/"+output)
             else:
                 if "fileName" in request.FILES:
                     fileName = request.FILES["fileName"]
-                    imageUrl = "MagazineImages/"+str(fileName).split(".")[0]+".png"
+                    imageUrl = "SundayMagazineImages/"+str(fileName).split(".")[0]+".png"
                     magazine = SundayMagazine(magazineName=name,fileName=fileName,imageUrl=imageUrl,newsDate=date,isActive=False)
                     magazine.save()
                     pdffile = settings.MEDIA_ROOT+"/"+str(magazine.fileName)
@@ -634,7 +634,7 @@ def sunday_magzine(request):
                     pix = page.getPixmap()
                     output = str(fileName).split(".")
                     output = output[0]+".png"
-                    pix.writePNG(settings.MEDIA_ROOT+"/MagazineImages/"+output)
+                    pix.writePNG(settings.MEDIA_ROOT+"/SundayMagazineImages/"+output)
             context["status"] = "{} added successfully!".format(name)
         
         if "update" in request.POST:
@@ -646,7 +646,7 @@ def sunday_magzine(request):
             if "updateActive" in request.POST:    
                 if "fileName" in request.FILES:
                     fileName = request.FILES["fileName"]
-                    imageUrl = "MagazineImages/"+str(fileName).split(".")[0]+".png"
+                    imageUrl = "SundayMagazineImages/"+str(fileName).split(".")[0]+".png"
                     magazine.magazineName=name
                     magazine.fileName=fileName
                     magazine.imageUrl=imageUrl
@@ -659,7 +659,7 @@ def sunday_magzine(request):
                     pix = page.getPixmap()
                     output = str(fileName).split(".")
                     output = output[0]+".png"
-                    pix.writePNG(settings.MEDIA_ROOT+"/MagazineImages/"+output)
+                    pix.writePNG(settings.MEDIA_ROOT+"/SundayMagazineImages/"+output)
                 else:
                     magazine.magazineName=name
                     magazine.newsDate=date
@@ -669,7 +669,7 @@ def sunday_magzine(request):
             else:
                 if "fileName" in request.FILES:
                     fileName = request.FILES["fileName"]
-                    imageUrl = "MagazineImages/"+str(fileName).split(".")[0]+".png"
+                    imageUrl = "SundayMagazineImages/"+str(fileName).split(".")[0]+".png"
                     magazine.magazineName=name
                     magazine.fileName=fileName
                     magazine.imageUrl=imageUrl
@@ -682,7 +682,7 @@ def sunday_magzine(request):
                     pix = page.getPixmap()
                     output = str(fileName).split(".")
                     output = output[0]+".png"
-                    pix.writePNG(settings.MEDIA_ROOT+"/MagazineImages/"+output)
+                    pix.writePNG(settings.MEDIA_ROOT+"/SundayMagazineImages/"+output)
                 else:
                     magazine.magazineName=name
                     magazine.newsDate=date
@@ -723,7 +723,7 @@ def publish_newspaper(request):
             if "updateActive" in request.POST:
                 if "file" in request.FILES:
                     fileName = request.FILES["file"]
-                    imageUrl = "MagazineImages/"+str(fileName).split(".")[0]+".png"
+                    imageUrl = "CityNewsImages/"+str(fileName).split(".")[0]+".png"
                     city.cityName = cityName
                     city.fileName = fileName
                     city.imageUrl = imageUrl
@@ -737,7 +737,7 @@ def publish_newspaper(request):
                     pix = page.getPixmap()
                     output = str(fileName).split(".")
                     output = output[0]+".png"
-                    pix.writePNG(settings.MEDIA_ROOT+"/MagazineImages/"+output)
+                    pix.writePNG(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
                 else:
                     city.cityName = cityName
                     city.newsDate = date
@@ -747,7 +747,7 @@ def publish_newspaper(request):
             else:
                 if "file" in request.FILES:
                     fileName = request.FILES["file"]
-                    imageUrl = "MagazineImages/"+str(fileName).split(".")[0]+".png"
+                    imageUrl = "CityNewsImages/"+str(fileName).split(".")[0]+".png"
                     city.cityName = cityName
                     city.fileName = fileName
                     city.imageUrl = imageUrl
@@ -761,7 +761,7 @@ def publish_newspaper(request):
                     pix = page.getPixmap()
                     output = str(fileName).split(".")
                     output = output[0]+".png"
-                    pix.writePNG(settings.MEDIA_ROOT+"/MagazineImages/"+output)
+                    pix.writePNG(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
                 else:
                     city.cityName = cityName
                     city.newsDate = date
@@ -775,6 +775,53 @@ def publish_newspaper(request):
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect("/")
-    
+
+
+from datetime import date
+
 def Add_pubshnews(request):
-    return render(request,"Add_Publishnewspaper.html")
+    context = {}
+    today = date.today()
+    today_date = today.strftime("%d-%m-%Y")
+    context["today_date"] = today_date
+
+    states = State.objects.filter(isActive=True).order_by("stateName")
+    context["states"] = states
+    return render(request,"Add_Publishnewspaper.html", context)
+
+def get_companies(request):
+    state_id = request.GET["state_id"]
+    state = get_object_or_404(State, stateId=state_id)
+    companines = Companines.objects.filter(stateId=state,isActive=True).order_by("companyName")
+    companyInfo = []
+    
+    for company in companines:
+        context = {}
+        context["companyId"] = company.companyId
+        context["companyName"] = company.companyName
+        companyInfo.append(context)
+    return JsonResponse({"companies":companyInfo})
+
+def get_cities(request):
+    company_id = request.GET["company_id"]
+    company = get_object_or_404(Companines, companyId=company_id)
+    district_list = [district.districtName for district in company.districtNames.all()]    
+    return JsonResponse({"district_list":district_list})
+
+def upload_main(request):
+    if "companyId" in request.GET:
+        main_file = request.GET["main_file"]
+        companyId = request.GET["companyId"]
+        date = request.GET["date"]
+        imageUlr = "MianNewsImages/"+str(main_file).split(".")[0]+".png"
+        company = get_object_or_404(Companines, companyId=companyId)
+        pdf = CompaninesPdf(companyId=company, companyName=company.companyName, pdfUlr=main_file, newsDate=date, imageUlr=imageUlr, isActive=True)
+        pdf.save()
+        pdffile = settings.MEDIA_ROOT+"/"+str(pdf.pdfUlr)
+        doc = fitz.open(pdffile)
+        page = doc.loadPage(0) #number of page
+        pix = page.getPixmap()
+        output = str(main_file).split(".")
+        output = output[0]+".png"
+        pix.writePNG(settings.MEDIA_ROOT+"/MianNewsImages/"+output)
+    return JsonResponse({"status":"hello"})

@@ -35,8 +35,10 @@ urlpatterns = [
     path('sunday-magazine/', views.sunday_magzine,name="sunday_magzine"),
     path('city/', views.publish_newspaper,name="publish_newspaper"),
     path('user-logout/',views.user_logout, name="user_logout"),
-    path('city/add/',views.Add_pubshnews,name='city/add')
-
+    path('city/add/',views.Add_pubshnews,name='city/add'),
+    path('get-companies', views.get_companies, name="get_companies"),
+    path('get-cities', views.get_cities, name="get_cities"),
+    path('upload-main', views.upload_main, name="upload_main"),
 ]
 
 if settings.DEBUG:

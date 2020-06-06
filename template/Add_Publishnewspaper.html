@@ -3,15 +3,14 @@
 
 {% block admin_base %}
 <div class="container-fluid">
-    <div class="col-md-10 mx-auto card mt-3 p-5 shadow shadow-sm">
+    <div class="col-md-10 mx-auto card mt-3 p-5 shadow shadow-sm ">
         <h3>Publish newspaper</h3>
         <br>
-        <form action="">
             <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
                         <label for="">Date/Time</label>
-                        <input type="date" class="form-control">
+                        <input type="text" id="date" value="{{today_date}}" pattern="\d{1,2}-\d{1,2}-\d{4}" placeholder="dd-mm-yyyy" class="datepicker form-control" name="date" value="{{city.newsDate}}" />
         
                     </div>
     
@@ -19,10 +18,12 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label for="">State</label>
-                        <select name="" id="" class="ui js-example-templating  form-control " style="width: 100%;">
-                            <option value="">Kanada</option>
-                            <option value="">English</option>
-                        </select>
+                        <select class="ui js-example-templating " style="width: 100%;" id="stateId" name="stateId" onchange="get_companies();">
+                                <option value="">-- Select State --</option>
+                            {% for state in states %}
+                                <option value="{{state.stateId}}">{{state.stateName}}</option>
+                            {% endfor %}  
+                          </select>
         
                     </div>
     
@@ -30,9 +31,8 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label for="">Publication House</label>
-                        <select name="" id="" class="ui js-example-templating form-control " style="width: 100%;">
-                            <option value="">Kanada</option>
-                            <option value="">English</option>
+                        <select name="companyId" id="companyId" class="ui js-example-templating form-control " style="width: 100%;" onchange="get_cities();">
+                            <option value="">-- Select Company --</option>
                         </select>
         
                     </div>
@@ -57,9 +57,9 @@
                 
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="" >Image</label>
+                        <label for="" >File</label>
                         <div class="custom-file">
-                            <input type="file" class="custom-file-input">
+                            <input type="file" class="custom-file-input" name="main_file" id="main_file" onchange="upload_main();">
                             <label class="custom-file-label" for="customFile">Choose file</label>
                         </div>
         
@@ -70,7 +70,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="" >Multiple Image</label>
+                        <label for="" >Multiple File</label>
                         <div class="custom-file">
                             <input type="file" class="custom-file-input" multiple data-show-upload="true" data-show-caption="true">
                             <label class="custom-file-label" for="customFile" >Choose file</label>
@@ -85,39 +85,17 @@
             </div>
             <h5 class="mt-3">UPLOAD FOR CITY</h5>
                 <br>
-            <div class="row">
-                <div class="col-md-3 card p-3 mx-auto">
-                    <h5 style="color: rgb(121, 41, 158);" class="text-center">Bengluru</h5>
-                    <div class="form-group">
-                        <input type="file" id="myfile" name="myfile" class="form-control mt-3"><br>
-                    </div>
-
-                </div>
-                <div class="col-md-3  card p-3 mx-auto">
-                    <h5 style="color: rgb(121, 41, 158);" class="text-center">Bengluru</h5>
-                    <div class="form-group">
-                        <input type="file" id="myfile" name="myfile" class="form-control mt-3"><br>
-        
-        
-                    </div>
-
-                </div>
-                <div class="col-md-3  card p-3 mx-auto">
-                    <h5 style="color: rgb(121, 41, 158);" class="text-center">Bengluru</h5>
-                    <div class="form-group">
-                        <input type="file" id="myfile" name="myfile" class="form-control mt-3"><br>
-       
-                    </div>
-                    <h6 class="text-success"><i class="fas fa-check"></i> UPLOADED - 03 Jun 2020</h6>
-
-                </div>
+            
+            <div class="row" id="district_row">
+                
+                
                 
 
             </div>
 
             <!-- <input type="submit" value="Add" class="form-control btn btn-success mb-5 mt-3"> -->
             
-        </form>
+        
 
         
 
@@ -148,5 +126,91 @@
         theme: "bootstrap4",
         
         });
+</script>
+
+<script>
+    $(document).ready(function () {
+    $('.datepicker').datepicker({
+      uiLibrary: 'bootstrap4',
+      format: 'dd-mm-yyyy'
+    });
+});
+</script>
+
+<script>
+    function get_companies(){
+        state_id = $("#stateId").val();
+        $.ajax({
+            url:"{% url 'get_companies' %}",
+            type:"get",
+            data:{state_id:state_id},
+            success:function(data){
+                let r = '<option value="">--Select Company--</option>'
+                for(i=0; i<data["companies"].length; i++){
+                    
+                    r += '<option value="'+data["companies"][i]["companyId"]+'">'+data["companies"][i]["companyName"]+'</option>'
+                    
+                }
+                $("#companyId").html(r);
+            }
+        })
+    }
+</script>
+
+<script>
+    function get_cities(){
+        company_id = $("#companyId").val();
+        $.ajax({
+            url:"{% url 'get_cities' %}",
+            type:"get",
+            data:{company_id:company_id},
+            success:function(data){
+                let r = ""
+                for(i=0; i<data["district_list"].length; i++){
+                    r += '<div class="col-md-4 card p-3">'
+                    r += '<h5 style="color: rgb(121, 41, 158);" class="text-center">'+data["district_list"][i]+'</h5>'
+                    r += '<input type="text" hidden value='+data["district_list"][i]+' name="districtName">'
+                    r += '<div class="form-group">'
+                    r += '<input type="file" id="myfile" name="myfile" class="mt-3"><br>'
+                    r += '</div></div>'
+                    // <h6 class="text-success"><i class="fas fa-check"></i> UPLOADED - 03 Jun 2020</h6>
+                    
+                 }
+                $("#district_row").html(r);
+            }
+        })
+    }
+</script>
+
+<script>
+    function upload_main(){
+        main_file = $("#main_file").prop('files');
+        companyId = $("#companyId").val();
+        date = $("#date").val();
+        $.ajax({
+            url:"{% url 'upload_main' %}",
+            type:"get",
+            data:{  main_file:main_file,
+                    companyId:companyId,
+                    date:date},
+            success:function(data){
+                alert(data["status"])
+                // let r = ""
+                // for(i=0; i<data["district_list"].length; i++){
+                //     r += '<div class="col-md-4 card p-3">'
+                //     r += '<h5 style="color: rgb(121, 41, 158);" class="text-center">'+data["district_list"][i]+'</h5>'
+                //     r += '<input type="text" hidden value='+data["district_list"][i]+' name="districtName">'
+                //     r += '<div class="form-group">'
+                //     r += '<input type="file" id="myfile" name="myfile" class="mt-3"><br>'
+                //     r += '</div></div>'
+                //     // <h6 class="text-success"><i class="fas fa-check"></i> UPLOADED - 03 Jun 2020</h6>
+                    
+                //  }
+                // $("#district_row").html(r);
+            }
+        })
+    }
+
+   
 </script>
 {%endblock%}

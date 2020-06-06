@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import State,Headline,Companines, Cities, MagazineCategory, Magazine, SundayMagazine
+from .models import State,Headline,Companines, Cities, MagazineCategory, Magazine, SundayMagazine, CompaninesPdf
 
 class HeadlineSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,7 +18,7 @@ class CompaninesSerializer(serializers.ModelSerializer):
 
 class CompanyInfoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Companines
+        model = CompaninesPdf
         fields = ['companyId','companyName','pdfUlr','imageUlr']
 
 class CitiesSerializer(serializers.ModelSerializer):

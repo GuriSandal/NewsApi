@@ -47,15 +47,28 @@ class Companines(models.Model):
     districtNames = models.ManyToManyField(District) 
     companyName = models.CharField(max_length=50)
     companyUrl = models.CharField(max_length=250,null=True,blank=True)
-    pdfUlr = models.FileField(upload_to='CompanyPDFs/%Y/%m/%d',null=True,blank=True)
     imageUlr = models.ImageField(upload_to = "CompaniesImages/%Y/%m/%d", null=True, blank=True)
-    newsDate = models.CharField(max_length=20,validators =[date_validate],null=True, blank=True)
     isActive = models.BooleanField(default=False)
     addedOn = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.companyName
     class Meta:
         verbose_name_plural = "Companies"
+
+class CompaninesPdf(models.Model):
+    companyId = models.ForeignKey(Companines,on_delete=models.CASCADE,blank=True, null=True)
+    companyPdfId = models.AutoField(primary_key=True, editable=False)
+    companyName = models.CharField(max_length=50)
+    pdfUlr = models.FileField(upload_to='CompanyPDFs/%Y/%m/%d',null=True,blank=True)
+    imageUlr = models.CharField(max_length=500, null=True)
+    newsDate = models.CharField(max_length=20,validators =[date_validate],null=True, blank=True)
+    isActive = models.BooleanField(default=False)
+    addedOn = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.companyName
+    class Meta:
+        verbose_name_plural = "CompaninesPdfs"
+
 
 class Cities(models.Model):
     cityId = models.AutoField(primary_key=True, editable=False)
