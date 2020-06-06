@@ -1,12 +1,18 @@
 {% extends 'admin_base.html' %}
 {%load static%}
 
+{% block title %}NEWS - Publication Newspapers{% endblock %}
+
+
 {% block admin_base %}
-<div class="col-md-10 mx-auto mt-5 shadow shadow-lg py-3">
-    <span> <a href="" class="text-dark">Home/</a> </span><span><a class="text-dark" href="">Publish newsapaper/</a></span><span> <a class="text-dark" href="">List</a></span>
+<div class="col-md-10 mx-auto mt-5 shadow-sm border rounded-lg py-2">
+    <span><i class="fa fa-home"></i> <a href="{% url 'state' %}" class="text-dark">Home</a> / </span><span><a class="text-dark" href="{% url 'publish_newspaper' %}">Publication Newspapers</a></span> / <span class="text-muted">List</span>    
 
 </div>
-<div class="col-md-10 card mx-auto mt-5 shadow shadow-lg">
+<div class="col-md-10 mx-auto mt-5 rounded-lg border shadow-sm">
+    {% if status %}
+        <div class="alert alert-success text-center mt-3">{{status}}</div>
+    {% endif %}
     <div class="row">
         <div class="col-md-12">
             <h6><a href="{%url 'city/add' %}" class="btn btn-primary mt-3" >Add new</a></h6>
@@ -19,27 +25,34 @@
    <div class="row mb-5">
        <div class="col-md-3">
            <label for="">State</label>
-           <select name="" id=""  class="ui js-example-templating form-control " style="width: 100%;">
-               <option value="">Kanada</option>
-               <option value="">English</option>
-           </select>
+           <select class="ui js-example-templating " style="width: 100%;" name="stateId">
+                <option value="">-- Select State --</option>
+            {% for state in states %}
+                <option value="{{state.stateId}}">{{state.stateName}}</option>
+            {% endfor %}
+           
+          </select>
 
        </div>
        <div class="col-md-3">
-        <label for="">District</label>
-        <select name="" id=""  class="ui js-example-templating form-control " style="width: 100%;">
-            <option value="">Kanada</option>
-            <option value="">English</option>
-        </select>
+        <label for="">Publication House</label>
+        <select class="ui js-example-templating " style="width: 100%;" name="companyId">
+            <option value="">-- Select Company --</option>
+            {% for company in companies %}
+                <option value="{{company.companyId}}">{{company.companyName}}</option>
+            {% endfor %}
+          </select>
        </div>
        <div class="col-md-2">
            <label for="">News Date</label>
-        <input type="date" id="filter" class="form-control">
+           <input type="text" id="filter" pattern="\d{1,2}-\d{1,2}-\d{4}" placeholder="dd-mm-yyyy" class="datepicker form-control" name="date" value="{{city.newsDate}}" />
 
     </div>
     <div class="col-md-1">
-        <label for="">.</label>
-        <i id="fi" class="fa fa-search btn card form-control"></i>
+        <br>
+        <div class="form-group">
+            <button id="fi" class="fa fa-search btn btn-outline-dark mt-2 p-2"></button>
+        </div>
 
     </div>
     <div class="col-md-2 ml-auto">
@@ -65,25 +78,35 @@
                         <tr><th>#</th>
                             <th>Name</th>
                             <th data-field="id" >Download</th>
-                            <th  >Publication House</th>
+                            <th>Publication House</th>
                             <th >Date/Time</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
                         </thead>
                         <tbody class="searchable">
-                        <tr><td>1</td>
-                            <td>Kanada</td>
-                            <td><img height="50" width="50" src="https://images.unsplash.com/photo-1588774069410-84ae30757c8e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=375&q=80" alt=""></td>
-                            <td>beguluru House</td>
-                            <td>2020-05-12</td>
-
-                            <td><span class="bg-success text-white px-3 rounded py-1">Active</span></td>
-                            <td><h4><a href="" data-toggle="modal" data-target="#exampleModal1"><i class="fa fa-edit" ></i></a></h4></td>
-                            
-    
-                        </tr>
-                       
+                        
+                        {% for city in cities %}
+                            <tr>
+                                <td class="align-middle">{{forloop.counter}}</td>
+                                <td class="align-middle">{{city.cityName}}</td>
+                                <td class="align-middle">
+                                    <a href="/media/{{city.fileName}}" download>
+                                        <img src="/media/{{city.imageUrl}}" height="70" width="60" alt="">
+                                    </a>
+                                </td>
+                                <td class="align-middle">{{city.companyName.companyName}} ({{city.companyName.stateId.stateName}})</td>
+                                <td class="align-middle">{{city.newsDate}}</td>
+                                <td class="align-middle">
+                                    {% if city.isActive %}
+                                        <span class="bg-success text-white px-3 rounded py-1">ACTIVE</span>
+                                    {% else %}
+                                        <span class="bg-secondary text-white px-3 rounded py-1">IN ACTIVE</span>
+                                    {% endif %}
+                                </td>
+                                <td class="align-middle"><h4><a href="" data-toggle="modal" data-target="#update{{city.cityId}}"><i class="fa fa-edit" ></i></a></h4></td>
+                            </tr>
+                        {% endfor %}
                         </tbody>
                         </table>
                     </div>
@@ -95,12 +118,13 @@
     </div> 
     <!-- table end  -->
         <!-- modal for edit new -->
+        {% for city in cities %}
         <div class="col-md-12 mt-5">
-            <div class="modal fade" id="exampleModal1"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="update{{city.cityId}}"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog " role="document">
                     <div class="modal-content  p-0 m-0" >
                         <div class="modal-header">
-                            Publish Newsapaper
+                            {{city.cityName}}
                             <button  data-dismiss="modal"  class="close" type="button"  >
                                 <span aria-hidden="true" >&times;</span>
                             </button>
@@ -109,16 +133,18 @@
                         <div class="modal-body p-0 m-0">
                             <div class="row">
                                 <div class="col-md-10 p-3 mx-auto">
-                                    <form action="">
+                                    <form action="" method="POST" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <input type="text" hidden value="{{city.cityId}}" name="id">
                                         <div class="form-group">
                                             <label for="">Name</label>
-                                            <input type="text" class="form-control" placeholder=" Enter Name here " >
+                                            <input type="text" class="form-control" placeholder="" value="{{city.cityName}}" name="cityName">
 
                                         </div>
                                         <div class="form-group">
-                                            <label for="" >Image</label>
+                                            <label for="" >File</label>
                                             <div class="custom-file">
-                                                <input type="file" class="custom-file-input">
+                                                <input type="file" class="custom-file-input" name="file" value="">
                                                 <label class="custom-file-label" for="customFile">Choose file</label>
                                             </div>
 
@@ -126,32 +152,45 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="">State</label>
-                                            <select name="" id="" class="ui js-example-templating form-control " style="width: 100%;">
-                                                <option value="">Kanada</option>
-                                                <option value="">English</option>
-                                            </select>
+                                            <select class="ui js-example-templating " style="width: 100%;" name="stateId">
+                                                <option value="{{city.companyName.stateId.stateId}}" selected>{{city.companyName.stateId.stateName}}</option>
+                                                {% for state in states %}
+                                                    {% if state.stateId == city.companyName.stateId.stateId %}
+                                                    {% else %}
+                                                        <option value="{{state.stateId}}">{{state.stateName}}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                               
+                                              </select>
 
                                         </div>
                                         <div class="form-group">
                                             <label for="">Publication House</label>
-                                            <select name="" id=""  class="ui js-example-templating form-control  " style="width: 100%;">
-                                                <option value="">Kanada</option>
-                                                <option value="">English</option>
-                                            </select>
+                                            <select class="ui js-example-templating " style="width: 100%;" name="companyId">
+                                                <option value="{{city.companyName.companyId}}" selected>{{city.companyName.companyName}}</option>
+                                                {% for company in companies %}
+                                                    {% if company.companyId == city.companyName.companyId %}
+                                                    {% else %}
+                                                        <option value="{{company.companyId}}">{{company.companyName}}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                               
+                                              </select>
 
                                         </div>
                                         <div class="form-group">
-                                            <label for="">Date/Time</label>
-                                            <input type="date" class="form-control">
-
+                                            <label for="">News Date</label>
                                         </div>
                                         <div class="form-group">
-                                            <input type="checkbox" id="vehicle1" class="form-conrol " name="vehicle1" value="Bike">
-                                            <label for="vehicle1"> Active</label>
-
+                                            {% if city.isActive %}
+                                                <input type="checkbox" id="updateActive" class="form-conrol " name="updateActive" checked>
+                                            {% else %}
+                                                <input type="checkbox" id="updateActive" class="form-conrol " name="updateActive">
+                                            {% endif %}                                
+                                            <label for="updateActive"> Active</label><br>
                                         </div>
                             
-                                        <input type="submit" value="Add" class="form-control btn btn-success mb-5 mt-3">
+                                        <input type="submit" value="Add" name="update" class="form-control btn btn-success mb-5 mt-3">
                                     </form>
     
                                 </div>
@@ -165,6 +204,7 @@
               </div>
     
         </div>
+        {% endfor %}
         <!-- modal end  -->
     
         
@@ -225,4 +265,12 @@ $('.searchable tr').filter(function () {
         });
 </script>
         
+<script>
+    $(document).ready(function () {
+    $('.datepicker').datepicker({
+      uiLibrary: 'bootstrap4',
+      format: 'dd-mm-yyyy'
+    });
+});
+</script>
 {%endblock%}

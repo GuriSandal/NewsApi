@@ -396,6 +396,7 @@ def headline(request):
 
     return render(request,'headline.html', context)
 
+import fitz
 def magzine(request):
     context = {}
     magazines = Magazine.objects.order_by("magazineName")
@@ -409,24 +410,42 @@ def magzine(request):
         if "add" in request.POST:
             name = request.POST["magazineName"]
             date = request.POST["date"]
-            categorieIds_list = request.POST.getlist('categorieIds')
+            categorieIds_list = request.POST.getlist('catagoryIds')
             
-            categorie_list = [get_object_or_404(MagazineCategory, categorieId=i) for i in categorieIds_list]
+            categorie_list = [get_object_or_404(MagazineCategory, categoryId=i) for i in categorieIds_list]
             
             if "addActive" in request.POST:
-                if "fileName" in request.FILES and "imageUrl" in request.FILES:
+                if "fileName" in request.FILES:
                     fileName = request.FILES["fileName"]
-                    imageUrl = request.FILES["imageUrl"]
-                    magazine = Magazine(magazineName=name,fileName=fileName,imageUrl=imageUrl,newsDate=date,isActive=True)
+                    image = "MagazineImages/"+str(fileName).split(".")[0]+".png"
+                    magazine = Magazine(magazineName=name,fileName=fileName,imageUrl=image,newsDate=date,isActive=True)
                     magazine.save()
+                    
+                    pdffile = settings.MEDIA_ROOT+"/"+str(magazine.fileName)
+                    doc = fitz.open(pdffile)
+                    page = doc.loadPage(0) #number of page
+                    pix = page.getPixmap()
+                    output = str(fileName).split(".")
+                    output = output[0]+".png"
+                    pix.writePNG(settings.MEDIA_ROOT+"/MagazineImages/"+output)
+                    
                     for i in categorie_list:
                         magazine.categoryName.add(i)
             else:
-                if "fileName" in request.FILES and "imageUrl" in request.FILES:
+                if "fileName" in request.FILES:
                     fileName = request.FILES["fileName"]
-                    imageUrl = request.FILES["imageUrl"]
-                    magazine = Magazine(magazineName=name,fileName=fileName,imageUrl=imageUrl,newsDate=date,isActive=False)
+                    image = "MagazineImages/"+str(fileName).split(".")[0]+".png"
+                    magazine = Magazine(magazineName=name,fileName=fileName,imageUrl=image,newsDate=date,isActive=False)
                     magazine.save()
+                    
+                    pdffile = settings.MEDIA_ROOT+"/"+str(magazine.fileName)
+                    doc = fitz.open(pdffile)
+                    page = doc.loadPage(0) #number of page
+                    pix = page.getPixmap()
+                    output = str(fileName).split(".")
+                    output = output[0]+".png"
+                    pix.writePNG(settings.MEDIA_ROOT+"/MagazineImages/"+output)
+
                     for i in categorie_list:
                         magazine.categoryName.add(i)
 
@@ -438,21 +457,30 @@ def magzine(request):
           
             Id = request.POST['id']
 
-            categorieIds_list = request.POST.getlist('categorieIds')
+            categorieIds_list = request.POST.getlist('catagoryIds')
             
-            categorie_list = [get_object_or_404(MagazineCategory, categorieId=i) for i in categorieIds_list]
+            categorie_list = [get_object_or_404(MagazineCategory, categoryId=i) for i in categorieIds_list]
 
             magazine = Magazine.objects.get(magazineId=Id)
             if "updateActive" in request.POST:    
-                if "fileName" in request.FILES and "imageUrl" in request.FILES:
+                if "fileName" in request.FILES:
                     fileName = request.FILES["fileName"]
-                    imageUrl = request.FILES["imageUrl"]
+                    image = "MagazineImages/"+str(fileName).split(".")[0]+".png"
                     magazine.magazineName=name
                     magazine.fileName=fileName
-                    magazine.imageUrl=imageUrl
+                    magazine.imageUrl=image
                     magazine.newsDate=date
                     magazine.isActive=True
                     magazine.save()
+
+                    pdffile = settings.MEDIA_ROOT+"/"+str(magazine.fileName)
+                    doc = fitz.open(pdffile)
+                    page = doc.loadPage(0) #number of page
+                    pix = page.getPixmap()
+                    output = str(fileName).split(".")
+                    output = output[0]+".png"
+                    pix.writePNG(settings.MEDIA_ROOT+"/MagazineImages/"+output)
+
                     for i in categorie_list:
                         magazine.categoryName.add(i)
                 else:
@@ -464,15 +492,23 @@ def magzine(request):
                         magazine.categoryName.add(i)
 
             else:
-                if "fileName" in request.FILES and "imageUrl" in request.FILES:
+                if "fileName" in request.FILES:
                     fileName = request.FILES["fileName"]
-                    imageUrl = request.FILES["imageUrl"]
+                    image = "MagazineImages/"+str(fileName).split(".")[0]+".png"
                     magazine.magazineName=name
                     magazine.fileName=fileName
-                    magazine.imageUrl=imageUrl
+                    magazine.imageUrl=image
                     magazine.newsDate=date
                     magazine.isActive=False
                     magazine.save()
+
+                    pdffile = settings.MEDIA_ROOT+"/"+str(magazine.fileName)
+                    doc = fitz.open(pdffile)
+                    page = doc.loadPage(0) #number of page
+                    pix = page.getPixmap()
+                    output = str(fileName).split(".")
+                    output = output[0]+".png"
+                    pix.writePNG(settings.MEDIA_ROOT+"/MagazineImages/"+output)
                     for i in categorie_list:
                         magazine.categoryName.add(i)
                 else:
@@ -572,39 +608,58 @@ def sunday_magzine(request):
         if "add" in request.POST:
             name = request.POST["magazineName"]
             date = request.POST["date"]
-            # date = date.split("-")
-            # date = date[2]+"-"+date[1]+"-"+date[0]
+          
             if "addActive" in request.POST:    
-                if "fileName" in request.FILES and "imageUrl" in request.FILES:
+                if "fileName" in request.FILES:
                     fileName = request.FILES["fileName"]
-                    imageUrl = request.FILES["imageUrl"]
+                    imageUrl = "MagazineImages/"+str(fileName).split(".")[0]+".png"
                     magazine = SundayMagazine(magazineName=name,fileName=fileName,imageUrl=imageUrl,newsDate=date,isActive=True)
                     magazine.save()
+                    pdffile = settings.MEDIA_ROOT+"/"+str(magazine.fileName)
+                    doc = fitz.open(pdffile)
+                    page = doc.loadPage(0) #number of page
+                    pix = page.getPixmap()
+                    output = str(fileName).split(".")
+                    output = output[0]+".png"
+                    pix.writePNG(settings.MEDIA_ROOT+"/MagazineImages/"+output)
             else:
-                if "fileName" in request.FILES and "imageUrl" in request.FILES:
+                if "fileName" in request.FILES:
                     fileName = request.FILES["fileName"]
-                    imageUrl = request.FILES["imageUrl"]
+                    imageUrl = "MagazineImages/"+str(fileName).split(".")[0]+".png"
                     magazine = SundayMagazine(magazineName=name,fileName=fileName,imageUrl=imageUrl,newsDate=date,isActive=False)
                     magazine.save()
+                    pdffile = settings.MEDIA_ROOT+"/"+str(magazine.fileName)
+                    doc = fitz.open(pdffile)
+                    page = doc.loadPage(0) #number of page
+                    pix = page.getPixmap()
+                    output = str(fileName).split(".")
+                    output = output[0]+".png"
+                    pix.writePNG(settings.MEDIA_ROOT+"/MagazineImages/"+output)
             context["status"] = "{} added successfully!".format(name)
         
         if "update" in request.POST:
             name = request.POST["magazineName"]
             date = request.POST["date"]
-            # date = date.split("-")
-            # date = date[2]+"-"+date[1]+"-"+date[0]
+          
             Id = request.POST['id']
             magazine = SundayMagazine.objects.get(magazineId=Id)
             if "updateActive" in request.POST:    
-                if "fileName" in request.FILES and "imageUrl" in request.FILES:
+                if "fileName" in request.FILES:
                     fileName = request.FILES["fileName"]
-                    imageUrl = request.FILES["imageUrl"]
+                    imageUrl = "MagazineImages/"+str(fileName).split(".")[0]+".png"
                     magazine.magazineName=name
                     magazine.fileName=fileName
                     magazine.imageUrl=imageUrl
                     magazine.newsDate=date
                     magazine.isActive=True
                     magazine.save()
+                    pdffile = settings.MEDIA_ROOT+"/"+str(magazine.fileName)
+                    doc = fitz.open(pdffile)
+                    page = doc.loadPage(0) #number of page
+                    pix = page.getPixmap()
+                    output = str(fileName).split(".")
+                    output = output[0]+".png"
+                    pix.writePNG(settings.MEDIA_ROOT+"/MagazineImages/"+output)
                 else:
                     magazine.magazineName=name
                     magazine.newsDate=date
@@ -612,15 +667,22 @@ def sunday_magzine(request):
                     magazine.save()
 
             else:
-                if "fileName" in request.FILES and "imageUrl" in request.FILES:
+                if "fileName" in request.FILES:
                     fileName = request.FILES["fileName"]
-                    imageUrl = request.FILES["imageUrl"]
+                    imageUrl = "MagazineImages/"+str(fileName).split(".")[0]+".png"
                     magazine.magazineName=name
                     magazine.fileName=fileName
                     magazine.imageUrl=imageUrl
                     magazine.newsDate=date
                     magazine.isActive=False
                     magazine.save()
+                    pdffile = settings.MEDIA_ROOT+"/"+str(magazine.fileName)
+                    doc = fitz.open(pdffile)
+                    page = doc.loadPage(0) #number of page
+                    pix = page.getPixmap()
+                    output = str(fileName).split(".")
+                    output = output[0]+".png"
+                    pix.writePNG(settings.MEDIA_ROOT+"/MagazineImages/"+output)
                 else:
                     magazine.magazineName=name
                     magazine.newsDate=date
@@ -637,7 +699,78 @@ def sunday_magzine(request):
     return render(request,"sunday_magzine.html", context)
 
 def publish_newspaper(request):
-    return render(request,"publish_newspaper.html")
+    context = {}
+    cities = Cities.objects.all()
+    context["cities"] = cities
+
+    states = State.objects.filter(isActive=True).order_by("stateName")
+    context["states"] = states
+
+    companies = Companines.objects.filter(isActive=True).order_by("companyName")
+    context["companies"] = companies
+
+    if request.method == "POST":
+        if "update" in request.POST:
+            cityName = request.POST["cityName"]
+            date = request.POST["date"]
+
+            companyId = request.POST["companyId"]
+            company = get_object_or_404(Companines, companyId=companyId)
+            
+            cityId = request.POST["id"]
+            city = get_object_or_404(Cities, cityId=cityId)
+            
+            if "updateActive" in request.POST:
+                if "file" in request.FILES:
+                    fileName = request.FILES["file"]
+                    imageUrl = "MagazineImages/"+str(fileName).split(".")[0]+".png"
+                    city.cityName = cityName
+                    city.fileName = fileName
+                    city.imageUrl = imageUrl
+                    city.newsDate = date
+                    city.companyName = company
+                    city.isActive = True
+                    city.save()
+                    pdffile = settings.MEDIA_ROOT+"/"+str(city.fileName)
+                    doc = fitz.open(pdffile)
+                    page = doc.loadPage(0) #number of page
+                    pix = page.getPixmap()
+                    output = str(fileName).split(".")
+                    output = output[0]+".png"
+                    pix.writePNG(settings.MEDIA_ROOT+"/MagazineImages/"+output)
+                else:
+                    city.cityName = cityName
+                    city.newsDate = date
+                    city.companyName = company
+                    city.isActive = True
+                    city.save()
+            else:
+                if "file" in request.FILES:
+                    fileName = request.FILES["file"]
+                    imageUrl = "MagazineImages/"+str(fileName).split(".")[0]+".png"
+                    city.cityName = cityName
+                    city.fileName = fileName
+                    city.imageUrl = imageUrl
+                    city.newsDate = date
+                    city.companyName = company
+                    city.isActive = False
+                    city.save()
+                    pdffile = settings.MEDIA_ROOT+"/"+str(city.fileName)
+                    doc = fitz.open(pdffile)
+                    page = doc.loadPage(0) #number of page
+                    pix = page.getPixmap()
+                    output = str(fileName).split(".")
+                    output = output[0]+".png"
+                    pix.writePNG(settings.MEDIA_ROOT+"/MagazineImages/"+output)
+                else:
+                    city.cityName = cityName
+                    city.newsDate = date
+                    city.companyName = company
+                    city.isActive = False
+                    city.save()
+            context["status"] = "{} Update successfully!".format(city.cityName)   
+
+    return render(request,"publish_newspaper.html", context)
 
 def user_logout(request):
     logout(request)
