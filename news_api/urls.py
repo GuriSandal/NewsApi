@@ -39,6 +39,7 @@ urlpatterns = [
     path('get-companies', views.get_companies, name="get_companies"),
     path('get-cities', views.get_cities, name="get_cities"),
     path('upload-main', views.upload_main, name="upload_main"),
+    path('city-upload', views.city_upload, name="city_upload"),
 ]
 
 if settings.DEBUG:

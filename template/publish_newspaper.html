@@ -36,11 +36,9 @@
        </div>
        <div class="col-md-3">
         <label for="">Publication House</label>
-        <select class="ui js-example-templating " style="width: 100%;" id="companyId" onchange="get_cities();" name="companyId">
-            <option value="">-- Select Company --</option>
-            {% for company in companies %}
-                <option value="{{company.companyId}}">{{company.companyName}}</option>
-            {% endfor %}
+        <select class="ui js-example-templating " style="width: 100%;" id="companyId" onchange="" name="companyId">
+            <option value="">--Select Company--</option>
+            
           </select>
        </div>
        <div class="col-md-2">

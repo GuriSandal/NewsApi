@@ -9,6 +9,8 @@ from django.contrib.auth import login, logout, authenticate
 import os
 from django.conf import settings
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
 
 # API END #
 class StateList(APIView):
@@ -808,20 +810,52 @@ def get_cities(request):
     district_list = [district.districtName for district in company.districtNames.all()]    
     return JsonResponse({"district_list":district_list})
 
+@csrf_exempt
 def upload_main(request):
-    if "companyId" in request.GET:
-        main_file = request.GET["main_file"]
-        companyId = request.GET["companyId"]
-        date = request.GET["date"]
-        imageUlr = "MianNewsImages/"+str(main_file).split(".")[0]+".png"
-        company = get_object_or_404(Companines, companyId=companyId)
-        pdf = CompaninesPdf(companyId=company, companyName=company.companyName, pdfUlr=main_file, newsDate=date, imageUlr=imageUlr, isActive=True)
-        pdf.save()
-        pdffile = settings.MEDIA_ROOT+"/"+str(pdf.pdfUlr)
-        doc = fitz.open(pdffile)
-        page = doc.loadPage(0) #number of page
-        pix = page.getPixmap()
-        output = str(main_file).split(".")
-        output = output[0]+".png"
-        pix.writePNG(settings.MEDIA_ROOT+"/MianNewsImages/"+output)
-    return JsonResponse({"status":"hello"})
+    if request.method == "POST":
+        if len(request.POST["companyId"]) > 0:
+            if "main_file" in request.FILES:
+                main_file = request.FILES["main_file"]
+                companyId = request.POST["companyId"]
+                date = request.POST["date"]
+                imageUlr = "MianNewsImages/"+str(main_file).split(".")[0]+".png"
+                company = get_object_or_404(Companines, companyId=companyId)
+                pdf = CompaninesPdf(companyId=company, companyName=company.companyName, pdfUlr=main_file, newsDate=date, imageUlr=imageUlr, isActive=True)
+                pdf.save()
+                pdffile = settings.MEDIA_ROOT+"/"+str(pdf.pdfUlr)
+                doc = fitz.open(pdffile)
+                page = doc.loadPage(0) #number of page
+                pix = page.getPixmap()
+                output = str(main_file).split(".")
+                output = output[0]+".png"
+                pix.writePNG(settings.MEDIA_ROOT+"/MianNewsImages/"+output)
+                
+            else:
+                return JsonResponse({"status":"error","msg":"Uploading Error"})
+        else:
+            return JsonResponse({"status":"error","msg":"Select Company First"})
+    
+    return JsonResponse({"status":"success"})
+
+@csrf_exempt
+def city_upload(request):
+    if request.method == "POST":
+        if "city_file" in request.FILES:
+            city_file = request.FILES["city_file"]
+            cityName = request.POST["cityName"]
+            date = request.POST["date"]
+            companyId = request.POST["companyId"]
+            imageUrl = "CityNewsImages/"+str(city_file).split(".")[0]+".png"
+            company = get_object_or_404(Companines, companyId=companyId)
+            pdf = Cities(companyName=company, cityName=cityName, fileName=city_file, newsDate=date, imageUrl=imageUrl, isActive=True)
+            pdf.save()
+            pdffile = settings.MEDIA_ROOT+"/"+str(pdf.fileName)
+            doc = fitz.open(pdffile)
+            page = doc.loadPage(0) #number of page
+            pix = page.getPixmap()
+            output = str(city_file).split(".")
+            output = output[0]+".png"
+            pix.writePNG(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
+        else:
+            return JsonResponse({"status":"error","msg":"Uploading Error"})   
+    return JsonResponse({"status":"success"})       
