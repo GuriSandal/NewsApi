@@ -212,22 +212,46 @@
         </script>
         <!-- for search by date  -->
 
-<script>
+<!-- <script>
 $(document).ready(function () {
 (function ($) {
 $('#fi').click(function () {
 var a = $('#filter').val();
+var b = $('#stateId option:selected ').text();
+var c = $('#companyId option:selected ').text()
+var d = c +' '+ '('+ b +')'
+alert(typeof(d))
 var rex = new RegExp(String(a))
+var rex1 = new RegExp(String(d))
+var rex2 = new RegExp(String(c))
+alert(rex1)
 
 $('.searchable tr').hide();
 $('.searchable tr').filter(function () {
-    return rex.test($(this).text());
+    return d.test($(this).text());
 }).show();
 })
 }(jQuery));
 // a();
 });
-</script>
+</script> -->
+<script>
+    $(document).ready(function(){
+      $("#fi").click( function() {
+        var value = $('#filter').val().toLowerCase();
+        var b = $('#stateId option:selected').text().toLowerCase();
+        var c = $('#companyId option:selected').text().toLowerCase();
+        var d = c +' '+ '('+ b +')'
+
+        $(".searchable tr").filter(function() {
+
+          $(this).toggle($(this).text().toLowerCase().indexOf(d) > -1)
+        });
+      });
+    });
+    </script>
+
+   
 <!-- for select search  -->
 <script>
     function formatState (state) {
