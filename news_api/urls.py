@@ -19,6 +19,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 import news_api_app.urls
 from news_api_app import views
+from django.views.static import serve
 
 urlpatterns = [
     path('api/customer/', include(news_api_app.urls)),
@@ -44,3 +45,4 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

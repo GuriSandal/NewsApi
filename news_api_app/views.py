@@ -10,6 +10,7 @@ import os
 from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
 
 # API END #
@@ -106,7 +107,7 @@ def login_user(request):
 def forgot_password(request):
     return render(request,'forgot_password.html')
 
-
+@login_required
 def state(request):
     context = {}
     isActive = ''
@@ -183,7 +184,7 @@ def state(request):
         
     return render(request,'state.html', context)
 
-
+@login_required
 def district(request):
     context = {}
     
@@ -239,7 +240,7 @@ def district(request):
 
     return render(request,'District.html',context)
 
-
+@login_required
 def company(request):
     context = {}
 
@@ -378,6 +379,7 @@ def company(request):
 
     return render(request,'Publication_house.html',context)
 
+@login_required
 def headline(request):
     context = {}
     headline = Headline.objects.get(headlineId=2)
@@ -399,6 +401,7 @@ def headline(request):
     return render(request,'headline.html', context)
 
 import fitz
+@login_required
 def magzine(request):
     context = {}
     magazines = Magazine.objects.order_by("magazineName")
@@ -530,6 +533,7 @@ def magzine(request):
             context["status"] = "{} Deleted Sucessfully!".format(magazine.magazineName)
     return render(request,'magzine.html', context)
 
+@login_required
 def magzine_catagory(request):
     context = {}
     categories = MagazineCategory.objects.order_by("categoryName")
@@ -601,6 +605,7 @@ def magzine_catagory(request):
 
     return render(request,"magzine_catagory.html", context)
 
+@login_required
 def sunday_magzine(request):
     context = {}
     magazines = SundayMagazine.objects.order_by("magazineName")
@@ -701,7 +706,7 @@ def sunday_magzine(request):
     return render(request,"sunday_magzine.html", context)
 
 
-
+@login_required
 def publish_newspaper(request):
     from datetime import date
     context = {}
@@ -809,12 +814,13 @@ def publish_newspaper(request):
     
     return render(request,"publish_newspaper.html", context)
 
+@login_required
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect("/")
 
 
-
+@login_required
 def Add_pubshnews(request):
     from datetime import date
     context = {}
@@ -826,6 +832,7 @@ def Add_pubshnews(request):
     context["states"] = states
     return render(request,"Add_Publishnewspaper.html", context)
 
+@login_required
 def get_companies(request):
     state_id = request.GET["state_id"]
     state = get_object_or_404(State, stateId=state_id)
@@ -839,6 +846,7 @@ def get_companies(request):
         companyInfo.append(context)
     return JsonResponse({"companies":companyInfo})
 
+@login_required
 def get_cities(request):
     context = {}
     company_id = request.GET["company_id"]
@@ -862,6 +870,7 @@ def get_cities(request):
     return JsonResponse(context)
 
 @csrf_exempt
+@login_required
 def upload_main(request):
     if request.method == "POST":
         if len(request.POST["companyId"]) > 0:
@@ -892,6 +901,7 @@ def upload_main(request):
             return JsonResponse({"status":"error","msg":"Select Company First!!"})
     
 @csrf_exempt
+@login_required
 def city_upload(request):
     if request.method == "POST":
         if "city_file" in request.FILES:
