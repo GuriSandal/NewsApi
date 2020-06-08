@@ -867,50 +867,55 @@ def upload_main(request):
         if len(request.POST["companyId"]) > 0:
             if "main_file" in request.FILES:
                 main_file = request.FILES["main_file"]
-                companyId = request.POST["companyId"]
-                stateId = request.POST["stateId"]
-                date = request.POST["date"]
-                imageUlr = "MianNewsImages/"+str(main_file).split(".")[0]+".png"
-                company = get_object_or_404(Companines, companyId=companyId)
-                state = get_object_or_404(State, stateId=stateId)
-                pdf = CompaninesPdf(companyId=company,stateId=state, companyName=company.companyName, pdfUlr=main_file, newsDate=date, imageUlr=imageUlr, isActive=True)
-                pdf.save()
-                pdffile = settings.MEDIA_ROOT+"/"+str(pdf.pdfUlr)
-                doc = fitz.open(pdffile)
-                page = doc.loadPage(0) #number of page
-                pix = page.getPixmap()
-                output = str(main_file).split(".")
-                output = output[0]+".png"
-                pix.writePNG(settings.MEDIA_ROOT+"/MianNewsImages/"+output)
-                
+                if str(main_file).split(".")[-1] == "pdf":
+                    companyId = request.POST["companyId"]
+                    stateId = request.POST["stateId"]
+                    date = request.POST["date"]
+                    imageUlr = "MianNewsImages/"+str(main_file).split(".")[0]+".png"
+                    company = get_object_or_404(Companines, companyId=companyId)
+                    state = get_object_or_404(State, stateId=stateId)
+                    pdf = CompaninesPdf(companyId=company,stateId=state, companyName=company.companyName, pdfUlr=main_file, newsDate=date, imageUlr=imageUlr, isActive=True)
+                    pdf.save()
+                    pdffile = settings.MEDIA_ROOT+"/"+str(pdf.pdfUlr)
+                    doc = fitz.open(pdffile)
+                    page = doc.loadPage(0) #number of page
+                    pix = page.getPixmap()
+                    output = str(main_file).split(".")
+                    output = output[0]+".png"
+                    pix.writePNG(settings.MEDIA_ROOT+"/MianNewsImages/"+output)
+                    return JsonResponse({"status":"success","msg":date,"color":"text-success"})
+                else:
+                    return JsonResponse({"status":"success","msg":"File should be in pdf format!!"})
             else:
-                return JsonResponse({"status":"error","msg":"Uploading Error"})
+                return JsonResponse({"status":"error","msg":"Uploading Error!!"})
         else:
-            return JsonResponse({"status":"error","msg":"Select Company First"})
+            return JsonResponse({"status":"error","msg":"Select Company First!!"})
     
-    return JsonResponse({"status":"success"})
-
 @csrf_exempt
 def city_upload(request):
     if request.method == "POST":
         if "city_file" in request.FILES:
             city_file = request.FILES["city_file"]
-            cityName = request.POST["cityName"]
-            stateId = request.POST["stateId"]
-            date = request.POST["date"]
-            companyId = request.POST["companyId"]
-            imageUrl = "CityNewsImages/"+str(city_file).split(".")[0]+".png"
-            company = get_object_or_404(Companines, companyId=companyId)
-            state = get_object_or_404(State, stateId=stateId)
-            pdf = Cities(companyName=company, stateId=state, cityName=cityName, fileName=city_file, newsDate=date, imageUrl=imageUrl, isActive=True)
-            pdf.save()
-            pdffile = settings.MEDIA_ROOT+"/"+str(pdf.fileName)
-            doc = fitz.open(pdffile)
-            page = doc.loadPage(0) #number of page
-            pix = page.getPixmap()
-            output = str(city_file).split(".")
-            output = output[0]+".png"
-            pix.writePNG(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
+            if str(city_file).split(".")[-1] == "pdf":
+                cityName = request.POST["cityName"]
+                stateId = request.POST["stateId"]
+                date = request.POST["date"]
+                companyId = request.POST["companyId"]
+                imageUrl = "CityNewsImages/"+str(city_file).split(".")[0]+".png"
+                company = get_object_or_404(Companines, companyId=companyId)
+                state = get_object_or_404(State, stateId=stateId)
+                pdf = Cities(companyName=company, stateId=state, cityName=cityName, fileName=city_file, newsDate=date, imageUrl=imageUrl, isActive=True)
+                pdf.save()
+                pdffile = settings.MEDIA_ROOT+"/"+str(pdf.fileName)
+                doc = fitz.open(pdffile)
+                page = doc.loadPage(0) #number of page
+                pix = page.getPixmap()
+                output = str(city_file).split(".")
+                output = output[0]+".png"
+                pix.writePNG(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
+                return JsonResponse({"status":"success","msg":date}) 
+            else:
+                return JsonResponse({"status":"error","msg":"File should be in pdf format!!"})
         else:
-            return JsonResponse({"status":"error","msg":"Uploading Error"})   
-    return JsonResponse({"status":"success"})       
+            return JsonResponse({"status":"error","msg":"Uploading Error!!"})   
+          

@@ -179,11 +179,13 @@
                     r += '<input type="text" hidden value="'+data["district_list"][i]+'" id="cityName'+i+'" name="cityName">'
                     r += '<div class="form-group">'
                     r += '<input type="file" name="city_file" id="city_file'+i+'" class="mt-3" onchange="city_upload('+i+');"><br>'
+                    r += '<br><span id=city_info'+i+'>'
                     for(j=0;j<data["added_city"].length;j++){
                         if(data["district_list"][i]==data["district_list"][j]){
                             r += '<br><h6 class="text-success"><i class="fas fa-check"></i> UPLOADED - '+data["date"]+'</h6>'
                         }
                     }
+                    r += '</span>'
                     r += '</div></div>'   
                  }
                 $("#district_row").html(r);
@@ -210,7 +212,12 @@
             contentType: false,
             type:"POST",
             success:function(data){
-                alert(data["status"])
+                if(data["status"]=="success"){
+                    $("#info").html('<h6 class="text-right text-success"><i class="fas fa-check"></i> UPLOADED - '+data["msg"]+'</h6>');
+                }
+                else{
+                    $("#info").html('<h6 class="text-right text-danger"><i class="fas fa-times"></i> '+data["msg"]+'</h6>');
+                }
             }
         })
     }
@@ -240,9 +247,15 @@
             contentType: false,
             type:"POST",
             success:function(data){
-                alert(data["status"]) }
-            })
-        }
+                if(data["status"]=="success"){
+                    $("#city_info"+i).html('<br><h6 class="text-success"><i class="fas fa-check"></i> UPLOADED - '+data["msg"]+'</h6>');
+                }
+                else{
+                    $("#city_info"+i).html('<br><h6 class="text-danger"><i class="fas fa-times"></i> '+data["msg"]+'</h6>');
+                }
+            }
+        })
+    }
 </script>
 
 {%endblock%}
