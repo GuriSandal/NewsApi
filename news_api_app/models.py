@@ -63,6 +63,7 @@ class CompaninesPdf(models.Model):
     imageUlr = models.CharField(max_length=500, null=True)
     newsDate = models.CharField(max_length=20,validators =[date_validate],null=True, blank=True)
     isActive = models.BooleanField(default=False)
+    stateId = models.ForeignKey(State,on_delete=models.CASCADE,null=True)
     addedOn = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.companyName
@@ -79,6 +80,7 @@ class Cities(models.Model):
     companyName = models.ForeignKey(Companines, on_delete=models.CASCADE, null=True)
     isActive = models.BooleanField(default=False)
     addedOn = models.DateTimeField(auto_now_add=True)
+    stateId = models.ForeignKey(State,on_delete=models.CASCADE,null=True)
     def __str__(self):
         return self.cityName
     class Meta:

@@ -24,6 +24,8 @@
     </div>
    <div class="row mb-5">
        <div class="col-md-3">
+        <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
            <label for="">State</label>
            <select class="ui js-example-templating " style="width: 100%;" id="stateId" onchange="get_companies();" name="stateId">
                 <option value="">-- Select State --</option>
@@ -43,20 +45,20 @@
        </div>
        <div class="col-md-2">
            <label for="">News Date</label>
-           <input type="text" id="filter" pattern="\d{1,2}-\d{1,2}-\d{4}" placeholder="dd-mm-yyyy" class="datepicker form-control" name="date" value="{{city.newsDate}}" />
-
+           <input name="date" type="text" pattern="\d{1,2}-\d{1,2}-\d{4}" value="{{today_date}}" placeholder="dd-mm-yyyy" class="form-control">
     </div>
     <div class="col-md-1">
         <br>
         <div class="form-group">
-            <button id="fi" class="fa fa-search btn btn-outline-dark mt-2 p-2"></button>
+            <button type="submit" name="search" class="fa fa-search btn btn-outline-dark mt-2 p-2"></button>
         </div>
 
     </div>
-    <div class="col-md-2 ml-auto">
+</form>
+    <!-- <div class="col-md-2 ml-auto">
         <h1><a href="" class="btn btn-success form-control">Refresh</a></h1>
 
-    </div>
+    </div> -->
 
     
 
@@ -85,7 +87,7 @@
                         <tbody class="searchable">
                         
                         {% for city in cities %}
-                            <tr>
+                            <tr> 
                                 <td class="align-middle">{{forloop.counter}}</td>
                                 <td class="align-middle">{{city.cityName}}</td>
                                 <td class="align-middle">
@@ -93,7 +95,7 @@
                                         <img src="/media/{{city.imageUrl}}" height="70" width="60" alt="">
                                     </a>
                                 </td>
-                                <td class="align-middle">{{city.companyName.companyName}} ({{city.companyName.stateId.stateName}})</td>
+                                <td class="align-middle">{{city.companyName.companyName}} ({{city.stateId.stateName}})</td>
                                 <td class="align-middle">{{city.newsDate}}</td>
                                 <td class="align-middle">
                                     {% if city.isActive %}
@@ -105,7 +107,7 @@
                                 <td class="align-middle"><h4><a href="" data-toggle="modal" data-target="#update{{city.cityId}}"><i class="fa fa-edit" ></i></a></h4></td>
                             </tr>
                         {% endfor %}
-                        </tbody>
+                        </tbody> 
                         </table>
                     </div>
                 </div>
@@ -150,31 +152,34 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="">State</label>
-                                            <select class="ui js-example-templating " style="width: 100%;" id="EstateId" name="stateId" onchange="get_companies1();">
-                                                <option value="">-- Select State --</option>
-                                            {% for state in states %}
-                                                <option value="{{state.stateId}}">{{state.stateName}}</option>
-                                            {% endfor %}  
+                                            <select class="ui js-example-templating form-control" style="width: 100%;" id="state{{city.cityId}}" name="stateId" onchange="get_companies1({{city.cityId}});">
+                                                <option value="{{city.companyName.stateId.stateId}}" selected>{{city.companyName.stateId.stateName}}</option>
+                                                {% for state in states %}
+                                                    {% if state.stateId == city.companyName.stateId.stateId %}
+                                                    {% else %}
+                                                        <option value="{{state.stateId}}">{{state.stateName}}</option>
+                                                    {% endif %}
+                                                {% endfor %}
                                           </select>
 
                                         </div>
                                         <div class="form-group">
                                             <label for="">Publication House</label>
-                                            <select name="companyId" id="EcompanyId" class="ui js-example-templating form-control " style="width: 100%;" >
-                                                <option value="">-- Select Company --</option>
+                                            <select name="companyId" id="company{{city.cityId}}" class="ui js-example-templating form-control " style="width: 100%;" >
+                                                <option value="{{city.companyName.companyId}}" >{{city.companyName.companyName}}</option>
                                             </select>
 
                                         </div>
                                         <div class="form-group">
-                                            <label for="">Date/Time</label>
-                                            <input type="text" id="date" value="{{today_date}}" pattern="\d{1,2}-\d{1,2}-\d{4}" placeholder="dd-mm-yyyy" class="datepicker2 form-control" name="date" value="{{city.newsDate}}" />
+                                            <label for="">News Date</label>
+                                            <input type="text" value="{{city.newsDate}}" pattern="\d{1,2}-\d{1,2}-\d{4}" placeholder="dd-mm-yyyy" class="datepicker{{city.cityId}} form-control" name="date" value="{{city.newsDate}}" />
                             
                                         </div>
                                         <div class="form-group">
                                             {% if city.isActive %}
-                                                <input type="checkbox" id="updateActive" class="form-conrol " name="updateActive" checked>
+                                                <input type="checkbox" class="form-conrol " name="updateActive" checked>
                                             {% else %}
-                                                <input type="checkbox" id="updateActive" class="form-conrol " name="updateActive">
+                                                <input type="checkbox" class="form-conrol " name="updateActive">
                                             {% endif %}                                
                                             <label for="updateActive"> Active</label><br>
                                         </div>
@@ -210,47 +215,7 @@
             // new $.fn.dataTable.FixedHeader( table );
         } );
         </script>
-        <!-- for search by date  -->
-
-<!-- <script>
-$(document).ready(function () {
-(function ($) {
-$('#fi').click(function () {
-var a = $('#filter').val();
-var b = $('#stateId option:selected ').text();
-var c = $('#companyId option:selected ').text()
-var d = c +' '+ '('+ b +')'
-alert(typeof(d))
-var rex = new RegExp(String(a))
-var rex1 = new RegExp(String(d))
-var rex2 = new RegExp(String(c))
-alert(rex1)
-
-$('.searchable tr').hide();
-$('.searchable tr').filter(function () {
-    return d.test($(this).text());
-}).show();
-})
-}(jQuery));
-// a();
-});
-</script> -->
-<script>
-    $(document).ready(function(){
-      $("#fi").click( function() {
-        var value = $('#filter').val().toLowerCase();
-        var b = $('#stateId option:selected').text().toLowerCase();
-        var c = $('#companyId option:selected').text().toLowerCase();
-        var d = c +' '+ '('+ b +')'
-
-        $(".searchable tr").filter(function() {
-
-          $(this).toggle($(this).text().toLowerCase().indexOf(d) > -1)
-        });
-      });
-    });
-    </script>
-
+        <!-- for search by date  -->    
    
 <!-- for select search  -->
 <script>
@@ -277,25 +242,81 @@ $('.searchable tr').filter(function () {
         
         });
 </script>
+
+{% for city in cities %}
+<script>
+    function formatState (state) {
+        if (!state.id) {
+            return state.text;
+        }
+
+        var baseUrl = "/user/pages/images/flags";
+        var $state = $(
+            '<span><img class="img-flag" /> <span></span></span>'
+        );
+
+        // Use .text() instead of HTML string concatenation to avoid script injection issues
+        $state.find("span").text(state.text);
+        // $state.find("img").attr("src", baseUrl + "/" + state.element.value.toLowerCase() + ".png");
+
+        return $state;
+        };
+
+        $("#company{{city.cityId}}").select2({
+        templateSelection: formatState,
+        theme: "bootstrap4",
         
+        });
+</script>
+
+<script>
+    function formatState (state) {
+        if (!state.id) {
+            return state.text;
+        }
+
+        var baseUrl = "/user/pages/images/flags";
+        var $state = $(
+            '<span><img class="img-flag" /> <span></span></span>'
+        );
+
+        // Use .text() instead of HTML string concatenation to avoid script injection issues
+        $state.find("span").text(state.text);
+        // $state.find("img").attr("src", baseUrl + "/" + state.element.value.toLowerCase() + ".png");
+
+        return $state;
+        };
+
+        $("#state{{city.cityId}}").select2({
+        templateSelection: formatState,
+        theme: "bootstrap4",
+        
+        });
+</script>
+
+
 <script>
     $(document).ready(function () {
-    $('.datepicker').datepicker({
+    $('.datepicker{{city.cityId}}').datepicker({
       uiLibrary: 'bootstrap4',
       format: 'dd-mm-yyyy'
     });
 });
 </script>
+{% endfor %}
+
+        
 <script>
     $(document).ready(function () {
-    $('.datepicker2').datepicker({
+    $('.datepickerdate').datepicker({
       uiLibrary: 'bootstrap4',
       format: 'dd-mm-yyyy'
     });
 });
 </script>
 
-<!-- ajax for state  -->
+
+
 <script>
     function get_companies(){
         state_id = $("#stateId").val();
@@ -315,9 +336,10 @@ $('.searchable tr').filter(function () {
         })
     }
 </script>
+
 <script>
-    function get_companies1(){
-        state_id = $("#EstateId").val();
+    function get_companies1(i){
+        state_id = $("#state"+i).val();
         $.ajax({
             url:"{% url 'get_companies' %}",
             type:"get",
@@ -329,14 +351,9 @@ $('.searchable tr').filter(function () {
                     r += '<option value="'+data["companies"][i]["companyId"]+'">'+data["companies"][i]["companyName"]+'</option>'
                     
                 }
-                $("#EcompanyId").html(r);
+                $("#company"+i).html(r);
             }
         })
     }
 </script>
-
-
-
-
-
 {%endblock%}

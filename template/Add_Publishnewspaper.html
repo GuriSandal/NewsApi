@@ -169,6 +169,9 @@
                 if(data["companyId"]==company_id){
                     $("#info").html('<h6 class="text-right text-success"><i class="fas fa-check"></i> UPLOADED - '+data["date"]+'</h6>');
                 }
+                else{
+                    $("#info").html('');
+                }
                 let r = ""
                 for(i=0; i<data["district_list"].length; i++){
                     r += '<div class="col-md-4 card p-3 city">'
@@ -193,11 +196,13 @@
     function upload_main(){
         main_file = $("#main_file").prop('files')[0];       
         companyId = $("#companyId").val();
+        stateId = $("#stateId").val();
         date = $("#date").val();
         var fd = new FormData();    
         fd.append( 'main_file', $("#main_file").prop('files')[0] );
         fd.append( 'companyId', companyId );
         fd.append( 'date', date );
+        fd.append('stateId',stateId);
         $.ajax({
             url:"{% url 'upload_main' %}",
             data: fd,
@@ -220,12 +225,14 @@
         city_file = $("#city_file"+i).prop("files")[0];       
         cityName = $("#cityName"+i).val();
         date = $("#date").val();
+        stateId = $("#stateId").val();
         companyId = $("#companyId").val();
         var fd = new FormData();    
         fd.append( "city_file", $("#city_file"+i).prop("files")[0] );
         fd.append( "cityName", cityName );
         fd.append( "date", date );
         fd.append( 'companyId', companyId );
+        fd.append('stateId',stateId);
         $.ajax({
             url:"{% url 'city_upload' %}",
             data: fd,

@@ -700,9 +700,12 @@ def sunday_magzine(request):
             context["status"] = "{} Deleted Sucessfully!".format(magazine.magazineName)
     return render(request,"sunday_magzine.html", context)
 
+
+
 def publish_newspaper(request):
+    from datetime import date
     context = {}
-    cities = Cities.objects.all()
+    cities = Cities.objects.order_by("-newsDate")
     context["cities"] = cities
 
     states = State.objects.filter(isActive=True).order_by("stateName")
@@ -710,6 +713,10 @@ def publish_newspaper(request):
 
     companies = Companines.objects.filter(isActive=True).order_by("companyName")
     context["companies"] = companies
+
+    today = date.today()
+    today_date = today.strftime("%d-%m-%Y")
+    context["today_date"] = today_date
 
     if request.method == "POST":
         if "update" in request.POST:
@@ -770,8 +777,36 @@ def publish_newspaper(request):
                     city.companyName = company
                     city.isActive = False
                     city.save()
-            context["status"] = "{} Update successfully!".format(city.cityName)   
+            context["status"] = "{} Update successfully!".format(city.cityName)  
 
+        if "search" in request.POST:
+            stateId = request.POST["stateId"] 
+            companyId = request.POST["companyId"] 
+            print(companyId)
+            date = request.POST["date"] 
+            
+            if len(date)>0 and len(companyId)>0:
+                state = State.objects.get(stateId=stateId)
+                company = Companines.objects.get(companyId=companyId)
+                cities = Cities.objects.filter(stateId=state,companyName=company,newsDate=date).order_by("-newsDate")
+                context["cities"] = cities
+            elif len(date)>0:
+                cities = Cities.objects.filter(newsDate=date).order_by("-newsDate")
+                context["cities"] = cities
+            elif len(companyId)>0:
+                state = State.objects.get(stateId=stateId)
+                company = Companines.objects.get(companyId=companyId)
+                cities = Cities.objects.filter(stateId=state,companyName=company).order_by("-newsDate")
+                context["cities"] = cities 
+            elif len(stateId)>0:
+                state = State.objects.get(stateId=stateId)
+                cities = Cities.objects.filter(stateId=state).order_by("-newsDate")
+                context["cities"] = cities
+
+            
+                
+
+    
     return render(request,"publish_newspaper.html", context)
 
 def user_logout(request):
@@ -779,9 +814,9 @@ def user_logout(request):
     return HttpResponseRedirect("/")
 
 
-from datetime import date
 
 def Add_pubshnews(request):
+    from datetime import date
     context = {}
     today = date.today()
     today_date = today.strftime("%d-%m-%Y")
@@ -805,15 +840,26 @@ def get_companies(request):
     return JsonResponse({"companies":companyInfo})
 
 def get_cities(request):
+    context = {}
     company_id = request.GET["company_id"]
     date = request.GET["date"]
     company = get_object_or_404(Companines, companyId=company_id)
     district_list = [district.districtName for district in company.districtNames.all()]
-    cities = Cities.objects.filter(newsDate=date, companyName=company)
-    added_city = [city.cityName for city in cities]    
-    companypdf = CompaninesPdf.objects.get(companyId=company_id, newsDate=date)
-    companyId = companypdf.companyId.companyId
-    return JsonResponse({"district_list":district_list,"added_city":added_city,"date":date,"companyId":companyId})
+    context["district_list"] = district_list
+    try:
+        cities = Cities.objects.filter(newsDate=date, companyName=company)
+        added_city = [city.cityName for city in cities]    
+        companypdf = CompaninesPdf.objects.get(companyId=company_id, newsDate=date)
+        companyId = companypdf.companyId.companyId
+        context["added_city"] = added_city
+        context["companyId"] = companyId
+        context["date"] = date
+    except:
+        context["added_city"] = ""
+        context["companyId"] = ""
+        context["date"] = ""
+
+    return JsonResponse(context)
 
 @csrf_exempt
 def upload_main(request):
@@ -822,10 +868,12 @@ def upload_main(request):
             if "main_file" in request.FILES:
                 main_file = request.FILES["main_file"]
                 companyId = request.POST["companyId"]
+                stateId = request.POST["stateId"]
                 date = request.POST["date"]
                 imageUlr = "MianNewsImages/"+str(main_file).split(".")[0]+".png"
                 company = get_object_or_404(Companines, companyId=companyId)
-                pdf = CompaninesPdf(companyId=company, companyName=company.companyName, pdfUlr=main_file, newsDate=date, imageUlr=imageUlr, isActive=True)
+                state = get_object_or_404(State, stateId=stateId)
+                pdf = CompaninesPdf(companyId=company,stateId=state, companyName=company.companyName, pdfUlr=main_file, newsDate=date, imageUlr=imageUlr, isActive=True)
                 pdf.save()
                 pdffile = settings.MEDIA_ROOT+"/"+str(pdf.pdfUlr)
                 doc = fitz.open(pdffile)
@@ -848,11 +896,13 @@ def city_upload(request):
         if "city_file" in request.FILES:
             city_file = request.FILES["city_file"]
             cityName = request.POST["cityName"]
+            stateId = request.POST["stateId"]
             date = request.POST["date"]
             companyId = request.POST["companyId"]
             imageUrl = "CityNewsImages/"+str(city_file).split(".")[0]+".png"
             company = get_object_or_404(Companines, companyId=companyId)
-            pdf = Cities(companyName=company, cityName=cityName, fileName=city_file, newsDate=date, imageUrl=imageUrl, isActive=True)
+            state = get_object_or_404(State, stateId=stateId)
+            pdf = Cities(companyName=company, stateId=state, cityName=cityName, fileName=city_file, newsDate=date, imageUrl=imageUrl, isActive=True)
             pdf.save()
             pdffile = settings.MEDIA_ROOT+"/"+str(pdf.fileName)
             doc = fitz.open(pdffile)
