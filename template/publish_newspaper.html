@@ -167,7 +167,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="">Date/Time</label>
-                                            <input type="text" id="date" value="{{today_date}}" pattern="\d{1,2}-\d{1,2}-\d{4}" placeholder="dd-mm-yyyy" class="datepicker form-control" name="date" value="{{city.newsDate}}" />
+                                            <input type="text" id="date" value="{{today_date}}" pattern="\d{1,2}-\d{1,2}-\d{4}" placeholder="dd-mm-yyyy" class="datepicker2 form-control" name="date" value="{{city.newsDate}}" />
                             
                                         </div>
                                         <div class="form-group">
@@ -281,6 +281,14 @@ $('.searchable tr').filter(function () {
 <script>
     $(document).ready(function () {
     $('.datepicker').datepicker({
+      uiLibrary: 'bootstrap4',
+      format: 'dd-mm-yyyy'
+    });
+});
+</script>
+<script>
+    $(document).ready(function () {
+    $('.datepicker2').datepicker({
       uiLibrary: 'bootstrap4',
       format: 'dd-mm-yyyy'
     });

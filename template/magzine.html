@@ -93,7 +93,7 @@
             <div class="container">
                 <div class=" row mb-5">
                     <div class="col-md-5">
-                        <input type="text" id="filter" pattern="\d{1,2}-\d{1,2}-\d{4}" placeholder="dd-mm-yyyy" class="datepicker form-control"/>
+                        <input type="text" id="filter" pattern="\d{1,2}-\d{1,2}-\d{4}" placeholder="dd-mm-yyyy" class="datepicker2 form-control"/>
                     </div>
                     <div class="col-md-1">
                         <i id="fi" class="fa fa-search btn btn-outline-dark p-2"></i>
@@ -218,7 +218,7 @@
                                         
                                         <div class="form-group">
                                             <label for="">News Date</label>
-                                            <input type="text" pattern="\d{1,2}-\d{1,2}-\d{4}" placeholder="dd-mm-yyyy" class="datepicker form-control" name="date" value="{{magazine.newsDate}}" />
+                                            <input type="text" pattern="\d{1,2}-\d{1,2}-\d{4}" placeholder="dd-mm-yyyy" class="datepicker3 form-control" name="date" value="{{magazine.newsDate}}" />
                                         </div>
                                         <div class="form-group">
                                             {% if magazine.isActive %}
@@ -359,6 +359,24 @@ $('.searchable tr').filter(function () {
 <script>
     $(document).ready(function () {
     $('.datepicker').datepicker({
+      uiLibrary: 'bootstrap4',
+      format: 'dd-mm-yyyy'
+    });
+});
+</script>
+
+<script>
+    $(document).ready(function () {
+    $('.datepicker2').datepicker({
+      uiLibrary: 'bootstrap4',
+      format: 'dd-mm-yyyy'
+    });
+});
+</script>
+
+<script>
+    $(document).ready(function () {
+    $('.datepicker3').datepicker({
       uiLibrary: 'bootstrap4',
       format: 'dd-mm-yyyy'
     });
