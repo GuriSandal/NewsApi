@@ -806,9 +806,14 @@ def get_companies(request):
 
 def get_cities(request):
     company_id = request.GET["company_id"]
+    date = request.GET["date"]
     company = get_object_or_404(Companines, companyId=company_id)
-    district_list = [district.districtName for district in company.districtNames.all()]    
-    return JsonResponse({"district_list":district_list})
+    district_list = [district.districtName for district in company.districtNames.all()]
+    cities = Cities.objects.filter(newsDate=date, companyName=company)
+    added_city = [city.cityName for city in cities]    
+    companypdf = CompaninesPdf.objects.get(companyId=company_id, newsDate=date)
+    companyId = companypdf.companyId.companyId
+    return JsonResponse({"district_list":district_list,"added_city":added_city,"date":date,"companyId":companyId})
 
 @csrf_exempt
 def upload_main(request):
