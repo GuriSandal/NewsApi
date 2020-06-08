@@ -382,7 +382,7 @@ def company(request):
 @login_required
 def headline(request):
     context = {}
-    headline = Headline.objects.get(headlineId=2)
+    headline = Headline.objects.get(headlineId=1)
     context["headline"] = headline
 
     if request.method == "POST":
