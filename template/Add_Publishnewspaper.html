@@ -41,9 +41,9 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label for="">Sort</label>
-                        <select name="" id="" class="ui  form-control " style="width: 100%;">
-                            <option value="">Acending</option>
-                            <option value="">Decending</option>
+                        <select name="" id="sort" class="ui  form-control " style="width: 100%;" onchange="get_cities();">
+                            <option value="0">Acending</option>
+                            <option value="1">Decending</option>
                         </select>
         
                     </div>
@@ -159,12 +159,14 @@
 <script>
     function get_cities(){
         company_id = $("#companyId").val();
+        sort = $("#sort").val();
         date = $("#date").val();
         $.ajax({
             url:"{% url 'get_cities' %}",
             type:"get",
             data:{company_id:company_id,
-                    date:date},
+                    date:date,
+                    sort:sort},
             success:function(data){
                 if(data["companyId"]==company_id){
                     $("#info").html('<h6 class="text-right text-success"><i class="fas fa-check"></i> UPLOADED - '+data["date"]+'</h6>');
@@ -181,8 +183,11 @@
                     r += '<input type="file" name="city_file" id="city_file'+i+'" class="mt-3" onchange="city_upload('+i+');"><br>'
                     r += '<br><span id=city_info'+i+'>'
                     for(j=0;j<data["added_city"].length;j++){
-                        if(data["district_list"][i]==data["district_list"][j]){
+                        if(data["district_list"][i]==data["added_city"][j]){
                             r += '<br><h6 class="text-success"><i class="fas fa-check"></i> UPLOADED - '+data["date"]+'</h6>'
+                        }
+                        else{
+                            r += ''
                         }
                     }
                     r += '</span>'

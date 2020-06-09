@@ -873,23 +873,41 @@ def get_cities(request):
     context = {}
     company_id = request.GET["company_id"]
     date = request.GET["date"]
-    company = get_object_or_404(Companines, companyId=company_id)
-    district_list = [district.districtName for district in company.districtNames.all()]
-    context["district_list"] = district_list
-    try:
-        cities = Cities.objects.filter(newsDate=date, companyName=company)
-        added_city = [city.cityName for city in cities]    
-        companypdf = CompaninesPdf.objects.get(companyId=company_id, newsDate=date)
-        companyId = companypdf.companyId.companyId
-        context["added_city"] = added_city
-        context["companyId"] = companyId
-        context["date"] = date
-    except:
-        context["added_city"] = ""
-        context["companyId"] = ""
-        context["date"] = ""
-
-    return JsonResponse(context)
+    sort = request.GET["sort"]
+    if sort == "1":
+        company = get_object_or_404(Companines, companyId=company_id)
+        district_list = [district.districtName for district in company.districtNames.order_by("-districtName")]
+        context["district_list"] = district_list
+        try:
+            cities = Cities.objects.filter(newsDate=date, companyName=company)
+            added_city = [city.cityName for city in cities]    
+            companypdf = CompaninesPdf.objects.get(companyId=company_id, newsDate=date)
+            companyId = companypdf.companyId.companyId
+            context["added_city"] = added_city
+            context["companyId"] = companyId
+            context["date"] = date
+        except:
+            context["added_city"] = ""
+            context["companyId"] = ""
+            context["date"] = ""
+        return JsonResponse(context)
+    else:
+        company = get_object_or_404(Companines, companyId=company_id)
+        district_list = [district.districtName for district in company.districtNames.order_by("districtName")]
+        context["district_list"] = district_list
+        try:
+            cities = Cities.objects.filter(newsDate=date, companyName=company)
+            added_city = [city.cityName for city in cities]    
+            companypdf = CompaninesPdf.objects.get(companyId=company_id, newsDate=date)
+            companyId = companypdf.companyId.companyId
+            context["added_city"] = added_city
+            context["companyId"] = companyId
+            context["date"] = date
+        except:
+            context["added_city"] = ""
+            context["companyId"] = ""
+            context["date"] = ""
+        return JsonResponse(context)
 
 @csrf_exempt
 @login_required
