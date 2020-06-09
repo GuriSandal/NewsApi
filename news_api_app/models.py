@@ -57,7 +57,7 @@ class Companines(models.Model):
 
 class CompaninesPdf(models.Model):
     companyId = models.ForeignKey(Companines,on_delete=models.CASCADE,blank=True, null=True)
-    companyPdfId = models.AutoField(primary_key=True, editable=False)
+    companypdfId = models.AutoField(primary_key=True, editable=False)
     companyName = models.CharField(max_length=50)
     pdfUlr = models.FileField(upload_to='CompanyPDFs/%Y/%m/%d',null=True,blank=True)
     imageUlr = models.ImageField(upload_to="MianNewsImages", null=True)

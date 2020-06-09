@@ -222,6 +222,88 @@
         </div>
         {% endfor %}
         <!-- modal end  -->
+
+        {% for companypdf in companypdfs %}
+        <div class="col-md-12 mt-5">
+            <div class="modal fade" id="update{{companypdf.companypdfId}}"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog " role="document">
+                    <div class="modal-content  p-0 m-0" >
+                        <div class="modal-header">
+                            {{companypdf.companyName}}
+                            <button  data-dismiss="modal"  class="close" type="button"  >
+                                <span aria-hidden="true" >&times;</span>
+                            </button>
+                        </div>
+                       
+                        <div class="modal-body p-0 m-0">
+                            <div class="row">
+                                <div class="col-md-10 p-3 mx-auto">
+                                    <form action="" method="POST" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <input type="text" hidden value="{{companypdf.companypdfId}}" name="id">
+                                        <div class="form-group">
+                                            <label for="">Name</label>
+                                            <input type="text" class="form-control" placeholder="" value="{{companypdf.companyName}}" name="cityName">
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="" >File</label>
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" name="file" value="">
+                                                <label class="custom-file-label" for="customFile">Choose file</label>
+                                            </div>
+
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="">State</label>
+                                            <select class="ui js-example-templating form-control" style="width: 100%;" id="stateMain{{companypdf.companypdfId}}" name="stateId" onchange="get_companies2({{companypdf.companypdfId}});">
+                                                <option value="{{companypdf.companyId.stateId.stateId}}" selected>{{companypdf.companyId.stateId.stateName}}</option>
+                                                {% for state in states %}
+                                                    {% if state.stateId == companypdf.companyId.stateId.stateId %}
+                                                    {% else %}
+                                                        <option value="{{state.stateId}}">{{state.stateName}}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                          </select>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="">Publication House</label>
+                                            <select name="companyId" id="companyMain{{companypdf.companypdfId}}" class="ui js-example-templating form-control " style="width: 100%;" >
+                                                <option value="{{companypdf.companyIdcompanyId}}" >{{companypdf.companyId.companyName}}</option>
+                                            </select>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="">News Date</label>
+                                            <input type="text" value="{{companypdf.newsDate}}" pattern="\d{1,2}-\d{1,2}-\d{4}" placeholder="dd-mm-yyyy" class="datepickerMain{{companypdf.companypdfId}} form-control" name="date" />
+                            
+                                        </div>
+                                        <div class="form-group">
+                                            {% if companypdf.isActive %}
+                                                <input type="checkbox" class="form-conrol " name="updateActive" checked>
+                                            {% else %}
+                                                <input type="checkbox" class="form-conrol " name="updateActive">
+                                            {% endif %}                                
+                                            <label for="updateActive"> Active</label><br>
+                                        </div>
+                            
+                                        <input type="submit" value="Add" name="updateMain" class="form-control btn btn-success mb-5 mt-3">
+                                    </form>
+    
+                                </div>
+    
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+              </div>
+    
+        </div>
+        {% endfor %}
     
         
     
@@ -264,6 +346,69 @@
         
         });
 </script>
+
+
+{% for companypdf in companypdfs %}
+<script>
+    function formatState (state) {
+        if (!state.id) {
+            return state.text;
+        }
+
+        var baseUrl = "/user/pages/images/flags";
+        var $state = $(
+            '<span><img class="img-flag" /> <span></span></span>'
+        );
+
+        // Use .text() instead of HTML string concatenation to avoid script injection issues
+        $state.find("span").text(state.text);
+        // $state.find("img").attr("src", baseUrl + "/" + state.element.value.toLowerCase() + ".png");
+
+        return $state;
+        };
+
+        $("#companyMain{{companypdf.companypdfId}}").select2({
+        templateSelection: formatState,
+        theme: "bootstrap4",
+        
+        });
+</script>
+
+<script>
+    function formatState (state) {
+        if (!state.id) {
+            return state.text;
+        }
+
+        var baseUrl = "/user/pages/images/flags";
+        var $state = $(
+            '<span><img class="img-flag" /> <span></span></span>'
+        );
+
+        // Use .text() instead of HTML string concatenation to avoid script injection issues
+        $state.find("span").text(state.text);
+        // $state.find("img").attr("src", baseUrl + "/" + state.element.value.toLowerCase() + ".png");
+
+        return $state;
+        };
+
+        $("#stateMain{{companypdf.companypdfId}}").select2({
+        templateSelection: formatState,
+        theme: "bootstrap4",
+        
+        });
+</script>
+
+
+<script>
+    $(document).ready(function () {
+    $('.datepickerMain{{companypdf.companypdfId}}').datepicker({
+      uiLibrary: 'bootstrap4',
+      format: 'dd-mm-yyyy'
+    });
+});
+</script>
+{% endfor %}
 
 {% for city in cities %}
 <script>
@@ -374,6 +519,26 @@
                     
                 }
                 $("#company"+i).html(r);
+            }
+        })
+    }
+</script>
+
+<script>
+    function get_companies2(i){
+        state_id = $("#stateMain"+i).val();
+        $.ajax({
+            url:"{% url 'get_companies' %}",
+            type:"get",
+            data:{state_id:state_id},
+            success:function(data){
+                let r = '<option value="">--Select Company--</option>'
+                for(i=0; i<data["companies"].length; i++){
+                    
+                    r += '<option value="'+data["companies"][i]["companyId"]+'">'+data["companies"][i]["companyName"]+'</option>'
+                    
+                }
+                $("#companyMain"+i).html(r);
             }
         })
     }
