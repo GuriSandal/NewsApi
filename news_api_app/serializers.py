@@ -29,7 +29,7 @@ class CitiesSerializer(serializers.ModelSerializer):
 
 class SearchCompanyInfoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Companines
+        model = CompaninesPdf
         fields = ['companyId','companyName','newsDate','pdfUlr','imageUlr']
 
 class MagazineCategorySerializer(serializers.ModelSerializer):
