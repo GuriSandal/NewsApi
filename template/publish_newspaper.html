@@ -77,15 +77,15 @@
                         <thead>
                         <tr><th>#</th>
                             <th>Name</th>
-                            <th data-field="id" >Download</th>
+                            <th>Download</th>
                             <th>Publication House</th>
-                            <th >Date/Time</th>
+                            <th>Date/Time</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
                         </thead>
                         <tbody class="searchable">
-                        
+
                         {% for city in cities %}
                             <tr> 
                                 <td class="align-middle">{{forloop.counter}}</td>
@@ -105,6 +105,28 @@
                                     {% endif %}
                                 </td>
                                 <td class="align-middle"><h4><a href="" data-toggle="modal" data-target="#update{{city.cityId}}"><i class="fa fa-edit" ></i></a></h4></td>
+                            </tr>
+                        {% endfor %}
+
+                        {% for companypdf in companypdfs %}
+                            <tr> 
+                                <td class="align-middle">{{forloop.counter|add:city_lenght}}</td>
+                                <td class="align-middle">{{companypdf.companyName}}</td>
+                                <td class="align-middle">
+                                    <a href="/media/{{companypdf.pdfUlr}}" download>
+                                        <img src="/media/{{companypdf.imageUlr}}" height="70" width="60" alt="">
+                                    </a>
+                                </td>
+                                <td class="align-middle">{{companypdf.companyId.companyName}} ({{companypdf.stateId.stateName}})</td>
+                                <td class="align-middle">{{companypdf.newsDate}}</td>
+                                <td class="align-middle">
+                                    {% if companypdf.isActive %}
+                                        <span class="bg-success text-white px-3 rounded py-1">ACTIVE</span>
+                                    {% else %}
+                                        <span class="bg-secondary text-white px-3 rounded py-1">IN ACTIVE</span>
+                                    {% endif %}
+                                </td>
+                                <td class="align-middle"><h4><a href="" data-toggle="modal" data-target="#update{{companypdf.companypdfId}}"><i class="fa fa-edit" ></i></a></h4></td>
                             </tr>
                         {% endfor %}
                         </tbody> 

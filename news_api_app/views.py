@@ -384,7 +384,7 @@ def headline(request):
     context = {}
     headline = Headline.objects.get(headlineId=1)
     context["headline"] = headline
-
+    print(request.get_host())
     if request.method == "POST":
         headlineText = request.POST["headlineText"]
 
@@ -712,6 +712,10 @@ def publish_newspaper(request):
     context = {}
     cities = Cities.objects.order_by("-newsDate")
     context["cities"] = cities
+    context["city_lenght"] = len(cities)
+
+    companypdfs = CompaninesPdf.objects.order_by("-newsDate")
+    context["companypdfs"] = companypdfs
 
     states = State.objects.filter(isActive=True).order_by("stateName")
     context["states"] = states
@@ -795,23 +799,41 @@ def publish_newspaper(request):
                 company = Companines.objects.get(companyId=companyId)
                 cities = Cities.objects.filter(stateId=state,companyName=company,newsDate=date).order_by("-newsDate")
                 context["cities"] = cities
+                context["city_lenght"] = len(cities)
+                companypdfs = CompaninesPdf.objects.filter(stateId=state,companyId=company,newsDate=date).order_by("-newsDate")
+                context["companypdfs"] = companypdfs
+            
+            elif len(stateId)>0 and len(date)>0:
+                state = State.objects.get(stateId=stateId)
+                cities = Cities.objects.filter(stateId=state,newsDate=date).order_by("-newsDate")
+                context["cities"] = cities
+                context["city_lenght"] = len(cities)
+                companypdfs = CompaninesPdf.objects.filter(stateId=state,newsDate=date).order_by("-newsDate")
+                context["companypdfs"] = companypdfs
+
             elif len(date)>0:
                 cities = Cities.objects.filter(newsDate=date).order_by("-newsDate")
                 context["cities"] = cities
+                context["city_lenght"] = len(cities)
+                companypdfs = CompaninesPdf.objects.filter(newsDate=date).order_by("-newsDate")
+                context["companypdfs"] = companypdfs
+
             elif len(companyId)>0:
                 state = State.objects.get(stateId=stateId)
                 company = Companines.objects.get(companyId=companyId)
                 cities = Cities.objects.filter(stateId=state,companyName=company).order_by("-newsDate")
                 context["cities"] = cities 
+                context["city_lenght"] = len(cities)
+                companypdfs = CompaninesPdf.objects.filter(stateId=state,companyName=company).order_by("-newsDate")
+                context["companypdfs"] = companypdfs
             elif len(stateId)>0:
                 state = State.objects.get(stateId=stateId)
                 cities = Cities.objects.filter(stateId=state).order_by("-newsDate")
                 context["cities"] = cities
+                context["city_lenght"] = len(cities)
+                companypdfs = CompaninesPdf.objects.filter(stateId=state).order_by("-newsDate")
+                context["companypdfs"] = companypdfs
 
-            
-                
-
-    
     return render(request,"publish_newspaper.html", context)
 
 @login_required
@@ -883,16 +905,30 @@ def upload_main(request):
                     imageUlr = "MianNewsImages/"+str(main_file).split(".")[0]+".png"
                     company = get_object_or_404(Companines, companyId=companyId)
                     state = get_object_or_404(State, stateId=stateId)
-                    pdf = CompaninesPdf(companyId=company,stateId=state, companyName=company.companyName, pdfUlr=main_file, newsDate=date, imageUlr=imageUlr, isActive=True)
-                    pdf.save()
-                    pdffile = settings.MEDIA_ROOT+"/"+str(pdf.pdfUlr)
-                    doc = fitz.open(pdffile)
-                    page = doc.loadPage(0) #number of page
-                    pix = page.getPixmap()
-                    output = str(main_file).split(".")
-                    output = output[0]+".png"
-                    pix.writePNG(settings.MEDIA_ROOT+"/MianNewsImages/"+output)
-                    return JsonResponse({"status":"success","msg":date,"color":"text-success"})
+                    try:
+                        pdf = CompaninesPdf.objects.get(companyId=company,stateId=state, companyName=company.companyName,newsDate=date,isActive=True)
+                        pdf.pdfUlr = main_file
+                        pdf.imageUlr = imageUlr
+                        pdf.save()
+                        pdffile = settings.MEDIA_ROOT+"/"+str(pdf.pdfUlr)
+                        doc = fitz.open(pdffile)
+                        page = doc.loadPage(0) #number of page
+                        pix = page.getPixmap()
+                        output = str(main_file).split(".")
+                        output = output[0]+".png"
+                        pix.writePNG(settings.MEDIA_ROOT+"/MianNewsImages/"+output)
+                        return JsonResponse({"status":"success","msg":date,"color":"text-success"})
+                    except:
+                        pdf = CompaninesPdf(companyId=company,stateId=state, companyName=company.companyName, pdfUlr=main_file, newsDate=date, imageUlr=imageUlr, isActive=True)
+                        pdf.save()
+                        pdffile = settings.MEDIA_ROOT+"/"+str(pdf.pdfUlr)
+                        doc = fitz.open(pdffile)
+                        page = doc.loadPage(0) #number of page
+                        pix = page.getPixmap()
+                        output = str(main_file).split(".")
+                        output = output[0]+".png"
+                        pix.writePNG(settings.MEDIA_ROOT+"/MianNewsImages/"+output)
+                        return JsonResponse({"status":"success","msg":date,"color":"text-success"})
                 else:
                     return JsonResponse({"status":"success","msg":"File should be in pdf format!!"})
             else:
@@ -914,16 +950,30 @@ def city_upload(request):
                 imageUrl = "CityNewsImages/"+str(city_file).split(".")[0]+".png"
                 company = get_object_or_404(Companines, companyId=companyId)
                 state = get_object_or_404(State, stateId=stateId)
-                pdf = Cities(companyName=company, stateId=state, cityName=cityName, fileName=city_file, newsDate=date, imageUrl=imageUrl, isActive=True)
-                pdf.save()
-                pdffile = settings.MEDIA_ROOT+"/"+str(pdf.fileName)
-                doc = fitz.open(pdffile)
-                page = doc.loadPage(0) #number of page
-                pix = page.getPixmap()
-                output = str(city_file).split(".")
-                output = output[0]+".png"
-                pix.writePNG(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
-                return JsonResponse({"status":"success","msg":date}) 
+                try:
+                    pdf = Cities.objects.get(companyName=company, stateId=state, cityName=cityName, newsDate=date, isActive=True)
+                    pdf.fileName = city_file
+                    pdf.imageUrl = imageUrl
+                    pdf.save()
+                    pdffile = settings.MEDIA_ROOT+"/"+str(pdf.fileName)
+                    doc = fitz.open(pdffile)
+                    page = doc.loadPage(0) #number of page
+                    pix = page.getPixmap()
+                    output = str(city_file).split(".")
+                    output = output[0]+".png"
+                    pix.writePNG(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
+                    return JsonResponse({"status":"success","msg":date}) 
+                except:
+                    pdf = Cities(companyName=company, stateId=state, cityName=cityName, fileName=city_file, newsDate=date, imageUrl=imageUrl, isActive=True)
+                    pdf.save()
+                    pdffile = settings.MEDIA_ROOT+"/"+str(pdf.fileName)
+                    doc = fitz.open(pdffile)
+                    page = doc.loadPage(0) #number of page
+                    pix = page.getPixmap()
+                    output = str(city_file).split(".")
+                    output = output[0]+".png"
+                    pix.writePNG(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
+                    return JsonResponse({"status":"success","msg":date}) 
             else:
                 return JsonResponse({"status":"error","msg":"File should be in pdf format!!"})
         else:
