@@ -60,7 +60,7 @@ class CompaninesPdf(models.Model):
     companypdfId = models.AutoField(primary_key=True, editable=False)
     companyName = models.CharField(max_length=50)
     pdfUlr = models.FileField(upload_to='CompanyPDFs/%Y/%m/%d',null=True,blank=True)
-    imageUlr = models.ImageField(upload_to="MianNewsImages", null=True)
+    imageUlr = models.ImageField(upload_to="CompanyNewsImages", null=True)
     newsDate = models.CharField(max_length=20,validators =[date_validate],null=True, blank=True)
     isActive = models.BooleanField(default=False)
     stateId = models.ForeignKey(State,on_delete=models.CASCADE,null=True)

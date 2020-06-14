@@ -39,8 +39,9 @@ urlpatterns = [
     path('city/add/',views.Add_pubshnews,name='city/add'),
     path('get-companies', views.get_companies, name="get_companies"),
     path('get-cities', views.get_cities, name="get_cities"),
-    path('upload-main', views.upload_main, name="upload_main"),
+    path('company-upload', views.company_upload, name="company_upload"),
     path('city-upload', views.city_upload, name="city_upload"),
+    path('multi-upload', views.multi_upload, name="multi_upload"),
 ]
 
 if settings.DEBUG:
