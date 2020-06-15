@@ -103,10 +103,9 @@ class SingleCityList(APIView):
         data["status"] = True
         state_id = request.GET["state_id"]
         state = State.objects.get(stateId=state_id)
-        company_id = request.GET["company_id"]
         city_name = request.GET["city_name"]
-        company = Companines.objects.get(companyId=company_id)
-        city = Cities.objects.filter(stateId=state, companyName=company, cityName=city_name).order_by("-newsDate")
+        search_date = request.GET['search_date']
+        city = Cities.objects.filter(stateId=state, cityName=city_name, newsDate=date).order_by("-newsDate")
         data["cityInfo"] = SingleCitySerializer(city,context={"request":request}, many=True).data
         return Response(data=data)
         
@@ -420,7 +419,11 @@ def headline(request):
 import fitz
 @login_required
 def magzine(request):
+    from datetime import date
     context = {}
+    today = date.today()
+    today_date = today.strftime("%d-%m-%Y")
+    context["today_date"] = today_date
     magazines = Magazine.objects.order_by("magazineName")
     context["magazines"] = magazines
 
@@ -624,7 +627,11 @@ def magzine_catagory(request):
 
 @login_required
 def sunday_magzine(request):
+    from datetime import date
     context = {}
+    today = date.today()
+    today_date = today.strftime("%d-%m-%Y")
+    context["today_date"] = today_date
     magazines = SundayMagazine.objects.order_by("magazineName")
     context["magazines"] = magazines
 
@@ -727,17 +734,17 @@ def sunday_magzine(request):
 def publish_newspaper(request):
     from datetime import date
     context = {}
-    cities = Cities.objects.order_by("-newsDate")
+    cities = Cities.objects.all()
     context["cities"] = cities
     context["city_lenght"] = len(cities)
 
-    companypdfs = CompaninesPdf.objects.order_by("-newsDate")
+    companypdfs = CompaninesPdf.objects.all()
     context["companypdfs"] = companypdfs
 
-    states = State.objects.filter(isActive=True).order_by("stateName")
+    states = State.objects.filter(isActive=True)
     context["states"] = states
 
-    companies = Companines.objects.filter(isActive=True).order_by("companyName")
+    companies = Companines.objects.filter(isActive=True)
     context["companies"] = companies
 
     today = date.today()
@@ -814,41 +821,41 @@ def publish_newspaper(request):
             if len(date)>0 and len(companyId)>0:
                 state = State.objects.get(stateId=stateId)
                 company = Companines.objects.get(companyId=companyId)
-                cities = Cities.objects.filter(stateId=state,companyName=company,newsDate=date).order_by("-newsDate")
+                cities = Cities.objects.filter(stateId=state,companyName=company,newsDate=date)
                 context["cities"] = cities
                 context["city_lenght"] = len(cities)
-                companypdfs = CompaninesPdf.objects.filter(stateId=state,companyId=company,newsDate=date).order_by("-newsDate")
+                companypdfs = CompaninesPdf.objects.filter(stateId=state,companyId=company,newsDate=date)
                 context["companypdfs"] = companypdfs
             
             elif len(stateId)>0 and len(date)>0:
                 state = State.objects.get(stateId=stateId)
-                cities = Cities.objects.filter(stateId=state,newsDate=date).order_by("-newsDate")
+                cities = Cities.objects.filter(stateId=state,newsDate=date)
                 context["cities"] = cities
                 context["city_lenght"] = len(cities)
-                companypdfs = CompaninesPdf.objects.filter(stateId=state,newsDate=date).order_by("-newsDate")
+                companypdfs = CompaninesPdf.objects.filter(stateId=state,newsDate=date)
                 context["companypdfs"] = companypdfs
 
             elif len(date)>0:
-                cities = Cities.objects.filter(newsDate=date).order_by("-newsDate")
+                cities = Cities.objects.filter(newsDate=date)
                 context["cities"] = cities
                 context["city_lenght"] = len(cities)
-                companypdfs = CompaninesPdf.objects.filter(newsDate=date).order_by("-newsDate")
+                companypdfs = CompaninesPdf.objects.filter(newsDate=date)
                 context["companypdfs"] = companypdfs
 
             elif len(companyId)>0:
                 state = State.objects.get(stateId=stateId)
                 company = Companines.objects.get(companyId=companyId)
-                cities = Cities.objects.filter(stateId=state,companyName=company).order_by("-newsDate")
+                cities = Cities.objects.filter(stateId=state,companyName=company)
                 context["cities"] = cities 
                 context["city_lenght"] = len(cities)
-                companypdfs = CompaninesPdf.objects.filter(stateId=state,companyName=company).order_by("-newsDate")
+                companypdfs = CompaninesPdf.objects.filter(stateId=state,companyName=company)
                 context["companypdfs"] = companypdfs
             elif len(stateId)>0:
                 state = State.objects.get(stateId=stateId)
-                cities = Cities.objects.filter(stateId=state).order_by("-newsDate")
+                cities = Cities.objects.filter(stateId=state)
                 context["cities"] = cities
                 context["city_lenght"] = len(cities)
-                companypdfs = CompaninesPdf.objects.filter(stateId=state).order_by("-newsDate")
+                companypdfs = CompaninesPdf.objects.filter(stateId=state)
                 context["companypdfs"] = companypdfs
 
     return render(request,"publish_newspaper.html", context)
@@ -1135,4 +1142,44 @@ def delete_all_company_pdf(request):
         company.delete()
     return JsonResponse({"status":"Successfully Deleted All Companies Pdfs"})
             
-        
+@csrf_exempt
+@login_required
+def main_upload(request):
+    if request.method == "POST":
+        if "company_file" in request.FILES:
+            company_file = request.FILES["company_file"]
+            if str(company_file).split(".")[-1] == "pdf":
+                companyId = request.POST["companyId"]
+                stateId = request.POST["stateId"]
+                date = request.POST["date"]
+                imageUrl = "CompanyNewsImages/"+str(company_file).split(".")[0]+".png"
+                company = get_object_or_404(Companines, companyId=companyId)
+                state = get_object_or_404(State, stateId=stateId)
+                try:
+                    pdf = CompaninesPdf.objects.get(companyId=company, companyName=company, stateId=state, newsDate=date, isActive=True)
+                    pdf.pdfUlr = company_file
+                    pdf.imageUlr = imageUrl
+                    pdf.save()
+                    pdffile = settings.MEDIA_ROOT+"/"+str(pdf.pdfUlr)
+                    doc = fitz.open(pdffile)
+                    page = doc.loadPage(0) #number of page
+                    pix = page.getPixmap()
+                    output = str(company_file).split(".")
+                    output = output[0]+".png"
+                    pix.writePNG(settings.MEDIA_ROOT+"/CompanyNewsImages/"+output)
+                    return JsonResponse({"status":"success","msg":date}) 
+                except:
+                    pdf = CompaninesPdf(companyId=company,companyName=company, stateId=state, pdfUlr=company_file, newsDate=date, imageUlr=imageUrl, isActive=True)
+                    pdf.save()
+                    pdffile = settings.MEDIA_ROOT+"/"+str(pdf.pdfUlr)
+                    doc = fitz.open(pdffile)
+                    page = doc.loadPage(0) #number of page
+                    pix = page.getPixmap()
+                    output = str(company_file).split(".")
+                    output = output[0]+".png"
+                    pix.writePNG(settings.MEDIA_ROOT+"/CompanyNewsImages/"+output)
+                    return JsonResponse({"status":"success","msg":date}) 
+            else:
+                return JsonResponse({"status":"error","msg":"File should be in pdf format!!"})
+        else:
+            return JsonResponse({"status":"error","msg":"Uploading Error!!"})

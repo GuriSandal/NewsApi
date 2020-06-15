@@ -53,7 +53,7 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="1" name="isActive" id="defaultCheck1">
+                                            <input class="form-check-input" type="checkbox" value="1" name="isActive" id="defaultCheck1" checked>
                                             <label class="form-check-label" for="defaultCheck1">
                                               Active
                                             </label>
@@ -88,7 +88,7 @@
                 <div class="container">
                     <table class="table table-fluid display nowrap" style="width:100%" id="myTable">
                     <thead>
-                    <tr><th>#</th>
+                    <tr><th>Id</th>
                         <th>State</th>
                         <th>Image</th>
                         <th>Status</th>
@@ -99,7 +99,7 @@
                     <tbody>
                     {% for state in states %}
                         <tr>
-                            <td class="align-middle">{{forloop.counter}}</td>
+                            <td class="align-middle">{{state.stateId}}</td>
                             <td class="align-middle">{{state.stateName}}</td>
                             {% if state.imageUlr %}
                             <td class="align-middle"><img src="/media/{{state.imageUlr}}" alt="" height="100" width="100"></td>
@@ -137,7 +137,7 @@
             <div class="modal-dialog " role="document">
                 <div class="modal-content  p-0 m-0" >
                     <div class="modal-header">
-                        {{state.stateName}}
+                        {{state.stateName}} (Id - {{state.stateId}})
                         <button  data-dismiss="modal"  class="close" type="button"  >
                             <span aria-hidden="true" >&times;</span>
                         </button>

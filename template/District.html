@@ -53,7 +53,7 @@
 
                                            </div>
                                             <div class=" form-group">
-                                                <input type="checkbox" id="addActive" class="form-conrol" name="addActive" >
+                                                <input type="checkbox" id="addActive" class="form-conrol" name="addActive" checked>
                                                 <label for="addActive"> Active</label>
                                             </div>
                                            
@@ -83,7 +83,7 @@
                         <div class="container">
                             <table class="table table-fluid display nowrap" style="width:100%" id="myTable">
                             <thead>
-                            <tr><th>#</th>
+                            <tr><th>Id</th>
                                 <th>District</th>
                                 <th>Status</th>
                                 <th>Date/Time</th>
@@ -93,7 +93,7 @@
                             <tbody>
                             {% for district in districts %}
                                 <tr>
-                                    <td class="align-middle">{{forloop.counter}}</td>
+                                    <td class="align-middle">{{district.districtId}}</td>
                                     <td class="align-middle"> 
                                         {{district.districtName}} <br>
                                         <small class="text-danger">State:</small> <small>{{district.stateName.stateName}}</small>
@@ -132,7 +132,7 @@
                     <div class="modal-dialog " role="document">
                         <div class="modal-content  p-0 m-0" >
                             <div class="modal-header">
-                                {{district.districtName}}
+                                {{district.districtName}} (Id - {{district.districtId}})
                                 <button  data-dismiss="modal"  class="close" type="button"  >
                                     <span aria-hidden="true" >&times;</span>
                                 </button>

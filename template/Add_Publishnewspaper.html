@@ -22,6 +22,13 @@
     </style>
 {% endblock %}
 {% block admin_base %}
+<div class="row" style="position: sticky;top: 0px;position: -webkit-sticky; z-index: 1;">
+    <div class="col-md-1 mx-auto mt-2">
+        <div class="spinner-border text-primary" id="spinner" role="status" style="display: none;">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+</div>
 
 <div class="container-fluid">
     <div class="col-md-10 mx-auto card mt-3 p-5 shadow shadow-sm ">
@@ -78,6 +85,17 @@
                 <input type="file" multiple  id='dropzone' class='dropzone' draggable='true' onchange="multiupload();">
             </div>
             <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group main" style="display: none;">
+                        <label for="">Main Upload</label>
+                        <div id="main_result" class="text-right"></div>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="mainFile" onchange="main_upload();">
+                            <label class="custom-file-label" for="mainFile">Choose file</label>
+                        </div>
+                        
+                    </div>
+                </div>
                 <div class="col-md-3 ml-auto my-2">
                     <button class="btn btn-block btn-danger city" style="display: none;" onclick="DeleteAllCityPdf();">Delete All PDFs of Cities</button>
                     <button class="btn btn-block btn-danger company" style="display: none;" onclick="DeleteAllCompanyPdf();">Delete All PDFs of Companies</button>
@@ -137,12 +155,14 @@
 
 <script>
     function get_companies(){
+        $("#spinner").show();
         state_id = $("#stateId").val();
         $.ajax({
             url:"{% url 'get_companies' %}",
             type:"get",
             data:{state_id:state_id},
             success:function(data){
+                $("#spinner").hide();
                 let r = '<option value="">--Select Company--</option>'
                 r += '<option value="all-company">All Companies Main</option>'
                 for(i=0; i<data["companies"].length; i++){
@@ -158,15 +178,19 @@
 
 <script>
     function get_cities(){
+        $("#spinner").show();
         company_id = $("#companyId").val();
         if(company_id != "all-company"){
             $(".hiddenFileInput").show();
             $(".city").show();
             $(".company").hide();
+            $(".main").show();
         }
         else{
             $(".city").hide();
             $(".company").show();
+            $(".hiddenFileInput").hide();
+            $(".main").hide();
         }
         sort = $("#sort").val();
         date = $("#date").val();
@@ -179,6 +203,7 @@
                     sort:sort,
                     state_id:state_id},
             success:function(data){
+                $("#spinner").hide();
                 let r = ""
                 if(data["status"] == "company"){
                     r += '<h5 class="mt-3">UPLOAD FOR COMPANY</h5><br>'
@@ -237,6 +262,7 @@
 
 <script>
     function company_upload(i){
+        $("#spinner").show();
         company_file = $("#company_file"+i).prop("files")[0];       
         companyName = $("#companyName"+i).val();
         date = $("#date").val();
@@ -253,6 +279,7 @@
             contentType: false,
             type:"POST",
             success:function(data){
+                $("#spinner").hide();
                 if(data["status"]=="success"){
                     $("#company_info"+i).html('<br><h6 class="text-success"><i class="fas fa-check"></i> UPLOADED - '+data["msg"]+'</h6>');
                 }
@@ -270,6 +297,7 @@
 <script>
     
     function city_upload(i){
+        $("#spinner").show();
         city_file = $("#city_file"+i).prop("files")[0];       
         cityName = $("#cityName"+i).val();
         date = $("#date").val();
@@ -288,6 +316,7 @@
             contentType: false,
             type:"POST",
             success:function(data){
+                $("#spinner").hide();
                 if(data["status"]=="success"){
                     $("#city_info"+i).html('<br><h6 class="text-success"><i class="fas fa-check"></i> UPLOADED - '+data["msg"]+'</h6>');
                 }
@@ -302,6 +331,7 @@
 
 <script>
     function multiupload(){
+        $("#spinner").show();
         files = $("#dropzone").prop("files")[0];       
         date = $("#date").val();
         stateId = $("#stateId").val();
@@ -321,12 +351,14 @@
             contentType: false,
             type:"POST",
             success:function(data){
+                $("#spinner").hide();
                 if(data["status"]=="city"){
                     alert(data["length"]+" CITIES PDF UPLOADED ON "+data["msg"])
                 }
                 else if(data["status"]=="city_error"){
                     alert(data["msg"]) 
                }
+               location.reload();
             }
         })
     }
@@ -334,6 +366,7 @@
 
 <script>
    function DeleteAllCityPdf(){
+        $("#spinner").show();
         date = $("#date").val();
         stateId = $("#stateId").val();
         companyId = $("#companyId").val();
@@ -344,7 +377,10 @@
                     companyId:companyId},
             type:"GET",
             success:function(data){
-                alert(data["status"])
+                $("#spinner").hide();
+                alert(data["status"]);
+                location.reload();
+                
                }
         })
    }
@@ -352,6 +388,7 @@
 
 <script>
     function DeleteAllCompanyPdf(){
+        $("#spinner").show();
         date = $("#date").val();
         stateId = $("#stateId").val();
         $.ajax({
@@ -361,8 +398,41 @@
                     },
             type:"GET",
             success:function(data){
-                alert(data["status"])
+                $("#spinner").hide();
+                alert(data["status"]);
+                location.reload();
                }
+        })
+    }
+</script>
+
+<script>
+    function main_upload(){
+        $("#spinner").show();
+        company_file = $("#mainFile").prop("files")[0];       
+        companyId = $("#companyId").val();
+        date = $("#date").val();
+        stateId = $("#stateId").val();
+        var fd = new FormData();    
+        fd.append( "company_file", company_file);
+        fd.append( "companyId", companyId );
+        fd.append( "date", date );
+        fd.append('stateId',stateId);
+        $.ajax({
+            url:"{% url 'main_upload' %}",
+            data: fd,
+            processData: false,
+            contentType: false,
+            type:"POST",
+            success:function(data){
+                $("#spinner").hide();
+                if(data["status"]=="success"){
+                    $("#main_result").html('<h6 class="text-success"><i class="fas fa-check"></i> UPLOADED - '+data["msg"]+'</h6>');
+                }
+                else{
+                    $("#main_result").html('<h6 class="text-danger"><i class="fas fa-times"></i> '+data["msg"]+'</h6>');
+                }
+            }
         })
     }
 </script>
