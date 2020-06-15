@@ -42,6 +42,8 @@ urlpatterns = [
     path('company-upload', views.company_upload, name="company_upload"),
     path('city-upload', views.city_upload, name="city_upload"),
     path('multi-upload', views.multi_upload, name="multi_upload"),
+    path('delete-all-city-pdf', views.delete_all_city_pdf, name="delete_all_city_pdf"),
+    path('delete-all-company-pdf', views.delete_all_company_pdf, name="delete_all_company_pdf"),
 ]
 
 if settings.DEBUG:

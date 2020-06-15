@@ -73,11 +73,17 @@
 
             </div>
             
-            <div class="hiddenFileInput">
+            <div class="hiddenFileInput my-2">
                 <h4 class="text-center">Multiple files drop here</h4>
                 <input type="file" multiple  id='dropzone' class='dropzone' draggable='true' onchange="multiupload();">
             </div>
-            <div id="district_row" style="">      
+            <div class="row">
+                <div class="col-md-3 ml-auto my-2">
+                    <button class="btn btn-block btn-danger city" style="display: none;" onclick="DeleteAllCityPdf();">Delete All PDFs of Cities</button>
+                    <button class="btn btn-block btn-danger company" style="display: none;" onclick="DeleteAllCompanyPdf();">Delete All PDFs of Companies</button>
+                </div>
+            </div>
+            <div id="district_row">      
             </div>
                     
                
@@ -154,7 +160,13 @@
     function get_cities(){
         company_id = $("#companyId").val();
         if(company_id != "all-company"){
-        $(".hiddenFileInput").show();
+            $(".hiddenFileInput").show();
+            $(".city").show();
+            $(".company").hide();
+        }
+        else{
+            $(".city").hide();
+            $(".company").show();
         }
         sort = $("#sort").val();
         date = $("#date").val();
@@ -320,5 +332,38 @@
     }
 </script>
 
+<script>
+   function DeleteAllCityPdf(){
+        date = $("#date").val();
+        stateId = $("#stateId").val();
+        companyId = $("#companyId").val();
+        $.ajax({
+            url:"{% url 'delete_all_city_pdf' %}",
+            data: {date:date,
+                    stateId:stateId,
+                    companyId:companyId},
+            type:"GET",
+            success:function(data){
+                alert(data["status"])
+               }
+        })
+   }
+</script>
 
+<script>
+    function DeleteAllCompanyPdf(){
+        date = $("#date").val();
+        stateId = $("#stateId").val();
+        $.ajax({
+            url:"{% url 'delete_all_company_pdf' %}",
+            data: {date:date,
+                    stateId:stateId,
+                    },
+            type:"GET",
+            success:function(data){
+                alert(data["status"])
+               }
+        })
+    }
+</script>
 {%endblock%}

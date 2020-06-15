@@ -48,3 +48,13 @@ class SundayMagazineSerializer(serializers.ModelSerializer):
         model = SundayMagazine
         fields = ['magazineId','magazineName','fileName','imageUrl','newsDate']
 
+class CompaninesPdfSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CompaninesPdf
+        fields = ['companyName', 'pdfUlr', 'imageUlr', 'newsDate']
+    
+class SingleCitySerializer(serializers.ModelSerializer):
+    companyName = serializers.StringRelatedField()
+    class Meta:
+        model = Cities
+        fields = ['cityName',"fileName","imageUrl","newsDate","companyName"]

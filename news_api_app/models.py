@@ -59,11 +59,11 @@ class CompaninesPdf(models.Model):
     companyId = models.ForeignKey(Companines,on_delete=models.CASCADE,blank=True, null=True)
     companypdfId = models.AutoField(primary_key=True, editable=False)
     companyName = models.CharField(max_length=50)
+    stateId = models.ForeignKey(State,on_delete=models.CASCADE, null=True)
     pdfUlr = models.FileField(upload_to='CompanyPDFs/%Y/%m/%d',null=True,blank=True)
     imageUlr = models.ImageField(upload_to="CompanyNewsImages", null=True)
     newsDate = models.CharField(max_length=20,validators =[date_validate],null=True, blank=True)
     isActive = models.BooleanField(default=False)
-    stateId = models.ForeignKey(State,on_delete=models.CASCADE,null=True)
     addedOn = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.companyName

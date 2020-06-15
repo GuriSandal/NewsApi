@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, render, HttpResponseRedirect
-from news_api_app.models import State, Headline, Companines,Cities, MagazineCategory, Magazine, SundayMagazine, District, CompaninesPdf
-from news_api_app.serializers import StateSerializer, HeadlineSerializer, CompaninesSerializer, CitiesSerializer, CompanyInfoSerializer, SearchCompanyInfoSerializer, MagazineCategorySerializer, MagazineSerializer, SundayMagazineSerializer
+from news_api_app.models import State, Headline, Companines, Cities, MagazineCategory, Magazine, SundayMagazine, District, CompaninesPdf
+from news_api_app.serializers import StateSerializer, HeadlineSerializer, CompaninesSerializer, CitiesSerializer, CompanyInfoSerializer, SearchCompanyInfoSerializer, MagazineCategorySerializer, MagazineSerializer, SundayMagazineSerializer, CompaninesPdfSerializer, SingleCitySerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -27,7 +27,7 @@ class StateList(APIView):
 class CompaninesList(APIView):
     def get(self, request):
         state_id = request.GET['state_id']
-        state = get_object_or_404(State,stateId=state_id)
+        state = get_object_or_404(State, stateId=state_id)
         data = {}
         data["status"] = True
         data['companyList'] = CompaninesSerializer(Companines.objects.filter(stateId=state).order_by("companyName"), context={"request": request}, many=True).data
@@ -37,7 +37,7 @@ class CitiesList(APIView):
     def get(self, request):
         data = {}
         company_id = request.GET['company_id']
-        company = get_object_or_404(Companines,companyId=company_id)
+        company = get_object_or_404(Companines, companyId=company_id)
         data["status"] = True
         data['companyInfo'] = CompanyInfoSerializer(CompaninesPdf.objects.filter(companyId=company), context={"request": request}, many=True).data
         data['cityList'] = CitiesSerializer(Cities.objects.filter(companyName=company).order_by("cityName"), context={"request": request}, many=True).data
@@ -49,7 +49,7 @@ class SearchCityNews(APIView):
         data = {}
         company_id = request.GET['company_id']
         search_date = request.GET['search_date']
-        company = get_object_or_404(Companines,companyId=company_id)
+        company = get_object_or_404(Companines, companyId=company_id)
         data["status"] = True
         data['companyInfo'] = SearchCompanyInfoSerializer(CompaninesPdf.objects.filter(companyId=company,newsDate=search_date), context={"request": request}, many=True).data
         data['cityList'] = CitiesSerializer(Cities.objects.filter(companyName=company,newsDate=search_date).order_by("cityName"), context={"request": request}, many=True).data
@@ -77,7 +77,7 @@ class SearchMagazineList(APIView):
         search_date = request.GET['search_date']
         category = get_object_or_404(MagazineCategory, categoryId=category_id)
         data["status"] = True
-        data["magazineList"] = MagazineSerializer(Magazine.objects.filter(categoryName=category,newsDate=search_date).order_by("magazineName"), context={"request": request}, many=True).data
+        data["magazineList"] = MagazineSerializer(Magazine.objects.filter(categoryName=category, newsDate=search_date).order_by("magazineName"), context={"request": request}, many=True).data
         return Response(data=data, status=status.HTTP_200_OK)
 
 class SundayMagazineList(APIView):
@@ -87,10 +87,29 @@ class SundayMagazineList(APIView):
         data['sundayMagazineList'] = SundayMagazineSerializer(SundayMagazine.objects.order_by("magazineName"),context={"request": request}, many=True).data
         return Response(data=data, status=status.HTTP_200_OK)
 
+class CompaninesPdfList(APIView):
+    def get(self, request):
+        data = {}
+        data["status"] = True
+        state_id = request.GET["state_id"]
+        search_date = request.GET['search_date']
+        state = State.objects.get(stateId=state_id)
+        data["companyList"] = CompaninesPdfSerializer(CompaninesPdf.objects.filter(stateId=state,newsDate=search_date).order_by("companyName"), context={"request":request}, many=True).data
+        return Response(data=data)
 
-
-# Front End #
-
+class SingleCityList(APIView):
+    def get(self, request):
+        data = {}
+        data["status"] = True
+        state_id = request.GET["state_id"]
+        state = State.objects.get(stateId=state_id)
+        company_id = request.GET["company_id"]
+        city_name = request.GET["city_name"]
+        company = Companines.objects.get(companyId=company_id)
+        city = Cities.objects.filter(stateId=state, companyName=company, cityName=city_name).order_by("-newsDate")
+        data["cityInfo"] = SingleCitySerializer(city,context={"request":request}, many=True).data
+        return Response(data=data)
+        
 def login_user(request):
     if request.method == "POST":
         uname = request.POST["username"]
@@ -100,7 +119,7 @@ def login_user(request):
             login(request,user)
             return HttpResponseRedirect("/state/")
         else:
-           return render(request, 'login_user.html', {"status":"Invalid Username or Password !"} ) 
+            return render(request, 'login_user.html', {"status":"Invalid Username or Password !"}) 
     return render(request,'login_user.html')
 
 
@@ -197,10 +216,8 @@ def district(request):
     if request.method == "POST":
         if "add" in request.POST:
             districtName = request.POST["districtName"]
-            stateId = request.POST["stateId"]
-            
+            stateId = request.POST["stateId"]       
             state = get_object_or_404(State, stateId=stateId)
-            
             if "addActive" in request.POST:
                 district = District(districtName=districtName, stateName=state, isActive=True)
                 district.save()
@@ -1096,4 +1113,26 @@ def multi_upload(request):
         return JsonResponse(context)
                 
                 
+@login_required
+def delete_all_city_pdf(request):
+    stateId = request.GET["stateId"]       
+    companyId = request.GET["companyId"]       
+    date = request.GET["date"]
+    state = State.objects.get(stateId=stateId)
+    company = Companines.objects.get(companyId=companyId)
+    cities = Cities.objects.filter(stateId=state, companyName=company, newsDate=date)       
+    for city in cities:
+        city.delete()
+    return JsonResponse({"status":"Successfully Deleted All Cities Pdfs"})
+
+@login_required
+def delete_all_company_pdf(request):
+    stateId = request.GET["stateId"]       
+    date = request.GET["date"]
+    state = State.objects.get(stateId=stateId)
+    companies = CompaninesPdf.objects.filter(stateId=state, newsDate=date)       
+    for company in companies:
+        company.delete()
+    return JsonResponse({"status":"Successfully Deleted All Companies Pdfs"})
             
+        
