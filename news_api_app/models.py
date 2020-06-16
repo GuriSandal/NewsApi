@@ -112,10 +112,11 @@ class Magazine(models.Model):
         verbose_name_plural = 'Magazines'
 
 class SundayMagazine(models.Model):
-    magazineId = models.AutoField(primary_key=True, editable=False)
+    id = models.AutoField(primary_key=True, editable=False)
     magazineName = models.CharField(max_length=50)
     fileName = models.FileField(upload_to='SundayMagazinePDFs/%Y/%m/%d')
     imageUrl = models.ImageField(upload_to='SundayMagazineImages', null=True)
+    imageName = models.CharField(max_length=200, null=True)
     newsDate = models.CharField(max_length=20,validators =[date_validate])
     isActive = models.BooleanField(default=False)
     addedOn = models.DateTimeField(auto_now_add=True, null=True)

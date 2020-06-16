@@ -644,7 +644,7 @@ def sunday_magzine(request):
                 if "fileName" in request.FILES:
                     fileName = request.FILES["fileName"]
                     imageUrl = "SundayMagazineImages/"+str(fileName).split(".")[0]+".png"
-                    magazine = SundayMagazine(magazineName=name,fileName=fileName,imageUrl=imageUrl,newsDate=date,isActive=True)
+                    magazine = SundayMagazine(magazineName=name,fileName=fileName,imageUrl=imageUrl,imageName=str(fileName).split(".")[0]+".png",newsDate=date,isActive=True)
                     magazine.save()
                     pdffile = settings.MEDIA_ROOT+"/"+str(magazine.fileName)
                     doc = fitz.open(pdffile)
@@ -657,7 +657,7 @@ def sunday_magzine(request):
                 if "fileName" in request.FILES:
                     fileName = request.FILES["fileName"]
                     imageUrl = "SundayMagazineImages/"+str(fileName).split(".")[0]+".png"
-                    magazine = SundayMagazine(magazineName=name,fileName=fileName,imageUrl=imageUrl,newsDate=date,isActive=False)
+                    magazine = SundayMagazine(magazineName=name,fileName=fileName,imageUrl=imageUrl,imageName=str(fileName).split(".")[0]+".png",newsDate=date,isActive=False)
                     magazine.save()
                     pdffile = settings.MEDIA_ROOT+"/"+str(magazine.fileName)
                     doc = fitz.open(pdffile)
@@ -673,7 +673,7 @@ def sunday_magzine(request):
             date = request.POST["date"]
           
             Id = request.POST['id']
-            magazine = SundayMagazine.objects.get(magazineId=Id)
+            magazine = SundayMagazine.objects.get(id=Id)
             if "updateActive" in request.POST:    
                 if "fileName" in request.FILES:
                     fileName = request.FILES["fileName"]
@@ -681,6 +681,7 @@ def sunday_magzine(request):
                     magazine.magazineName=name
                     magazine.fileName=fileName
                     magazine.imageUrl=imageUrl
+                    imageName=str(fileName).split(".")[0]+".png"
                     magazine.newsDate=date
                     magazine.isActive=True
                     magazine.save()
@@ -704,6 +705,7 @@ def sunday_magzine(request):
                     magazine.magazineName=name
                     magazine.fileName=fileName
                     magazine.imageUrl=imageUrl
+                    imageName=str(fileName).split(".")[0]+".png"
                     magazine.newsDate=date
                     magazine.isActive=False
                     magazine.save()
@@ -724,7 +726,7 @@ def sunday_magzine(request):
 
         if "delete" in request.POST:
             magazineId = request.POST["magazineId"]
-            magazine = get_object_or_404(SundayMagazine, magazineId=magazineId)
+            magazine = get_object_or_404(SundayMagazine, id=magazineId)
             magazine.delete()
             context["status"] = "{} Deleted Sucessfully!".format(magazine.magazineName)
     return render(request,"sunday_magzine.html", context)
@@ -1055,9 +1057,11 @@ def multi_upload(request):
         stateId = request.POST["stateId"]
         date = request.POST["date"]
         files = request.FILES.getlist("files")
+        names = []
         for i in files:
             if str(i).split(".")[-1] == "pdf":
                 name = str(i).split("_")[0]
+                names.append(name)
                 image = "CityNewsImages/"+str(i).split(".")[0]+".png"
                 company = Companines.objects.get(companyId=companyId)
                 state = State.objects.get(stateId=stateId)
@@ -1114,9 +1118,9 @@ def multi_upload(request):
                         pix.writePNG(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
             else:
                 return JsonResponse({"status":"city_error","msg":"File should be in pdf format!!"})
-        context["status"] = "city"
+        context["status"] = "success"
         context["msg"] = date
-        context["length"] = len(files)
+        context["names"] = names
         return JsonResponse(context)
                 
                 

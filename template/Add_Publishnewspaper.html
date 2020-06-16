@@ -22,8 +22,8 @@
     </style>
 {% endblock %}
 {% block admin_base %}
-<div class="container">
-<div class="row" style="position: sticky;top: 0px;position: -webkit-sticky; z-index: 1;">
+<div class="container" style="position: sticky;top: 0px;position: -webkit-sticky; z-index: 1;">
+<div class="row" >
     <div class="col-md-1 mx-auto mt-2">
         <div class="spinner-border text-primary" id="spinner" role="status" style="display: none;">
             <span class="sr-only">Loading...</span>
@@ -236,12 +236,13 @@
                     r += '<h5 class="mt-3">UPLOAD FOR CITY</h5><br>'
                     r += '<div class="row">'
                     for(i=0; i<data["district_list"].length; i++){
+                        name = data["district_list"][i]
                         r += '<div class="col-md-4 card p-3 city">'
                         r += '<h5 style="color: rgb(121, 41, 158);" class="text-center">'+data["district_list"][i]+'</h5>'
-                        r += '<input type="text" hidden value="'+data["district_list"][i]+'" id="cityName'+i+'" name="cityName">'
+                        r += '<input type="text" hidden value="'+data["district_list"][i]+'" id="cityName'+name+'" name="cityName">'
                         r += '<div class="form-group">'
-                        r += '<input type="file" name="city_file" id="city_file'+i+'" class="mt-3" onchange="city_upload('+i+');"><br>'
-                        r += '<br><span id=city_info'+i+'>'
+                        r += '<input type="file" name="city_file" id="city_file'+name+'" class="mt-3" onchange="city_upload(\''+name+'\');"><br>'
+                        r += '<br><span id=city_info'+name+'>'
                         for(j=0;j<data["added_city"].length;j++){
                             if(data["district_list"][i]==data["added_city"][j]){
                                 r += '<br><h6 class="text-success"><i class="fas fa-check"></i> UPLOADED - '+data["date"]+'</h6>'
@@ -354,13 +355,14 @@
             type:"POST",
             success:function(data){
                 $("#spinner").hide();
-                if(data["status"]=="city"){
-                    alert(data["length"]+" CITIES PDF UPLOADED ON "+data["msg"])
+                if(data["status"]=="success"){
+                    alert("Success")
+                    get_cities();
                 }
-                else if(data["status"]=="city_error"){
-                    alert(data["msg"]) 
-               }
-               location.reload();
+                
+                else{
+                    alert('<h6 class="text-danger"><i class="fas fa-times"></i> '+data["msg"]+'</h6>');
+                }
             }
         })
     }
@@ -381,7 +383,7 @@
             success:function(data){
                 $("#spinner").hide();
                 alert(data["status"]);
-                location.reload();
+                get_cities();
                 
                }
         })
@@ -402,7 +404,7 @@
             success:function(data){
                 $("#spinner").hide();
                 alert(data["status"]);
-                location.reload();
+                get_cities();
                }
         })
     }
