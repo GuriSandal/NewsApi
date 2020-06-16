@@ -11,7 +11,8 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-
+from PIL import Image
+from resizeimage import resizeimage
 
 # API END #
 class StateList(APIView):
@@ -453,6 +454,9 @@ def magzine(request):
                     output = str(fileName).split(".")
                     output = output[0]+".png"
                     pix.writePNG(settings.MEDIA_ROOT+"/MagazineImages/"+output)
+                    img = Image.open(settings.MEDIA_ROOT+"/MagazineImages/"+output)
+                    img = resizeimage.resize_cover(img, [150, 250])
+                    img.save(settings.MEDIA_ROOT+"/MagazineImages/"+output, img.format)
                     
                     for i in categorie_list:
                         magazine.categoryName.add(i)
@@ -470,7 +474,10 @@ def magzine(request):
                     output = str(fileName).split(".")
                     output = output[0]+".png"
                     pix.writePNG(settings.MEDIA_ROOT+"/MagazineImages/"+output)
-
+                    fd_img = open(settings.MEDIA_ROOT+"/MagazineImages/"+output, 'r')
+                    img = Image.open(settings.MEDIA_ROOT+"/MagazineImages/"+output)
+                    img = resizeimage.resize_cover(img, [150, 250])
+                    img.save(settings.MEDIA_ROOT+"/MagazineImages/"+output, img.format)
                     for i in categorie_list:
                         magazine.categoryName.add(i)
 
@@ -505,7 +512,9 @@ def magzine(request):
                     output = str(fileName).split(".")
                     output = output[0]+".png"
                     pix.writePNG(settings.MEDIA_ROOT+"/MagazineImages/"+output)
-
+                    img = Image.open(settings.MEDIA_ROOT+"/MagazineImages/"+output)
+                    img = resizeimage.resize_cover(img, [150, 250])
+                    img.save(settings.MEDIA_ROOT+"/MagazineImages/"+output, img.format)
                     for i in categorie_list:
                         magazine.categoryName.add(i)
                 else:
@@ -534,6 +543,9 @@ def magzine(request):
                     output = str(fileName).split(".")
                     output = output[0]+".png"
                     pix.writePNG(settings.MEDIA_ROOT+"/MagazineImages/"+output)
+                    img = Image.open(settings.MEDIA_ROOT+"/MagazineImages/"+output)
+                    img = resizeimage.resize_cover(img, [150, 250])
+                    img.save(settings.MEDIA_ROOT+"/MagazineImages/"+output, img.format)
                     for i in categorie_list:
                         magazine.categoryName.add(i)
                 else:
@@ -653,6 +665,9 @@ def sunday_magzine(request):
                     output = str(fileName).split(".")
                     output = output[0]+".png"
                     pix.writePNG(settings.MEDIA_ROOT+"/SundayMagazineImages/"+output)
+                    img = Image.open(settings.MEDIA_ROOT+"/SundayMagazineImages/"+output)
+                    img = resizeimage.resize_cover(img, [150, 250])
+                    img.save(settings.MEDIA_ROOT+"/SundayMagazineImages/"+output, img.format)
             else:
                 if "fileName" in request.FILES:
                     fileName = request.FILES["fileName"]
@@ -666,6 +681,9 @@ def sunday_magzine(request):
                     output = str(fileName).split(".")
                     output = output[0]+".png"
                     pix.writePNG(settings.MEDIA_ROOT+"/SundayMagazineImages/"+output)
+                    img = Image.open(settings.MEDIA_ROOT+"/SundayMagazineImages/"+output)
+                    img = resizeimage.resize_cover(img, [150, 250])
+                    img.save(settings.MEDIA_ROOT+"/SundayMagazineImages/"+output, img.format)
             context["status"] = "{} added successfully!".format(name)
         
         if "update" in request.POST:
@@ -692,6 +710,9 @@ def sunday_magzine(request):
                     output = str(fileName).split(".")
                     output = output[0]+".png"
                     pix.writePNG(settings.MEDIA_ROOT+"/SundayMagazineImages/"+output)
+                    img = Image.open(settings.MEDIA_ROOT+"/SundayMagazineImages/"+output)
+                    img = resizeimage.resize_cover(img, [150, 250])
+                    img.save(settings.MEDIA_ROOT+"/SundayMagazineImages/"+output, img.format)
                 else:
                     magazine.magazineName=name
                     magazine.newsDate=date
@@ -716,6 +737,9 @@ def sunday_magzine(request):
                     output = str(fileName).split(".")
                     output = output[0]+".png"
                     pix.writePNG(settings.MEDIA_ROOT+"/SundayMagazineImages/"+output)
+                    img = Image.open(settings.MEDIA_ROOT+"/SundayMagazineImages/"+output)
+                    img = resizeimage.resize_cover(img, [150, 250])
+                    img.save(settings.MEDIA_ROOT+"/SundayMagazineImages/"+output, img.format)
                 else:
                     magazine.magazineName=name
                     magazine.newsDate=date
@@ -782,6 +806,9 @@ def publish_newspaper(request):
                     output = str(fileName).split(".")
                     output = output[0]+".png"
                     pix.writePNG(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
+                    img = Image.open(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
+                    img = resizeimage.resize_cover(img, [150, 250])
+                    img.save(settings.MEDIA_ROOT+"/CityNewsImages/"+output, img.format)
                 else:
                     city.cityName = cityName
                     city.newsDate = date
@@ -806,6 +833,9 @@ def publish_newspaper(request):
                     output = str(fileName).split(".")
                     output = output[0]+".png"
                     pix.writePNG(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
+                    img = Image.open(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
+                    img = resizeimage.resize_cover(img, [150, 250])
+                    img.save(settings.MEDIA_ROOT+"/CityNewsImages/"+output, img.format)
                 else:
                     city.cityName = cityName
                     city.newsDate = date
@@ -994,6 +1024,9 @@ def company_upload(request):
                     output = str(company_file).split(".")
                     output = output[0]+".png"
                     pix.writePNG(settings.MEDIA_ROOT+"/CompanyNewsImages/"+output)
+                    img = Image.open(settings.MEDIA_ROOT+"/CompanyNewsImages/"+output)
+                    img = resizeimage.resize_cover(img, [150, 250])
+                    img.save(settings.MEDIA_ROOT+"/CompanyNewsImages/"+output, img.format)
                     return JsonResponse({"status":"success","msg":date}) 
                 except:
                     pdf = CompaninesPdf(companyId=company,companyName=company, stateId=state, pdfUlr=company_file, newsDate=date, imageUlr=imageUrl, isActive=True)
@@ -1005,6 +1038,9 @@ def company_upload(request):
                     output = str(company_file).split(".")
                     output = output[0]+".png"
                     pix.writePNG(settings.MEDIA_ROOT+"/CompanyNewsImages/"+output)
+                    img = Image.open(settings.MEDIA_ROOT+"/CompanyNewsImages/"+output)
+                    img = resizeimage.resize_cover(img, [150, 250])
+                    img.save(settings.MEDIA_ROOT+"/CompanyNewsImages/"+output, img.format)
                     return JsonResponse({"status":"success","msg":date}) 
             else:
                 return JsonResponse({"status":"error","msg":"File should be in pdf format!!"})
@@ -1037,6 +1073,9 @@ def city_upload(request):
                     output = str(city_file).split(".")
                     output = output[0]+".png"
                     pix.writePNG(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
+                    img = Image.open(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
+                    img = resizeimage.resize_cover(img, [150, 250])
+                    img.save(settings.MEDIA_ROOT+"/CityNewsImages/"+output, img.format)
                     return JsonResponse({"status":"success","msg":date}) 
                 except:
                     pdf = Cities(companyName=company, stateId=state, cityName=cityName, fileName=city_file, newsDate=date, imageUrl=imageUrl, isActive=True)
@@ -1048,6 +1087,9 @@ def city_upload(request):
                     output = str(city_file).split(".")
                     output = output[0]+".png"
                     pix.writePNG(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
+                    img = Image.open(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
+                    img = resizeimage.resize_cover(img, [150, 250])
+                    img.save(settings.MEDIA_ROOT+"/CityNewsImages/"+output, img.format)
                     return JsonResponse({"status":"success","msg":date}) 
             else:
                 return JsonResponse({"status":"error","msg":"File should be in pdf format!!"})
@@ -1089,6 +1131,9 @@ def multi_upload(request):
                         output = str(i).split(".")
                         output = output[0]+".png"
                         pix.writePNG(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
+                        img = Image.open(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
+                        img = resizeimage.resize_cover(img, [150, 250])
+                        img.save(settings.MEDIA_ROOT+"/CityNewsImages/"+output, img.format)
                     except:
                         city = Cities(cityName=name,stateId=state,fileName=i,newsDate=date,imageUrl=image,companyName=company,isActive=True)
                         city.save()
@@ -1099,6 +1144,9 @@ def multi_upload(request):
                         output = str(i).split(".")
                         output = output[0]+".png"
                         pix.writePNG(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
+                        img = Image.open(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
+                        img = resizeimage.resize_cover(img, [150, 250])
+                        img.save(settings.MEDIA_ROOT+"/CityNewsImages/"+output, img.format)
                 else:
                     try:
                         city = Cities.objects.get(companyName=company, stateId=state, cityName=name, newsDate=date, isActive=True)
@@ -1112,6 +1160,9 @@ def multi_upload(request):
                         output = str(i).split(".")
                         output = output[0]+".png"
                         pix.writePNG(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
+                        img = Image.open(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
+                        img = resizeimage.resize_cover(img, [150, 250])
+                        img.save(settings.MEDIA_ROOT+"/CityNewsImages/"+output, img.format)
                     except:
                         city = Cities(cityName=name,stateId=state,fileName=i,newsDate=date,imageUrl=image,companyName=company,isActive=True)
                         city.save()
@@ -1122,6 +1173,9 @@ def multi_upload(request):
                         output = str(i).split(".")
                         output = output[0]+".png"
                         pix.writePNG(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
+                        img = Image.open(settings.MEDIA_ROOT+"/CityNewsImages/"+output)
+                        img = resizeimage.resize_cover(img, [150, 250])
+                        img.save(settings.MEDIA_ROOT+"/CityNewsImages/"+output, img.format)
             else:
                 return JsonResponse({"status":"city_error","msg":"File should be in pdf format!!"})
         context["status"] = "success"
@@ -1177,6 +1231,9 @@ def main_upload(request):
                     output = str(company_file).split(".")
                     output = output[0]+".png"
                     pix.writePNG(settings.MEDIA_ROOT+"/CompanyNewsImages/"+output)
+                    img = Image.open(settings.MEDIA_ROOT+"/CompanyNewsImages/"+output)
+                    img = resizeimage.resize_cover(img, [150, 250])
+                    img.save(settings.MEDIA_ROOT+"/CompanyNewsImages/"+output, img.format)
                     return JsonResponse({"status":"success","msg":date}) 
                 except:
                     pdf = CompaninesPdf(companyId=company,companyName=company, stateId=state, pdfUlr=company_file, newsDate=date, imageUlr=imageUrl, isActive=True)
@@ -1188,6 +1245,9 @@ def main_upload(request):
                     output = str(company_file).split(".")
                     output = output[0]+".png"
                     pix.writePNG(settings.MEDIA_ROOT+"/CompanyNewsImages/"+output)
+                    img = Image.open(settings.MEDIA_ROOT+"/CompanyNewsImages/"+output)
+                    img = resizeimage.resize_cover(img, [150, 250])
+                    img.save(settings.MEDIA_ROOT+"/CompanyNewsImages/"+output, img.format)
                     return JsonResponse({"status":"success","msg":date}) 
             else:
                 return JsonResponse({"status":"error","msg":"File should be in pdf format!!"})
