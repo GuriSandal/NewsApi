@@ -924,11 +924,14 @@ def get_cities(request):
             context["status"] = "city"
             try:
                 cities = Cities.objects.filter(newsDate=date, companyName=company)
+                added_company = CompaninesPdf.objects.get(newsDate=date, stateId=state, companyId=company)
                 added_city = [city.cityName for city in cities]    
                 context["added_city"] = added_city
+                context["added_company"] = added_company.companyName
                 context["date"] = date
                 
             except:
+                context["added_company"] = ""
                 context["added_city"] = ""
                 context["date"] = ""
             return JsonResponse(context)
@@ -955,11 +958,14 @@ def get_cities(request):
             context["status"] = "city"
             try:
                 cities = Cities.objects.filter(newsDate=date, companyName=company)
+                added_company = CompaninesPdf.objects.get(newsDate=date, companyId=company)
                 added_city = [city.cityName for city in cities]    
                 context["added_city"] = added_city
+                context["added_company"] = added_company.companyName
                 context["date"] = date
             except:
                 context["added_city"] = ""
+                context["added_company"] = ""
                 context["date"] = ""
             return JsonResponse(context)
 
