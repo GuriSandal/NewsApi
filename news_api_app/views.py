@@ -736,11 +736,11 @@ def sunday_magzine(request):
 def publish_newspaper(request):
     from datetime import date
     context = {}
-    cities = Cities.objects.all()
+    cities = Cities.objects.order_by("cityId")
     context["cities"] = cities
     context["city_lenght"] = len(cities)
 
-    companypdfs = CompaninesPdf.objects.all()
+    companypdfs = CompaninesPdf.objects.order_by("companypdfId")
     context["companypdfs"] = companypdfs
 
     states = State.objects.filter(isActive=True)
@@ -797,7 +797,7 @@ def publish_newspaper(request):
                     city.imageUrl = imageUrl
                     city.newsDate = date
                     city.companyName = company
-                    city.isActive = False
+                rojects    city.isActive = False
                     city.save()
                     pdffile = settings.MEDIA_ROOT+"/"+str(city.fileName)
                     doc = fitz.open(pdffile)
