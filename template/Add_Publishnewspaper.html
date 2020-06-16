@@ -290,7 +290,7 @@
             success:function(data){
                 $("#spinner").hide();
                 if(data["status"]=="success"){
-                    $("#company_info"+i).html('<br><h6 class="text-success"><i class="fas fa-check"></i> UPLOADED - '+data["msg"]+'</h6>');
+                    get_cities();
                 }
                 else{
                     $("#company_info"+i).html('<br><h6 class="text-danger"><i class="fas fa-times"></i> '+data["msg"]+'</h6>');
@@ -327,7 +327,7 @@
             success:function(data){
                 $("#spinner").hide();
                 if(data["status"]=="success"){
-                    $("#city_info"+i).html('<br><h6 class="text-success"><i class="fas fa-check"></i> UPLOADED - '+data["msg"]+'</h6>');
+                    get_cities();
                 }
                 else{
                     $("#city_info"+i).html('<br><h6 class="text-danger"><i class="fas fa-times"></i> '+data["msg"]+'</h6>');
