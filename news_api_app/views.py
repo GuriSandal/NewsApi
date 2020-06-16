@@ -105,7 +105,7 @@ class SingleCityList(APIView):
         state = State.objects.get(stateId=state_id)
         city_name = request.GET["city_name"]
         search_date = request.GET['search_date']
-        city = Cities.objects.filter(stateId=state, cityName=city_name, newsDate=date).order_by("-newsDate")
+        city = Cities.objects.filter(stateId=state, cityName=city_name, newsDate=search_date)
         data["cityInfo"] = SingleCitySerializer(city,context={"request":request}, many=True).data
         return Response(data=data)
         
