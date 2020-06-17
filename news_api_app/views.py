@@ -52,7 +52,7 @@ class SearchCityNews(APIView):
         search_date = request.GET['search_date']
         company = get_object_or_404(Companines, companyId=company_id)
         data["status"] = True
-        data['companyInfo'] = SearchCompanyInfoSerializer(CompaninesPdf.objects.filter(companyId=company,newsDate=search_date), context={"request": request}, many=True).data
+        data['companyInfo'] = SearchCompanyInfoSerializer(get_object_or_404(CompaninesPdf, companyId=company,newsDate=search_date), context={"request": request}, many=False).data
         data['cityList'] = CitiesSerializer(Cities.objects.filter(companyName=company,newsDate=search_date).order_by("cityName"), context={"request": request}, many=True).data
         return Response(data=data, status=status.HTTP_200_OK)
 
