@@ -46,7 +46,7 @@ urlpatterns = [
     path('delete-all-city-pdf', views.delete_all_city_pdf, name="delete_all_city_pdf"),
     path('delete-all-company-pdf', views.delete_all_company_pdf, name="delete_all_company_pdf"),
     path('main-upload', views.main_upload, name="main_upload"),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += staticfiles_urlpatterns()
 
 
