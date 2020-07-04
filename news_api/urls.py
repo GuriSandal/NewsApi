@@ -20,6 +20,7 @@ from django.conf.urls.static import static
 import news_api_app.urls
 from news_api_app import views
 from django.views.static import serve
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     path('api/customer/', include(news_api_app.urls)),
@@ -46,7 +47,7 @@ urlpatterns = [
     path('delete-all-company-pdf', views.delete_all_company_pdf, name="delete_all_company_pdf"),
     path('main-upload', views.main_upload, name="main_upload"),
 ]
+urlpatterns += staticfiles_urlpatterns()
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 
