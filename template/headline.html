@@ -1,0 +1,132 @@
+{% extends 'admin_base.html' %}
+{%load static%}
+
+{% block title %}NEWS - Headline{% endblock %}
+
+
+{% block admin_base %}
+<div class="col-md-10 mx-auto mt-5 shadow-sm border rounded-lg py-2">
+    <span><i class="fa fa-home"></i> <a href="{% url 'state' %}" class="text-dark">Home</a> / </span><span><a class="text-dark" href="{% url 'headline' %}">Headline</a></span> / <span class="text-muted">List</span>    
+
+</div>
+<div class="col-md-10 mx-auto mt-5">
+    {% if status %}
+    <div class="alert alert-success text-center mt-3">{{status}}</div>
+{% endif %}
+    
+    
+    <!-- table  satart    -->
+    <div class="row">
+        <div class="col-md-12 px-0">
+            
+            
+            <div class="row">
+                <div class="col-md-12 px-0">
+                    <div class="container">
+                        <table class="table table-fluid display rounded-lg border shadow-sm nowrap" style="width:100%"  id="myTable" >
+                        <thead>
+                        <tr><th>#</th>
+                            <th>Headline</th>
+                            <th>Status</th>
+                            <th>Date/Time</th>
+                            
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="align-middle">1</td>
+                            <td class="align-middle"> 
+                                {{headline.headlineText}}
+                            </td>
+                            <td class="align-middle">
+                                {% if headline.isActive %}
+                                    <span class="bg-success text-white px-3 rounded py-1">ACTIVE</span>
+                                {% else %}
+                                    <span class="bg-secondary text-white px-3 rounded py-1">IN ACTIVE</span>
+                                {% endif %}
+                            </td>
+                            <td class="align-middle">
+                                <span>{{headline.addedOn}}</span>
+                            </td>
+                            <td class="align-middle"><span> <h4><a href="" data-toggle="modal" data-target="#upadte{{headline.headlineId}}"><i class="fa fa-edit" ></i></a></span>
+                            </td>
+    
+                        </tr>
+                        
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+    
+        </div>
+    
+    </div> 
+</div>
+    <!-- table end  -->
+        <!-- modal for edit  -->
+        <div class="col-md-12 mt-5">
+            <div class="modal fade" id="upadte{{headline.headlineId}}"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog " role="document">
+                    <div class="modal-content  p-0 m-0" >
+                        <div class="modal-header">
+                            Update Headline
+                            <button  data-dismiss="modal"  class="close" type="button"  >
+                                <span aria-hidden="true" >&times;</span>
+                            </button>
+                        </div>
+                       
+                        <div class="modal-body p-0 m-0">
+                            <div class="row">
+                                <div class="col-md-10 p-3 mx-auto">
+                                    <form action="" method="POST">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="">Headline</label>
+                                            <input type="text" class="form-control" placeholder="" value="{{headline.headlineText}}" name="headlineText">
+
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            {% if headline.isActive %}
+                                                <input type="checkbox" id="updateActive" class="form-conrol " name="updateActive" checked>
+                                            {% else %}
+                                                <input type="checkbox" id="updateActive" class="form-conrol " name="updateActive">
+                                            {% endif %}                                         
+                                           <label for="vehicle1"> Active</label>
+
+                                        </div>
+
+                                        <input type="submit" value="Update" name="update" class="form-control btn btn-success mb-5 ">
+                                        
+                                    </form>
+    
+                                </div>
+    
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+              </div>
+    
+        </div>
+        <!-- modal end  -->
+    
+        
+    
+    </div>
+    <script>
+         $(document).ready(function() {
+            $('#myTable').DataTable( {
+                search = false,
+                responsive: true
+            } );
+        
+            // new $.fn.dataTable.FixedHeader( table );
+        } );
+    </script>
+
+{%endblock%}

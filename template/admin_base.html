@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <script src="/static/bootstrap/jquery/jq.js"></script>
+    <link rel="stylesheet" href="/static/FontAwesome/css/all.min.css">
+
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    <!-- <link rel="stylesheet" href="/static/jqueryTable/jquery.dataTables.min.css"> -->
+    <script src="/static/jqueryTable/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="/static/jqueryTable/responsive.dataTables.min.css">
+    <script src="/static/jqueryTable/dataTables.responsive.min.js"></script>
+
+    <script src="https://cdn.rawgit.com/atatanasov/gijgo/master/dist/combined/js/gijgo.min.js" type="text/javascript"></script>
+    <link href="https://cdn.rawgit.com/atatanasov/gijgo/master/dist/combined/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+    
+    <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="/static/select2-bootstrap4-theme-master/dist/select2-bootstrap4.css">
+    <link rel="stylesheet" href="/static/select2-bootstrap4-theme-master/dist/select2-bootstrap4.min.css">
+<!-- for search option  -->
+<link href="/static/jqueryTable/select2.min.css" rel="stylesheet" />
+<script src="/static/jqueryTable/select2.min.js"></script>
+<!-- <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css"> -->
+
+<!-- <script src="/static/jqueryTable/"></script> -->
+<style>
+  *{font-family:serif;}
+ </style>
+    {%block head%}
+    {%endblock%}
+    <title>{% block title %} {% endblock %}</title>
+</head>
+<body style="font-family: Verdana, Geneva, Tahoma, sans-serif;" >
+<div class="container-fluid  p-0 ">
+    <div class="container-fluid bg-dark p-0 ">
+      <div class="container ">
+      <div class="row ">
+        <div class="col-md-12  ">
+            <nav class="navbar navbar-expand-lg navbar-dark  bg-dark">
+                <a class="navbar-brand font-weight-bold" style="color:orange;" href="{% url 'state' %}">NEWS</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdowna" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavDropdowna">
+                  <ul class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown ">
+                      <a class="nav-link dropdown-toggle " style="color: white;"  href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span><i class="fa fa-user-alt"></i> {{user.username}}</span>
+                      </a>
+                      <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                      <a class="dropdown-item " href="{% url 'user_logout' %}" >Logout</a>
+
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </nav>
+            </div>
+
+
+          </div> 
+
+        </div>
+
+    </div>
+
+
+    <div class="container-fluid bg-dark "> 
+      <div class="container">
+       <div class="row">
+        <div class="col-md-12  p-0">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                  <ul class="navbar-nav mr-auto">
+                      
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle " style="color: white;"  href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class=""></i>TREE
+                    </a>
+                      <div class="dropdown-menu  " aria-labelledby="navbarDropdownMenuLink">
+                      <a class="dropdown-item" href="{% url 'state' %}"   >STATE</a>
+                      <a class="dropdown-item" href="{% url 'district' %}"   >DISTRICT</a>
+                      <a class="dropdown-item" href="{% url 'company' %}"   >PUBLICATION HOUSE</a>
+                      </div>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'publish_newspaper'%}" class="nav-link" style="color: white;">PUBLISH NEWSPAPER</a> 
+
+                    </li>
+                    <li class="nav-item dropdown  ">
+                        <a class="nav-link dropdown-toggle " style="color: white;"  href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        MAGAZINE
+                      </a>
+                        <div class="dropdown-menu  " aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'magzine_catagory'%}"   >MAGAZINE CATEGORY</a>
+                        <a class="dropdown-item" href="{%url 'sunday_magzine'%}"   >SUNDAY MAGZINE</a>
+                        <a class="dropdown-item" href="{% url 'magzine' %}"   >MAGZINE</a>
+                        </div>
+                      </li>
+                      <li class="nav-item">
+                        <a href="{%url 'headline'%}" class="nav-link" style="color: white;">HEADLINE</a> 
+                    </li>
+                  </ul>
+                </div>
+              </nav>
+        </div>
+      </div>  
+    </div>
+    </div>
+    
+     
+
+        {% block admin_base%}
+        {%endblock%}
+        
+    
+
+</div>
+<script>
+  $(".custom-file-input").on("change", function() {
+    var fileName = $(this).val().split("\\").pop();
+    $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+  });
+</script>
+<script>
+   $(".js-example-templating").select2({
+    // templateResult: formatState,
+        templateSelection: formatState,
+        theme: "bootstrap4",
+        
+        });
+
+</script>
+
+</body>
+</html>

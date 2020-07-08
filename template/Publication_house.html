@@ -1,0 +1,345 @@
+{% extends 'admin_base.html' %}
+{%load static%}
+
+{% block title %}NEWS - Publication House{% endblock %}
+
+{% block head%}
+{%endblock%}
+{% block admin_base %}
+<div class="col-md-10 mx-auto mt-5 shadow-sm border rounded-lg py-2">
+    <span><i class="fa fa-home"></i> <a href="{% url 'state' %}" class="text-dark">Home</a> / </span><span><a class="text-dark" href="{% url 'company' %}">Publication House</a></span> / <span class="text-muted">List</span>    
+
+</div>
+<div class="col-md-10 mx-auto mt-5 rounded-lg border shadow-sm">
+    {% if status %}
+        <div class="alert alert-success text-center mt-3">{{status}}</div>
+    {% endif %}
+    <div class="row">
+        <div class="col-md-12">
+            <h6><a href="" class="btn btn-primary mt-3" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus"></i> Add new</a></h6>
+        </div>
+    </div>
+    <div >
+        <!-- modal for add new -->
+        <div class="col-md-12 mt-5">
+            <div class="modal fade" id="exampleModal"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog " role="document">
+                    <div class="modal-content  p-0 m-0" >
+                        <div class="modal-header">
+                            Publication House
+                            <button  data-dismiss="modal"  class="close" type="button"  >
+                                <span aria-hidden="true" >&times;</span>
+                            </button>
+                        </div>
+                       
+                        <div class="modal-body p-0 m-0">
+                            <div class="row">
+                                <div class="col-md-10 p-3 mx-auto">
+                                    <form action="" method="POST" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="" >Name</label>
+                                            <input type="text" class="form-control" placeholder="Enter Name here " value="" name="companyName" required>
+                                        </div>
+                                       <div class="form-group">
+                                            <label for="" >Url</label>
+                                            <input type="text" class="form-control" placeholder="Enter url here " value="" name="companyUrl">
+                                       </div>
+                                        <div class="form-group">
+                                            <label for="" >District</label>
+                                            <select class="js-example-basic-multiple " style="width: 100%;" name="districtIds" multiple="multiple" required>
+                                                {% for district in districts %}
+                                                    <option value="{{district.districtId}}">{{district.districtName}} ({{district.stateName.stateName}})</option>
+                                                {% endfor %}
+                                              </select>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="" >State</label>
+                                            <select class="ui js-example-templating " style="width: 100%;" name="stateId">
+                                                {% for state in states %}
+                                                    <option value="{{state.stateId}}">{{state.stateName}}</option>
+                                                {% endfor %}
+                                               
+                                              </select>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="" >Image</label>
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" name="imageUrl">
+                                                <label class="custom-file-label" for="customFile">Choose file</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="checkbox" id="addActive" class="form-conrol mt-4" name="addActive" checked>
+                                            <label for="addActive"> Active</label>
+
+                                        </div>
+
+                                        
+                                        <input type="submit" value="Add" name="add" class="form-control btn btn-success mb-5 mt-3">
+                                        
+                                    </form>
+    
+                                </div>
+    
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+              </div>
+    
+        </div>
+        <!-- modal end  -->
+    
+    </div>
+    <!-- table  satart    -->
+    <div class="row">
+        <div class="col-md-12">
+            
+            
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="container">
+                        <table class="table table-fluid" id="myTable">
+                        <thead>
+                        <tr><th>Id</th>
+                            <th>Publication House </th>
+                            <th>Image</th>
+                            <th>Status</th>
+                            <th>Edit</th>
+                            <th>Company main purti</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for company in companies %}
+                            <tr>
+                                <td class="align-middle">{{company.companyId}}</td>
+                                <td class="align-middle"> 
+                                    {{company.companyName}} <br>
+                                    <small class="text-danger">State:</small> <small>{{company.stateId.stateName}}</small><br>
+                                    <small class="font-weight-bold">URL:</small> <small>{{company.companyUrl}}</small>
+                                    
+                                </td>
+                                {% if company.imageUlr %}
+                                    <td class="align-middle"><img src="/media/{{company.imageUlr}}" alt="" height="100" width="100"></td>
+                                {% else %}
+                                    <td class="align-middle"><img src="" alt="" height="100" width="100"></td>
+                                {% endif %}
+                                <td class="align-middle">
+                                    {% if company.isActive %}
+                                        <span class="bg-success text-white px-3 rounded py-1">ACTIVE</span>
+                                    {% else %}
+                                        <span class="bg-secondary text-white px-3 rounded py-1">IN ACTIVE</span>
+                                    {% endif %}
+                                </td>
+                                <td class="align-middle">
+                                    <span>{{company.addedOn}}</span>
+                                </td>
+                                <td class="align-middle"><span> <h4><a href="" data-toggle="modal" data-target="#update{{company.companyId}}"><i class="fa fa-edit" ></i></a></span>
+                                    <span> <a href=""data-toggle="modal" data-target="#delete{{company.companyId}}"><i class="fa fa-trash"></i></a></h4></span></h4>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+    
+        </div>
+    
+    </div> 
+    <!-- table end  -->
+        <!-- modal for edit new -->
+        {% for company in companies %}
+        <div class="col-md-12 mt-5">
+            <div class="modal fade" id="update{{company.companyId}}"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog " role="document">
+                    <div class="modal-content  p-0 m-0" >
+                        <div class="modal-header">
+                            {{company.companyName}} (Id - {{company.companyId}})
+                            <button  data-dismiss="modal"  class="close" type="button"  >
+                                <span aria-hidden="true" >&times;</span>
+                            </button>
+                        </div>
+                       
+                        <div class="modal-body p-0 m-0">
+                            <div class="row">
+                                <div class="col-md-10 p-3 mx-auto">
+                                    <form action="" method="POST" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <input type="text" value="{{company.companyId}}" hidden name="companyId">
+                                        <div class="form-group">
+                                            <label for="" >Name</label>
+                                            <input type="text" class="form-control" placeholder="" value="{{company.companyName}}" required name="companyName">
+                                        </div>
+                                       <div class="form-group">
+                                            <label for="" >Url</label>
+                                            <input type="text" class="form-control" placeholder="" value="{{company.companyUrl}}" name="companyUrl">
+                                       </div>
+                                        <div class="form-group">
+                                            <label for="" >District</label>
+                                            <select class="js-example-basic-multiple " style="width: 100%;" name="districtIds" multiple="multiple">
+                                                {% for data in company.districtNames.all %}
+                                                    <option value="{{data.districtId}}" selected>{{data.districtName}} ({{data.stateName.stateName}})</option>
+                                                {% endfor %}
+                                                {% for district in districts %}
+                                                    {% if district in company.districtNames.all %}
+                                                    {% else %}
+                                                        <option value="{{district.districtId}}" >{{district.districtName}} ({{district.stateName.stateName}})</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                              </select>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="" >State</label>
+                                            <select class="ui js-example-templating " style="width: 100%;" name="stateId">
+                                                <option value="{{company.stateId.stateId}}" selected>{{company.stateId.stateName}}</option>
+                                                {% for state in states %}
+                                                    {% if state.stateId == company.stateId.stateId %}
+                                                    {% else %}
+                                                        <option value="{{state.stateId}}">{{state.stateName}}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                               
+                                              </select>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="text-center">
+                                                {% if company.imageUlr %}
+                                                    <img src="/media/{{company.imageUlr}}" alt="" height="100" width="100">
+                                                {% endif %}
+                                            </div>
+                                            <label for="" >Image</label>
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" name="imageUrl">
+                                                <label class="custom-file-label" for="customFile">Choose file</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            {% if company.isActive %}
+                                                <input type="checkbox" id="updateActive" class="form-conrol " name="updateActive" checked>
+                                            {% else %}
+                                                <input type="checkbox" id="updateActive" class="form-conrol " name="updateActive">
+                                            {% endif %}
+                                            <label for="updateActive"> Active</label>
+
+                                        </div>
+
+                                        
+                                        <input type="submit" value="Update" name="update" class="form-control btn btn-success mb-5 mt-3">
+                                        
+                                    </form>
+    
+                                </div>
+    
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+              </div>
+    
+        </div>
+        {% endfor %}
+        <!-- modal end  -->
+    
+        <!-- modal for delete -->
+        {% for company in companies %}
+        <div class="col-md-12 mt-5">
+            <div class="modal fade" id="delete{{company.companyId}}"  data-backdrop="static"  data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog " role="document">
+                    <div class="modal-content  p-0 m-0" >
+    
+                       
+                        <div class="modal-body p-0 m-0">
+                            <div class="row">
+                                <div class="col-md-10 p-3 mx-auto">
+                                    <h4>Do you really want to delete <strong>{{company.companyName}}</strong>?<h4>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                            <form action="" method="POST">
+                                                {% csrf_token %}
+                                                <input type="text" value="{{company.companyId}}" hidden name="companyId">
+                                                <input type="submit" value="Delete" name="delete" class=" btn btn-danger px-5 mt-3">
+                                            </form>
+                                               </div> 
+                                               <div class="col-md-6">
+                                                <a  data-dismiss="modal" class="btn btn-info px-5 mt-3 text-white">Cancel</a>        
+                                               </div>
+                                                
+    
+                                        </div>
+    
+    
+                                </div>
+    
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+              </div>
+    
+        </div>
+        {% endfor %}
+        <!-- modal end  -->
+    
+    </div>
+        <!-- for data table  -->
+    <script>
+        
+        $(document).ready(function() {
+            $('#myTable').DataTable( {
+                
+                responsive: true
+            } );
+        
+            // new $.fn.dataTable.FixedHeader( table );
+        } );
+        </script>
+
+        <!-- for select multiple in edit / -->
+        <script>
+            $(document).ready(function() {
+                $('.js-example-basic-multiple').select2();
+            });
+        </script>
+        <!-- for multi select for add new  -->
+         <script>
+            $(document).ready(function() {
+                $('.js-example-basic-multiple2').select2();
+            });
+        </script>
+            <!-- for select search  -->
+        <script>
+            function formatState (state) {
+                if (!state.id) {
+                    return state.text;
+                }
+
+                var baseUrl = "/user/pages/images/flags";
+                var $state = $(
+                    '<span><img class="img-flag" /> <span></span></span>'
+                );
+
+                // Use .text() instead of HTML string concatenation to avoid script injection issues
+                $state.find("span").text(state.text);
+                // $state.find("img").attr("src", baseUrl + "/" + state.element.value.toLowerCase() + ".png");
+
+                return $state;
+                };
+
+                $(".js-example-templating").select2({
+                templateSelection: formatState
+                });
+        </script>
+{%endblock%}

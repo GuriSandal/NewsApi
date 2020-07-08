@@ -1,0 +1,449 @@
+{% extends 'admin_base.html' %}
+{%load static%}
+
+{% block head %}
+    <style>
+
+            .dropzone {
+                padding: 70px;
+            }
+
+            .hiddenFileInput{
+                border: 2px dashed #060;
+                display: none;
+            }
+            .hiddenFileInput > input{
+                height: 100%;
+                width: 100%;
+                opacity: 0;
+                cursor: pointer;
+                }
+            
+    </style>
+{% endblock %}
+{% block admin_base %}
+<div class="container" style="position: sticky;top: 0px;position: -webkit-sticky; z-index: 1;">
+<div class="row" >
+    <div class="col-md-1 mx-auto mt-2">
+        <div class="spinner-border text-primary" id="spinner" role="status" style="display: none;">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="container-fluid">
+    <div class="col-md-10 mx-auto card mt-3 p-5 shadow shadow-sm ">
+        <h3>Publish newspaper</h3>
+        <br>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="">Date/Time</label>
+                        <input type="text" id="date" value="{{today_date}}" pattern="\d{1,2}-\d{1,2}-\d{4}" placeholder="dd-mm-yyyy" class="datepicker form-control" name="date" value="{{city.newsDate}}" />
+        
+                    </div>
+    
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="">State</label>
+                        <select class="ui js-example-templating " style="width: 100%;" id="stateId" name="stateId" onchange="get_companies();">
+                                <option value="">-- Select State --</option>
+                            {% for state in states %}
+                                <option value="{{state.stateId}}">{{state.stateName}}</option>
+                            {% endfor %}  
+                          </select>
+        
+                    </div>
+    
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="">Publication House</label>
+                        <select name="companyId" id="companyId" class="ui js-example-templating form-control " style="width: 100%;" onchange="get_cities();">
+                            <option value="">-- Select Company --</option>
+                        </select>
+        
+                    </div>
+    
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="">Sort</label>
+                        <select name="" id="sort" class="ui  form-control " style="width: 100%;" onchange="get_cities();">
+                            <option value="0">Acending</option>
+                            <option value="1">Decending</option>
+                        </select>
+        
+                    </div>
+    
+                </div>
+
+            </div>
+            
+            <div class="hiddenFileInput my-2">
+                <h4 class="text-center">Multiple files drop here</h4>
+                <input type="file" multiple  id='dropzone' class='dropzone' draggable='true' onchange="multiupload();">
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group main" style="display: none;">
+                        <label for="">Main Upload</label>
+                        <div id="main_result" class="text-right"></div>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="mainFile" onchange="main_upload();">
+                            <label class="custom-file-label" for="mainFile">Choose file</label>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="col-md-3 ml-auto my-2">
+                    <button class="btn btn-block btn-danger city" style="display: none;" onclick="DeleteAllCityPdf();">Delete All PDFs of Cities</button>
+                    <button class="btn btn-block btn-danger company" style="display: none;" onclick="DeleteAllCompanyPdf();">Delete All PDFs of Companies</button>
+                </div>
+            </div>
+            <div id="district_row">      
+            </div>
+                    
+               
+                
+                
+            <!-- <input type="submit" value="Add" class="form-control btn btn-success mb-5 mt-3"> -->        
+
+    </div>
+
+</div>
+
+<script>
+    $('#dropzone').click(false);
+</script>
+
+
+<!-- for select search  -->
+<script>
+    function formatState (state) {
+        if (!state.id) {
+            return state.text;
+        }
+
+        var baseUrl = "/user/pages/images/flags";
+        var $state = $(
+            '<span><img class="img-flag" /> <span></span></span>'
+        );
+
+        // Use .text() instead of HTML string concatenation to avoid script injection issues
+        $state.find("span").text(state.text);
+        // $state.find("img").attr("src", baseUrl + "/" + state.element.value.toLowerCase() + ".png");
+
+        return $state;
+        };
+
+        $(".js-example-templating").select2({
+        templateSelection: formatState,
+        theme: "bootstrap4",
+        
+        });
+</script>
+
+<script>
+    $(document).ready(function () {
+    $('.datepicker').datepicker({
+      uiLibrary: 'bootstrap4',
+      format: 'dd-mm-yyyy'
+    });
+});
+</script>
+
+<script>
+    function get_companies(){
+        $("#spinner").show();
+        state_id = $("#stateId").val();
+        $.ajax({
+            url:"{% url 'get_companies' %}",
+            type:"get",
+            data:{state_id:state_id},
+            success:function(data){
+                $("#spinner").hide();
+                let r = '<option value="">--Select Company--</option>'
+                r += '<option value="all-company">All Companies Main</option>'
+                for(i=0; i<data["companies"].length; i++){
+                
+                    r += '<option value="'+data["companies"][i]["companyId"]+'">'+data["companies"][i]["companyName"]+'</option>'
+
+                }
+                $("#companyId").html(r);
+            }
+        })
+    }
+</script>
+
+<script>
+    function get_cities(){
+        $("#spinner").show();
+        company_id = $("#companyId").val();
+        if(company_id != "all-company"){
+            $(".hiddenFileInput").show();
+            $(".city").show();
+            $(".company").hide();
+            $(".main").show();
+        }
+        else{
+            $(".city").hide();
+            $(".company").show();
+            $(".hiddenFileInput").hide();
+            $(".main").hide();
+        }
+        sort = $("#sort").val();
+        date = $("#date").val();
+        state_id = $("#stateId").val();
+        $.ajax({
+            url:"{% url 'get_cities' %}",
+            type:"get",
+            data:{company_id:company_id,
+                    date:date,
+                    sort:sort,
+                    state_id:state_id},
+            success:function(data){
+                $("#spinner").hide();
+                if(data["added_company"].length > 0){
+                    $("#main_result").html('<h6 class="text-success"><i class="fas fa-check"></i> UPLOADED - '+data["date"]+'</h6>');
+                }
+                else{
+                    $("#main_result").html('');
+                }
+                let r = ""
+                if(data["status"] == "company"){
+                    r += '<h5 class="mt-3">UPLOAD FOR COMPANY</h5><br>'
+                    r += '<div class="row">'
+                    for(i=0; i<data["company_list"].length; i++){
+                        r += '<div class="col-md-4 card p-3 city">'
+                        r += '<h5 style="color: rgb(121, 41, 158);" class="text-center">'+data["company_list"][i]+'</h5>'
+                        r += '<input type="text" hidden value="'+data["company_list"][i]+'" id="companyName'+i+'" name="companyName">'
+                        r += '<div class="form-group">'
+                        r += '<input type="file" name="company_file" id="company_file'+i+'" class="mt-3" onchange="company_upload('+i+');"><br>'
+                        r += '<br><span id=company_info'+i+'>'
+                        for(j=0;j<data["added_company"].length;j++){
+                            if(data["company_list"][i]==data["added_company"][j]){
+                                r += '<br><h6 class="text-success"><i class="fas fa-check"></i> UPLOADED - '+data["date"]+'</h6>'
+                            }
+                            else{
+                                r += ''
+                            }
+                        }
+                        r += '</span>'
+                        r += '</div></div>'   
+                    }
+                    r += '</div>'
+
+                }
+                else{
+                    
+                    r += '<h5 class="mt-3">UPLOAD FOR CITY</h5><br>'
+                    r += '<div class="row">'
+                    for(i=0; i<data["district_list"].length; i++){
+                        name = data["district_list"][i]
+                        r += '<div class="col-md-4 card p-3 city">'
+                        r += '<h5 style="color: rgb(121, 41, 158);" class="text-center">'+data["district_list"][i]+'</h5>'
+                        r += '<input type="text" hidden value="'+data["district_list"][i]+'" id="cityName'+name+'" name="cityName">'
+                        r += '<div class="form-group">'
+                        r += '<input type="file" name="city_file" id="city_file'+name+'" class="mt-3" onchange="city_upload(\''+name+'\');"><br>'
+                        r += '<br><span id=city_info'+name+'>'
+                        for(j=0;j<data["added_city"].length;j++){
+                            if(data["district_list"][i]==data["added_city"][j]){
+                                r += '<br><h6 class="text-success"><i class="fas fa-check"></i> UPLOADED - '+data["date"]+'</h6>'
+                            }
+                            else{
+                                r += ''
+                            }
+                        }
+                        r += '</span>'
+                        r += '</div></div>'   
+                    }
+                    r += '</div>'
+                }
+                
+                $("#district_row").html(r);
+            }
+        })
+    }
+</script>
+
+<script>
+    function company_upload(i){
+        $("#spinner").show();
+        company_file = $("#company_file"+i).prop("files")[0];       
+        companyName = $("#companyName"+i).val();
+        date = $("#date").val();
+        stateId = $("#stateId").val();
+        var fd = new FormData();    
+        fd.append( "company_file", $("#company_file"+i).prop("files")[0] );
+        fd.append( "companyName", companyName );
+        fd.append( "date", date );
+        fd.append('stateId',stateId);
+        $.ajax({
+            url:"{% url 'company_upload' %}",
+            data: fd,
+            processData: false,
+            contentType: false,
+            type:"POST",
+            success:function(data){
+                $("#spinner").hide();
+                if(data["status"]=="success"){
+                    get_cities();
+                }
+                else{
+                    $("#company_info"+i).html('<br><h6 class="text-danger"><i class="fas fa-times"></i> '+data["msg"]+'</h6>');
+                }
+            }
+        })
+    }
+
+   
+</script>
+
+
+<script>
+    
+    function city_upload(i){
+        $("#spinner").show();
+        city_file = $("#city_file"+i).prop("files")[0];       
+        cityName = $("#cityName"+i).val();
+        date = $("#date").val();
+        stateId = $("#stateId").val();
+        companyId = $("#companyId").val();
+        var fd = new FormData();    
+        fd.append( "city_file", $("#city_file"+i).prop("files")[0] );
+        fd.append( "cityName", cityName );
+        fd.append( "date", date );
+        fd.append( 'companyId', companyId );
+        fd.append('stateId',stateId);
+        $.ajax({
+            url:"{% url 'city_upload' %}",
+            data: fd,
+            processData: false,
+            contentType: false,
+            type:"POST",
+            success:function(data){
+                $("#spinner").hide();
+                if(data["status"]=="success"){
+                    get_cities();
+                }
+                else{
+                    $("#city_info"+i).html('<br><h6 class="text-danger"><i class="fas fa-times"></i> '+data["msg"]+'</h6>');
+                }
+            }
+        })
+    }
+</script>
+
+
+<script>
+    function multiupload(){
+        $("#spinner").show();
+        files = $("#dropzone").prop("files")[0];       
+        date = $("#date").val();
+        stateId = $("#stateId").val();
+        companyId = $("#companyId").val();
+        var fd = new FormData();    
+        $.each($("#dropzone")[0].files, function(i, file) {
+            fd.append("files", file);
+        });
+        // fd.append( "files", $("#dropzone").prop("files")[0] );
+        fd.append( "date", date );
+        fd.append( 'companyId', companyId );
+        fd.append('stateId',stateId);
+        $.ajax({
+            url:"{% url 'multi_upload' %}",
+            data: fd,
+            processData: false,
+            contentType: false,
+            type:"POST",
+            success:function(data){
+                $("#spinner").hide();
+                if(data["status"]=="success"){
+                    alert("Success")
+                    get_cities();
+                }
+                
+                else{
+                    alert('<h6 class="text-danger"><i class="fas fa-times"></i> '+data["msg"]+'</h6>');
+                }
+            }
+        })
+    }
+</script>
+
+<script>
+   function DeleteAllCityPdf(){
+        $("#spinner").show();
+        date = $("#date").val();
+        stateId = $("#stateId").val();
+        companyId = $("#companyId").val();
+        $.ajax({
+            url:"{% url 'delete_all_city_pdf' %}",
+            data: {date:date,
+                    stateId:stateId,
+                    companyId:companyId},
+            type:"GET",
+            success:function(data){
+                $("#spinner").hide();
+                alert(data["status"]);
+                get_cities();
+                
+               }
+        })
+   }
+</script>
+
+<script>
+    function DeleteAllCompanyPdf(){
+        $("#spinner").show();
+        date = $("#date").val();
+        stateId = $("#stateId").val();
+        $.ajax({
+            url:"{% url 'delete_all_company_pdf' %}",
+            data: {date:date,
+                    stateId:stateId,
+                    },
+            type:"GET",
+            success:function(data){
+                $("#spinner").hide();
+                alert(data["status"]);
+                get_cities();
+               }
+        })
+    }
+</script>
+
+<script>
+    function main_upload(){
+        $("#spinner").show();
+        company_file = $("#mainFile").prop("files")[0];       
+        companyId = $("#companyId").val();
+        date = $("#date").val();
+        stateId = $("#stateId").val();
+        var fd = new FormData();    
+        fd.append( "company_file", company_file);
+        fd.append( "companyId", companyId );
+        fd.append( "date", date );
+        fd.append('stateId',stateId);
+        $.ajax({
+            url:"{% url 'main_upload' %}",
+            data: fd,
+            processData: false,
+            contentType: false,
+            type:"POST",
+            success:function(data){
+                $("#spinner").hide();
+                if(data["status"]=="success"){
+                    $("#main_result").html('<h6 class="text-success"><i class="fas fa-check"></i> UPLOADED - '+data["msg"]+'</h6>');
+                }
+                else{
+                    $("#main_result").html('<h6 class="text-danger"><i class="fas fa-times"></i> '+data["msg"]+'</h6>');
+                }
+            }
+        })
+    }
+</script>
+{%endblock%}
