@@ -208,8 +208,8 @@
                                             <div class="col-md-6">
                                             <form action="" method="POST">
                                                 {% csrf_token %}
-                                                <input type="text" value="{{magazine.magazineId}}" hidden name="magazineId">
-                                                <input type="submit" value="Delete" name="delete" class=" btn btn-danger px-5 mt-3">
+                                                <input type="text" value="{{magazine.id}}" hidden name="magazineId">
+                                                <input type="submit" name="delete" class=" btn btn-danger px-5 mt-3">
                                             </form>
                                                </div> 
                                                <div class="col-md-6">
