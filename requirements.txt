@@ -1,7 +1,7 @@
 Django==3.0.6
 djangorestframework==3.11.0
 fitz==0.0.1.dev2
-Pillow==7.1.2
+Pillow==9.0.0
 PyMuPDF==1.17.0
 python-resize-image==1.1.19
 
